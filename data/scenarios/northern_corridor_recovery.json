@@ -1,0 +1,47 @@
+{
+  "name": "Northern Corridor Recovery",
+  "description": "Two fictional countries coordinate around rolling infrastructure failures and civilian displacement.",
+  "seed": 17,
+  "grid_rows": 12,
+  "grid_cols": 12,
+  "nations": ["Auria", "Boros"],
+  "terrain": [
+    ["plains", "plains", "river", "river", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains"],
+    ["plains", "plains", "river", "river", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains"],
+    ["plains", "plains", "river", "river", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains"],
+    ["plains", "plains", "river", "river", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains"],
+    ["plains", "plains", "road", "road", "road", "road", "plains", "plains", "plains", "plains", "plains", "plains"],
+    ["plains", "plains", "road", "road", "road", "road", "plains", "plains", "plains", "plains", "plains", "plains"],
+    ["plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "road", "road", "road", "plains"],
+    ["plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "road", "road", "road", "plains"],
+    ["plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains"],
+    ["plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains"],
+    ["plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains"],
+    ["plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains", "plains"]
+  ],
+  "assets": [
+    {"id": "auria_power_01", "name": "Auria North Power", "nation": "Auria", "asset_type": "power_plant", "row": 2, "col": 1, "health": 62},
+    {"id": "auria_hospital_01", "name": "Auria Central Hospital", "nation": "Auria", "asset_type": "hospital", "row": 3, "col": 4, "health": 71},
+    {"id": "auria_water_01", "name": "Auria Water Works", "nation": "Auria", "asset_type": "water_treatment", "row": 4, "col": 2, "health": 80},
+    {"id": "auria_transport_01", "name": "Auria Transit Hub", "nation": "Auria", "asset_type": "transport_hub", "row": 5, "col": 4, "health": 55},
+    {"id": "auria_shelter_01", "name": "Auria Shelter East", "nation": "Auria", "asset_type": "shelter", "row": 5, "col": 6, "health": 68},
+    {"id": "boros_power_01", "name": "Boros River Power", "nation": "Boros", "asset_type": "power_plant", "row": 9, "col": 10, "health": 58},
+    {"id": "boros_hospital_01", "name": "Boros City Hospital", "nation": "Boros", "asset_type": "hospital", "row": 8, "col": 8, "health": 76},
+    {"id": "boros_water_01", "name": "Boros Water Works", "nation": "Boros", "asset_type": "water_treatment", "row": 7, "col": 9, "health": 84},
+    {"id": "boros_transport_01", "name": "Boros Freight Junction", "nation": "Boros", "asset_type": "transport_hub", "row": 6, "col": 9, "health": 49},
+    {"id": "boros_command_01", "name": "Boros Emergency Command", "nation": "Boros", "asset_type": "command_center", "row": 9, "col": 7, "health": 73}
+  ],
+  "population_zones": [
+    {"id": "auria_zone_01", "name": "Auria North District", "nation": "Auria", "row": 4, "col": 4, "population": 120000, "service_coverage": 0.72, "served_by_asset_ids": ["auria_power_01", "auria_hospital_01", "auria_water_01"]},
+    {"id": "boros_zone_01", "name": "Boros River District", "nation": "Boros", "row": 8, "col": 9, "population": 98000, "service_coverage": 0.69, "served_by_asset_ids": ["boros_power_01", "boros_hospital_01", "boros_water_01"]}
+  ],
+  "resource_stocks": [
+    {"nation": "Auria", "stocks": {"repair_crews": 8, "fuel": 360, "medical_supplies": 240, "generators": 10, "food_rations": 280, "water_purifiers": 7}},
+    {"nation": "Boros", "stocks": {"repair_crews": 7, "fuel": 340, "medical_supplies": 210, "generators": 8, "food_rations": 260, "water_purifiers": 6}}
+  ],
+  "active_consequences": {
+    "Auria": ["repair_backlog"],
+    "Boros": ["supply_lines_disrupted"]
+  },
+  "notes": ["Use for world loader smoke tests and first Streamlit dashboard wiring."]
+}

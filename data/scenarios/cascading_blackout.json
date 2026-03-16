@@ -1,0 +1,333 @@
+{
+  "name": "Cascading Blackout",
+  "description": "A simultaneous equipment failure at both nations' primary power plants has triggered a rolling blackout. Telecom towers are switching to battery backup, hospitals are on emergency generators, and water pumping stations are losing pressure. Every dependent asset is degrading in real time. Resources are limited and the dependency chain means fixing power first is the only viable path \u2014 but repair crews are stretched thin across both nations.",
+  "seed": 99,
+  "grid_rows": 20,
+  "grid_cols": 20,
+  "nations": [
+    "Auria",
+    "Boros"
+  ],
+  "assets": [
+    {
+      "id": "auria_power_01",
+      "name": "Auria Primary Grid",
+      "nation": "Auria",
+      "asset_type": "power_plant",
+      "row": 3,
+      "col": 3,
+      "starting_health": 15
+    },
+    {
+      "id": "auria_power_02",
+      "name": "Auria Backup Generator Hub",
+      "nation": "Auria",
+      "asset_type": "power_plant",
+      "row": 1,
+      "col": 5,
+      "starting_health": 50
+    },
+    {
+      "id": "auria_water_01",
+      "name": "Auria Water Station Alpha",
+      "nation": "Auria",
+      "asset_type": "water_treatment",
+      "row": 4,
+      "col": 6,
+      "starting_health": 70
+    },
+    {
+      "id": "auria_water_02",
+      "name": "Auria Water Station Beta",
+      "nation": "Auria",
+      "asset_type": "water_treatment",
+      "row": 6,
+      "col": 4,
+      "starting_health": 65
+    },
+    {
+      "id": "auria_hospital_01",
+      "name": "Auria General Hospital",
+      "nation": "Auria",
+      "asset_type": "hospital",
+      "row": 5,
+      "col": 7,
+      "starting_health": 75
+    },
+    {
+      "id": "auria_hospital_02",
+      "name": "Northern Trauma Centre",
+      "nation": "Auria",
+      "asset_type": "hospital",
+      "row": 2,
+      "col": 9,
+      "starting_health": 70
+    },
+    {
+      "id": "auria_telecom_01",
+      "name": "Auria Tower Alpha",
+      "nation": "Auria",
+      "asset_type": "telecom_tower",
+      "row": 1,
+      "col": 3,
+      "starting_health": 60
+    },
+    {
+      "id": "auria_telecom_02",
+      "name": "Auria Tower Beta",
+      "nation": "Auria",
+      "asset_type": "telecom_tower",
+      "row": 3,
+      "col": 10,
+      "starting_health": 55
+    },
+    {
+      "id": "auria_transport_01",
+      "name": "Auria Logistics Hub",
+      "nation": "Auria",
+      "asset_type": "transport_hub",
+      "row": 6,
+      "col": 2,
+      "starting_health": 85
+    },
+    {
+      "id": "auria_fuel_01",
+      "name": "Auria Fuel Depot Alpha",
+      "nation": "Auria",
+      "asset_type": "fuel_depot",
+      "row": 4,
+      "col": 1,
+      "starting_health": 75
+    },
+    {
+      "id": "auria_shelter_01",
+      "name": "Auria Emergency Shelter",
+      "nation": "Auria",
+      "asset_type": "shelter",
+      "row": 7,
+      "col": 8,
+      "starting_health": 70
+    },
+    {
+      "id": "auria_cmd_01",
+      "name": "Auria Coordination Centre",
+      "nation": "Auria",
+      "asset_type": "command_center",
+      "row": 2,
+      "col": 7,
+      "starting_health": 60
+    },
+    {
+      "id": "boros_power_01",
+      "name": "Boros Main Power Plant",
+      "nation": "Boros",
+      "asset_type": "power_plant",
+      "row": 16,
+      "col": 16,
+      "starting_health": 10
+    },
+    {
+      "id": "boros_power_02",
+      "name": "Boros Reserve Generator",
+      "nation": "Boros",
+      "asset_type": "power_plant",
+      "row": 18,
+      "col": 14,
+      "starting_health": 45
+    },
+    {
+      "id": "boros_water_01",
+      "name": "Boros Pumping Station One",
+      "nation": "Boros",
+      "asset_type": "water_treatment",
+      "row": 15,
+      "col": 13,
+      "starting_health": 65
+    },
+    {
+      "id": "boros_water_02",
+      "name": "Boros Pumping Station Two",
+      "nation": "Boros",
+      "asset_type": "water_treatment",
+      "row": 13,
+      "col": 15,
+      "starting_health": 60
+    },
+    {
+      "id": "boros_hospital_01",
+      "name": "Boros Metropolitan Hospital",
+      "nation": "Boros",
+      "asset_type": "hospital",
+      "row": 14,
+      "col": 14,
+      "starting_health": 70
+    },
+    {
+      "id": "boros_hospital_02",
+      "name": "Southern Medical Centre",
+      "nation": "Boros",
+      "asset_type": "hospital",
+      "row": 17,
+      "col": 12,
+      "starting_health": 65
+    },
+    {
+      "id": "boros_telecom_01",
+      "name": "Boros Tower South",
+      "nation": "Boros",
+      "asset_type": "telecom_tower",
+      "row": 18,
+      "col": 16,
+      "starting_health": 55
+    },
+    {
+      "id": "boros_telecom_02",
+      "name": "Boros Tower Inland",
+      "nation": "Boros",
+      "asset_type": "telecom_tower",
+      "row": 16,
+      "col": 11,
+      "starting_health": 50
+    },
+    {
+      "id": "boros_transport_01",
+      "name": "Boros Central Depot",
+      "nation": "Boros",
+      "asset_type": "transport_hub",
+      "row": 13,
+      "col": 17,
+      "starting_health": 80
+    },
+    {
+      "id": "boros_fuel_01",
+      "name": "Boros Fuel Store South",
+      "nation": "Boros",
+      "asset_type": "fuel_depot",
+      "row": 15,
+      "col": 18,
+      "starting_health": 70
+    },
+    {
+      "id": "boros_shelter_01",
+      "name": "Boros Crisis Shelter",
+      "nation": "Boros",
+      "asset_type": "shelter",
+      "row": 12,
+      "col": 13,
+      "starting_health": 70
+    },
+    {
+      "id": "boros_cmd_01",
+      "name": "Boros National EOC",
+      "nation": "Boros",
+      "asset_type": "command_center",
+      "row": 17,
+      "col": 15,
+      "starting_health": 55
+    }
+  ],
+  "population_zones": [
+    {
+      "id": "auria_zone_central",
+      "name": "Auria Central City",
+      "nation": "Auria",
+      "row": 4,
+      "col": 6,
+      "population": 300000,
+      "served_by_asset_ids": [
+        "auria_power_01",
+        "auria_power_02",
+        "auria_hospital_01",
+        "auria_water_01",
+        "auria_shelter_01"
+      ]
+    },
+    {
+      "id": "auria_zone_north",
+      "name": "Auria Northern Suburbs",
+      "nation": "Auria",
+      "row": 2,
+      "col": 7,
+      "population": 120000,
+      "served_by_asset_ids": [
+        "auria_hospital_02",
+        "auria_telecom_01",
+        "auria_power_02",
+        "auria_water_02"
+      ]
+    },
+    {
+      "id": "auria_zone_industrial",
+      "name": "Auria Industrial Belt",
+      "nation": "Auria",
+      "row": 6,
+      "col": 3,
+      "population": 60000,
+      "served_by_asset_ids": [
+        "auria_transport_01",
+        "auria_fuel_01",
+        "auria_power_01"
+      ]
+    },
+    {
+      "id": "boros_zone_metro",
+      "name": "Boros Metro Core",
+      "nation": "Boros",
+      "row": 15,
+      "col": 14,
+      "population": 350000,
+      "served_by_asset_ids": [
+        "boros_power_01",
+        "boros_power_02",
+        "boros_hospital_01",
+        "boros_water_01",
+        "boros_shelter_01"
+      ]
+    },
+    {
+      "id": "boros_zone_south",
+      "name": "Boros Southern Quarter",
+      "nation": "Boros",
+      "row": 17,
+      "col": 13,
+      "population": 140000,
+      "served_by_asset_ids": [
+        "boros_hospital_02",
+        "boros_telecom_01",
+        "boros_power_02",
+        "boros_water_02"
+      ]
+    },
+    {
+      "id": "boros_zone_port",
+      "name": "Boros Port District",
+      "nation": "Boros",
+      "row": 14,
+      "col": 17,
+      "population": 70000,
+      "served_by_asset_ids": [
+        "boros_transport_01",
+        "boros_fuel_01",
+        "boros_power_01"
+      ]
+    }
+  ],
+  "starting_disruptions": [],
+  "exogenous_event_overrides": {
+    "earthquake": {
+      "probability": 0.0
+    },
+    "flood": {
+      "probability": 0.0
+    },
+    "aftershock": {
+      "probability": 0.0
+    },
+    "equipment_fault": {
+      "probability": 0.08
+    },
+    "supply_delay": {
+      "probability": 0.05
+    }
+  }
+}

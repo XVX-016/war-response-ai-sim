@@ -1,0 +1,17 @@
+__pycache__/
+.pytest_cache/
+.venv/
+venv/
+.env
+.streamlit/secrets.toml
+*.pyc
+*.pyo
+*.pyd
+*.pt
+*.pth
+*.onnx
+logs/
+models/
+dist/
+build/
+*.egg-info/

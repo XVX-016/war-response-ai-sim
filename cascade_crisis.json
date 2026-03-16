@@ -1,0 +1,70 @@
+{
+  "name": "Cascade Crisis",
+  "description": "A major earthquake has disabled primary power infrastructure in both nations. Hospitals are on backup power, water treatment is failing, and displaced populations are growing. Both nations must stabilise before resources run out.",
+  "seed": 42,
+  "grid_rows": 20,
+  "grid_cols": 20,
+  "nations": ["Auria", "Boros"],
+
+  "assets": [
+    { "id": "auria_power_01",     "name": "Auria Main Grid",         "nation": "Auria", "asset_type": "power_plant",    "row": 2,  "col": 4,  "starting_health": 45 },
+    { "id": "auria_water_01",     "name": "Northern Water Plant",    "nation": "Auria", "asset_type": "water_treatment", "row": 3,  "col": 6,  "starting_health": 70 },
+    { "id": "auria_hospital_01",  "name": "Central Hospital",        "nation": "Auria", "asset_type": "hospital",        "row": 4,  "col": 5,  "starting_health": 65 },
+    { "id": "auria_telecom_01",   "name": "Auria Telecom Tower A",   "nation": "Auria", "asset_type": "telecom_tower",   "row": 1,  "col": 7,  "starting_health": 80 },
+    { "id": "auria_transport_01", "name": "Northern Transport Hub",  "nation": "Auria", "asset_type": "transport_hub",   "row": 5,  "col": 3,  "starting_health": 55 },
+    { "id": "auria_fuel_01",      "name": "Auria Fuel Reserve",      "nation": "Auria", "asset_type": "fuel_depot",      "row": 3,  "col": 2,  "starting_health": 80 },
+    { "id": "auria_shelter_01",   "name": "Emergency Shelter North", "nation": "Auria", "asset_type": "shelter",         "row": 6,  "col": 7,  "starting_health": 90 },
+    { "id": "auria_cmd_01",       "name": "Auria Civil Command",     "nation": "Auria", "asset_type": "command_center",  "row": 2,  "col": 9,  "starting_health": 75 },
+
+    { "id": "boros_power_01",     "name": "Boros Power Station",     "nation": "Boros", "asset_type": "power_plant",    "row": 17, "col": 15, "starting_health": 40 },
+    { "id": "boros_water_01",     "name": "Southern Water Works",    "nation": "Boros", "asset_type": "water_treatment", "row": 16, "col": 13, "starting_health": 60 },
+    { "id": "boros_hospital_01",  "name": "Boropolis Hospital",      "nation": "Boros", "asset_type": "hospital",        "row": 15, "col": 14, "starting_health": 55 },
+    { "id": "boros_telecom_01",   "name": "Boros Relay Tower",       "nation": "Boros", "asset_type": "telecom_tower",   "row": 18, "col": 16, "starting_health": 75 },
+    { "id": "boros_transport_01", "name": "Southern Transport Hub",  "nation": "Boros", "asset_type": "transport_hub",   "row": 14, "col": 12, "starting_health": 50 },
+    { "id": "boros_fuel_01",      "name": "Boros Fuel Depot",        "nation": "Boros", "asset_type": "fuel_depot",      "row": 16, "col": 11, "starting_health": 70 },
+    { "id": "boros_shelter_01",   "name": "Emergency Shelter South", "nation": "Boros", "asset_type": "shelter",         "row": 13, "col": 15, "starting_health": 85 },
+    { "id": "boros_cmd_01",       "name": "Boros Civil Command",     "nation": "Boros", "asset_type": "command_center",  "row": 17, "col": 10, "starting_health": 70 }
+  ],
+
+  "population_zones": [
+    {
+      "id": "auria_zone_north",
+      "name": "Auria Northern Districts",
+      "nation": "Auria",
+      "row": 3, "col": 5,
+      "population": 150000,
+      "served_by_asset_ids": ["auria_hospital_01", "auria_power_01", "auria_water_01", "auria_shelter_01"]
+    },
+    {
+      "id": "auria_zone_west",
+      "name": "Auria Western Suburbs",
+      "nation": "Auria",
+      "row": 5, "col": 2,
+      "population": 80000,
+      "served_by_asset_ids": ["auria_transport_01", "auria_fuel_01", "auria_power_01"]
+    },
+    {
+      "id": "boros_zone_south",
+      "name": "Boropolis Metro",
+      "nation": "Boros",
+      "row": 15, "col": 13,
+      "population": 200000,
+      "served_by_asset_ids": ["boros_hospital_01", "boros_power_01", "boros_water_01", "boros_shelter_01"]
+    },
+    {
+      "id": "boros_zone_east",
+      "name": "Boros Eastern Region",
+      "nation": "Boros",
+      "row": 16, "col": 16,
+      "population": 60000,
+      "served_by_asset_ids": ["boros_transport_01", "boros_fuel_01", "boros_telecom_01"]
+    }
+  ],
+
+  "starting_disruptions": [],
+
+  "exogenous_event_overrides": {
+    "earthquake": { "probability": 0.01 },
+    "aftershock": { "probability": 0.05 }
+  }
+}

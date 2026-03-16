@@ -1,0 +1,44 @@
+# ── ResilienceSim v1 ── requirements.txt ─────────────────────────────────────
+# Pinned versions. Last verified: March 2026.
+# Install: pip install -r requirements.txt
+
+# UI
+streamlit==1.33.0
+
+# Data validation / schemas
+pydantic==2.7.1
+
+# RL environment interface (for future RL agent; rule agent works without it)
+gymnasium==0.29.1
+pettingzoo==1.24.3
+
+# RL algorithms (optional — only needed if training RL agent)
+stable-baselines3==2.3.2
+
+# Computer vision (optional — only needed for vision/detector.py)
+ultralytics==8.2.0
+opencv-python==4.9.0.80
+Pillow==10.3.0
+
+# Mapping / visualisation
+folium==0.16.0
+matplotlib==3.8.4
+plotly==5.22.0
+
+# Data
+numpy==1.26.4
+pandas==2.2.2
+
+# Claude API (optional — only needed for ai_narrator)
+anthropic==0.25.8
+
+# Utilities
+python-dotenv==1.0.1
+loguru==0.7.2
+tqdm==4.66.4
+pyyaml==6.0.1          # for YAML scenario files
+
+# Dev / testing
+pytest==8.2.0
+pytest-cov==5.0.0
+black==24.4.2

@@ -1,0 +1,319 @@
+{
+  "name": "Flood Response",
+  "description": "Sustained regional flooding has severed transport corridors and overwhelmed water treatment capacity in both nations. Fuel depots are cut off from resupply, hospitals are receiving a surge of patients, and shelters are filling rapidly. Neither nation has power issues yet \u2014 but without transport, repair crews cannot reach damaged sites and resource stocks will erode quickly.",
+  "seed": 17,
+  "grid_rows": 20,
+  "grid_cols": 20,
+  "nations": [
+    "Auria",
+    "Boros"
+  ],
+  "assets": [
+    {
+      "id": "auria_power_01",
+      "name": "Auria Grid Station",
+      "nation": "Auria",
+      "asset_type": "power_plant",
+      "row": 2,
+      "col": 3,
+      "starting_health": 95
+    },
+    {
+      "id": "auria_water_01",
+      "name": "River Valley Water Plant",
+      "nation": "Auria",
+      "asset_type": "water_treatment",
+      "row": 4,
+      "col": 5,
+      "starting_health": 30
+    },
+    {
+      "id": "auria_hospital_01",
+      "name": "St. Mara General",
+      "nation": "Auria",
+      "asset_type": "hospital",
+      "row": 3,
+      "col": 7,
+      "starting_health": 60
+    },
+    {
+      "id": "auria_hospital_02",
+      "name": "Eastside Clinic",
+      "nation": "Auria",
+      "asset_type": "hospital",
+      "row": 5,
+      "col": 9,
+      "starting_health": 70
+    },
+    {
+      "id": "auria_telecom_01",
+      "name": "Auria North Tower",
+      "nation": "Auria",
+      "asset_type": "telecom_tower",
+      "row": 1,
+      "col": 6,
+      "starting_health": 80
+    },
+    {
+      "id": "auria_transport_01",
+      "name": "Central Interchange",
+      "nation": "Auria",
+      "asset_type": "transport_hub",
+      "row": 6,
+      "col": 4,
+      "starting_health": 20
+    },
+    {
+      "id": "auria_transport_02",
+      "name": "Eastern Bypass Node",
+      "nation": "Auria",
+      "asset_type": "transport_hub",
+      "row": 4,
+      "col": 10,
+      "starting_health": 35
+    },
+    {
+      "id": "auria_fuel_01",
+      "name": "Northern Fuel Store",
+      "nation": "Auria",
+      "asset_type": "fuel_depot",
+      "row": 2,
+      "col": 8,
+      "starting_health": 55
+    },
+    {
+      "id": "auria_shelter_01",
+      "name": "Hillside Evacuation Camp",
+      "nation": "Auria",
+      "asset_type": "shelter",
+      "row": 1,
+      "col": 4,
+      "starting_health": 70
+    },
+    {
+      "id": "auria_shelter_02",
+      "name": "Valley Shelter East",
+      "nation": "Auria",
+      "asset_type": "shelter",
+      "row": 6,
+      "col": 11,
+      "starting_health": 65
+    },
+    {
+      "id": "auria_cmd_01",
+      "name": "Auria Emergency Command",
+      "nation": "Auria",
+      "asset_type": "command_center",
+      "row": 1,
+      "col": 2,
+      "starting_health": 85
+    },
+    {
+      "id": "boros_power_01",
+      "name": "Boros Southern Grid",
+      "nation": "Boros",
+      "asset_type": "power_plant",
+      "row": 17,
+      "col": 16,
+      "starting_health": 90
+    },
+    {
+      "id": "boros_water_01",
+      "name": "Delta Water Works",
+      "nation": "Boros",
+      "asset_type": "water_treatment",
+      "row": 15,
+      "col": 14,
+      "starting_health": 25
+    },
+    {
+      "id": "boros_hospital_01",
+      "name": "Boros Central Medical",
+      "nation": "Boros",
+      "asset_type": "hospital",
+      "row": 16,
+      "col": 12,
+      "starting_health": 55
+    },
+    {
+      "id": "boros_hospital_02",
+      "name": "Port District Hospital",
+      "nation": "Boros",
+      "asset_type": "hospital",
+      "row": 14,
+      "col": 16,
+      "starting_health": 65
+    },
+    {
+      "id": "boros_telecom_01",
+      "name": "Boros South Tower",
+      "nation": "Boros",
+      "asset_type": "telecom_tower",
+      "row": 18,
+      "col": 15,
+      "starting_health": 80
+    },
+    {
+      "id": "boros_transport_01",
+      "name": "Southern Interchange",
+      "nation": "Boros",
+      "asset_type": "transport_hub",
+      "row": 13,
+      "col": 13,
+      "starting_health": 15
+    },
+    {
+      "id": "boros_transport_02",
+      "name": "Coastal Road Node",
+      "nation": "Boros",
+      "asset_type": "transport_hub",
+      "row": 15,
+      "col": 17,
+      "starting_health": 40
+    },
+    {
+      "id": "boros_fuel_01",
+      "name": "Southern Fuel Reserve",
+      "nation": "Boros",
+      "asset_type": "fuel_depot",
+      "row": 17,
+      "col": 11,
+      "starting_health": 50
+    },
+    {
+      "id": "boros_shelter_01",
+      "name": "High Ground Camp Alpha",
+      "nation": "Boros",
+      "asset_type": "shelter",
+      "row": 18,
+      "col": 17,
+      "starting_health": 70
+    },
+    {
+      "id": "boros_shelter_02",
+      "name": "Inland Shelter Bravo",
+      "nation": "Boros",
+      "asset_type": "shelter",
+      "row": 12,
+      "col": 14,
+      "starting_health": 60
+    },
+    {
+      "id": "boros_cmd_01",
+      "name": "Boros Civil Operations HQ",
+      "nation": "Boros",
+      "asset_type": "command_center",
+      "row": 18,
+      "col": 13,
+      "starting_health": 80
+    }
+  ],
+  "population_zones": [
+    {
+      "id": "auria_zone_valley",
+      "name": "Auria River Valley",
+      "nation": "Auria",
+      "row": 5,
+      "col": 5,
+      "population": 200000,
+      "served_by_asset_ids": [
+        "auria_water_01",
+        "auria_transport_01",
+        "auria_hospital_01",
+        "auria_shelter_01"
+      ]
+    },
+    {
+      "id": "auria_zone_east",
+      "name": "Auria Eastern District",
+      "nation": "Auria",
+      "row": 4,
+      "col": 9,
+      "population": 110000,
+      "served_by_asset_ids": [
+        "auria_hospital_02",
+        "auria_transport_02",
+        "auria_shelter_02",
+        "auria_power_01"
+      ]
+    },
+    {
+      "id": "auria_zone_upland",
+      "name": "Auria Upland Towns",
+      "nation": "Auria",
+      "row": 2,
+      "col": 5,
+      "population": 45000,
+      "served_by_asset_ids": [
+        "auria_fuel_01",
+        "auria_power_01",
+        "auria_cmd_01"
+      ]
+    },
+    {
+      "id": "boros_zone_delta",
+      "name": "Boros Delta Metro",
+      "nation": "Boros",
+      "row": 15,
+      "col": 13,
+      "population": 250000,
+      "served_by_asset_ids": [
+        "boros_water_01",
+        "boros_transport_01",
+        "boros_hospital_01",
+        "boros_shelter_01"
+      ]
+    },
+    {
+      "id": "boros_zone_coast",
+      "name": "Boros Coastal Settlements",
+      "nation": "Boros",
+      "row": 15,
+      "col": 16,
+      "population": 90000,
+      "served_by_asset_ids": [
+        "boros_hospital_02",
+        "boros_transport_02",
+        "boros_shelter_02",
+        "boros_power_01"
+      ]
+    },
+    {
+      "id": "boros_zone_inland",
+      "name": "Boros Inland Communities",
+      "nation": "Boros",
+      "row": 17,
+      "col": 12,
+      "population": 55000,
+      "served_by_asset_ids": [
+        "boros_fuel_01",
+        "boros_power_01",
+        "boros_cmd_01"
+      ]
+    }
+  ],
+  "starting_disruptions": [
+    {
+      "asset_id": "auria_transport_01",
+      "damage": 30
+    },
+    {
+      "asset_id": "boros_transport_01",
+      "damage": 35
+    }
+  ],
+  "exogenous_event_overrides": {
+    "earthquake": {
+      "probability": 0.0
+    },
+    "aftershock": {
+      "probability": 0.0
+    },
+    "flood": {
+      "probability": 0.08
+    },
+    "supply_delay": {
+      "probability": 0.06
+    }
+  }
+}
