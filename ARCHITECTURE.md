@@ -82,6 +82,7 @@ live KPIs, the grid map, and a turn event log.
       f. Complete any actions that reached turns_remaining == 0
       g. Apply exogenous events (random, per config.EXOGENOUS_EVENTS)
       h. Propagate dependency penalties (consequence.apply_dependency_penalties)
+         h2. Apply active consequence HP drain (consequence.apply_active_consequence_effects)
       i. Apply degradation_rate to applicable assets (config.ASSET_TYPES)
       j. Recompute resource resupply (reduced if transport_hub degraded)
       k. Call consequence.compute_consequences → active_consequences dict

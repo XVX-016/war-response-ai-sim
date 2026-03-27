@@ -58,7 +58,7 @@ def apply_dependency_penalties(state: ScenarioState) -> Tuple[Dict[str, float], 
 
             if not dep_assets:
                 # Dependency type entirely destroyed → full penalty
-                penalty = config.DEPENDENCY_PENALTY
+                penalty = config.DEPENDENCY_PENALTY * 1.5
                 penalties[asset.id] = penalties.get(asset.id, 0) + penalty
                 events.append(SimEvent(
                     turn        = state.turn,
@@ -78,6 +78,8 @@ def apply_dependency_penalties(state: ScenarioState) -> Tuple[Dict[str, float], 
             best_dep = max(dep_assets, key=lambda a: a.health)
             if best_dep.health < config.DEGRADED_THRESHOLD:
                 penalty = config.DEPENDENCY_PENALTY
+                if best_dep.health_fraction() < 0.25:
+                    penalty *= 1.5
                 penalties[asset.id] = penalties.get(asset.id, 0) + penalty
                 events.append(SimEvent(
                     turn        = state.turn,
@@ -92,6 +94,76 @@ def apply_dependency_penalties(state: ScenarioState) -> Tuple[Dict[str, float], 
                     tags        = [f"degraded_dep:{dep_type}"],
                     severity    = "warning",
                 ))
+
+    return penalties, events
+
+
+def apply_active_consequence_effects(state: ScenarioState) -> Tuple[Dict[str, float], List[SimEvent]]:
+    """
+    Apply per-turn damage from already-active consequence tags.
+    Uses the state's existing active_consequences snapshot and does not mutate state.
+    """
+    penalties: Dict[str, float] = {}
+    events: List[SimEvent] = []
+
+    for nation in state.nations:
+        active_tags = set(state.active_consequences.get(nation, []))
+        nation_assets = [asset for asset in state.get_assets_for(nation) if not asset.is_destroyed]
+
+        if "blackout" in active_tags:
+            for asset in nation_assets:
+                if asset.asset_type == "power_plant":
+                    continue
+                penalties[asset.id] = penalties.get(asset.id, 0.0) + 2.0
+                events.append(SimEvent(
+                    turn=state.turn,
+                    event_type="active_consequence_penalty",
+                    nation=nation,
+                    asset_id=asset.id,
+                    description=f"{asset.name} loses 2 HP due to ongoing blackout conditions",
+                    tags=["blackout"],
+                    severity="warning",
+                ))
+
+        if "water_shortage" in active_tags:
+            for asset in nation_assets:
+                if asset.asset_type != "hospital":
+                    continue
+                penalties[asset.id] = penalties.get(asset.id, 0.0) + 3.0
+                events.append(SimEvent(
+                    turn=state.turn,
+                    event_type="active_consequence_penalty",
+                    nation=nation,
+                    asset_id=asset.id,
+                    description=f"{asset.name} loses 3 HP due to water shortage stress",
+                    tags=["water_shortage"],
+                    severity="warning",
+                ))
+
+        if "fuel_shortage" in active_tags:
+            for asset in nation_assets:
+                if asset.asset_type != "transport_hub":
+                    continue
+                penalties[asset.id] = penalties.get(asset.id, 0.0) + 3.0
+                events.append(SimEvent(
+                    turn=state.turn,
+                    event_type="active_consequence_penalty",
+                    nation=nation,
+                    asset_id=asset.id,
+                    description=f"{asset.name} loses 3 HP due to fuel shortage disruption",
+                    tags=["fuel_shortage"],
+                    severity="warning",
+                ))
+
+        if "supply_lines_disrupted" in active_tags:
+            events.append(SimEvent(
+                turn=state.turn,
+                event_type="active_consequence_penalty",
+                nation=nation,
+                description=f"{nation}: supply lines disrupted reduces repair crew resupply by 1 this turn",
+                tags=["supply_lines_disrupted", "repair_crews_penalty"],
+                severity="warning",
+            ))
 
     return penalties, events
 
