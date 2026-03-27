@@ -316,6 +316,16 @@ def _apply_resupply(state: ScenarioState, events: List[SimEvent]) -> None:
         if not res:
             continue
         gains = {k: v * factor for k, v in config.BASE_RESUPPLY_PER_TURN.items() if v > 0}
+        if "supply_lines_disrupted" in state.active_consequences.get(nation, []):
+            gains["repair_crews"] = max(0.0, gains.get("repair_crews", 0.0) - 1.0)
+            events.append(SimEvent(
+                turn        = state.turn,
+                event_type  = "resupply_reduced",
+                nation      = nation,
+                description = f"{nation}: repair crew resupply reduced by 1 due to supply lines disruption",
+                tags        = ["supply_lines_disrupted", "repair_crews_penalty"],
+                severity    = "warning",
+            ))
         res.add(gains)
         if factor < 1.0:
             events.append(SimEvent(
@@ -487,6 +497,16 @@ def step_simulation(
     penalties, dep_events = csq.apply_dependency_penalties(s)
     turn_events.extend(dep_events)
     for asset_id, penalty in penalties.items():
+        asset = s.get_asset(asset_id)
+        if asset:
+            asset.apply_damage(penalty)
+            if asset.id not in assets_degraded:
+                assets_degraded.append(asset.id)
+
+    # ?? 2h2. Active consequence penalties ??????????????????
+    penalties2, events2 = csq.apply_active_consequence_effects(s)
+    turn_events.extend(events2)
+    for asset_id, penalty in penalties2.items():
         asset = s.get_asset(asset_id)
         if asset:
             asset.apply_damage(penalty)

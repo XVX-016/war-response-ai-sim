@@ -104,7 +104,7 @@ DEPENDENCY_GRAPH = {
 }
 
 # HP lost per degraded dependency per turn
-DEPENDENCY_PENALTY = 5.0
+DEPENDENCY_PENALTY = 8.0
 
 # ── Cascade consequence map ───────────────────────────────────────────────────
 # Maps asset_type → list of consequence tags emitted when health < DEGRADED_THRESHOLD.
@@ -123,28 +123,28 @@ CONSEQUENCE_MAP = {
 # ── Population zones ──────────────────────────────────────────────────────────
 # Displacement triggers when service_coverage drops below DISPLACEMENT_TRIGGER.
 # Mortality risk rises when both hospital and power are degraded simultaneously.
-DISPLACEMENT_TRIGGER     = 0.40   # service_coverage fraction (0–1)
+DISPLACEMENT_TRIGGER     = 0.50   # service_coverage fraction (0–1)
 MORTALITY_RISK_THRESHOLD = 0.25   # service_coverage fraction below which mortality risk activates
-MAX_DISPLACEMENT_RATE    = 0.05   # max 5 % of zone population displaced per turn
+MAX_DISPLACEMENT_RATE    = 0.08   # max 5 % of zone population displaced per turn
 
 # ── Resource stocks ───────────────────────────────────────────────────────────
 # Starting stock per nation. Keys match ResourceStock.stocks dict.
 RESOURCE_TYPES = {
-    "repair_crews":     {"unit": "teams",   "starting": 10},
-    "fuel":             {"unit": "tons",    "starting": 500},
-    "medical_supplies": {"unit": "kits",    "starting": 300},
-    "generators":       {"unit": "units",   "starting": 20},
-    "food_rations":     {"unit": "pallets", "starting": 400},
-    "water_purifiers":  {"unit": "units",   "starting": 15},
+    "repair_crews":     {"unit": "teams",   "starting": 8},
+    "fuel":             {"unit": "tons",    "starting": 350},
+    "medical_supplies": {"unit": "kits",    "starting": 200},
+    "generators":       {"unit": "units",   "starting": 12},
+    "food_rations":     {"unit": "pallets", "starting": 280},
+    "water_purifiers":  {"unit": "units",   "starting": 10},
 }
 
 # Resources replenished each turn via supply lines (reduced if transport_hub degraded)
 BASE_RESUPPLY_PER_TURN = {
     "repair_crews":     1,
-    "fuel":             20,
-    "medical_supplies": 10,
+    "fuel":             12,
+    "medical_supplies": 6,
     "generators":       0,
-    "food_rations":     15,
+    "food_rations":     9,
     "water_purifiers":  0,
 }
 
@@ -212,8 +212,8 @@ ACTION_TYPES = {
 EXOGENOUS_EVENTS = {
     "earthquake":      {"probability": 0.02, "damage": 40, "affects": ["power_plant", "transport_hub", "hospital"]},
     "flood":           {"probability": 0.03, "damage": 30, "affects": ["water_treatment", "shelter", "transport_hub"]},
-    "equipment_fault": {"probability": 0.05, "damage": 20, "affects": list(ASSET_TYPES.keys())},
-    "supply_delay":    {"probability": 0.04, "damage": 0,  "affects": [],   "resource_cut": 0.5},
+    "equipment_fault": {"probability": 0.10, "damage": 20, "affects": list(ASSET_TYPES.keys())},
+    "supply_delay":    {"probability": 0.07, "damage": 0,  "affects": [],   "resource_cut": 0.5},
     "aftershock":      {"probability": 0.01, "damage": 15, "affects": ["power_plant", "telecom_tower"]},
 }
 
@@ -223,7 +223,7 @@ END_CONDITIONS = {
     # Stabilisation: all critical assets above DEGRADED_THRESHOLD for 3 consecutive turns
     "stabilised": {
         "description": "All critical assets operational for 3 consecutive turns",
-        "consecutive_turns_required": 3,
+        "consecutive_turns_required": 8,
     },
     # Collapse: service_coverage drops below collapse threshold nation-wide
     "collapsed": {

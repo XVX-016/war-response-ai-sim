@@ -16,7 +16,7 @@
       "asset_type": "power_plant",
       "row": 2,
       "col": 3,
-      "starting_health": 95
+      "starting_health": 85
     },
     {
       "id": "auria_water_01",
@@ -25,7 +25,7 @@
       "asset_type": "water_treatment",
       "row": 4,
       "col": 5,
-      "starting_health": 30
+      "starting_health": 20
     },
     {
       "id": "auria_hospital_01",
@@ -34,7 +34,7 @@
       "asset_type": "hospital",
       "row": 3,
       "col": 7,
-      "starting_health": 60
+      "starting_health": 50
     },
     {
       "id": "auria_hospital_02",
@@ -43,7 +43,7 @@
       "asset_type": "hospital",
       "row": 5,
       "col": 9,
-      "starting_health": 70
+      "starting_health": 60
     },
     {
       "id": "auria_telecom_01",
@@ -52,7 +52,7 @@
       "asset_type": "telecom_tower",
       "row": 1,
       "col": 6,
-      "starting_health": 80
+      "starting_health": 70
     },
     {
       "id": "auria_transport_01",
@@ -61,7 +61,7 @@
       "asset_type": "transport_hub",
       "row": 6,
       "col": 4,
-      "starting_health": 20
+      "starting_health": 10
     },
     {
       "id": "auria_transport_02",
@@ -70,7 +70,7 @@
       "asset_type": "transport_hub",
       "row": 4,
       "col": 10,
-      "starting_health": 35
+      "starting_health": 25
     },
     {
       "id": "auria_fuel_01",
@@ -79,7 +79,7 @@
       "asset_type": "fuel_depot",
       "row": 2,
       "col": 8,
-      "starting_health": 55
+      "starting_health": 45
     },
     {
       "id": "auria_shelter_01",
@@ -88,7 +88,7 @@
       "asset_type": "shelter",
       "row": 1,
       "col": 4,
-      "starting_health": 70
+      "starting_health": 60
     },
     {
       "id": "auria_shelter_02",
@@ -97,7 +97,7 @@
       "asset_type": "shelter",
       "row": 6,
       "col": 11,
-      "starting_health": 65
+      "starting_health": 55
     },
     {
       "id": "auria_cmd_01",
@@ -106,7 +106,7 @@
       "asset_type": "command_center",
       "row": 1,
       "col": 2,
-      "starting_health": 85
+      "starting_health": 75
     },
     {
       "id": "boros_power_01",
@@ -115,7 +115,7 @@
       "asset_type": "power_plant",
       "row": 17,
       "col": 16,
-      "starting_health": 90
+      "starting_health": 80
     },
     {
       "id": "boros_water_01",
@@ -124,7 +124,7 @@
       "asset_type": "water_treatment",
       "row": 15,
       "col": 14,
-      "starting_health": 25
+      "starting_health": 15
     },
     {
       "id": "boros_hospital_01",
@@ -133,7 +133,7 @@
       "asset_type": "hospital",
       "row": 16,
       "col": 12,
-      "starting_health": 55
+      "starting_health": 45
     },
     {
       "id": "boros_hospital_02",
@@ -142,7 +142,7 @@
       "asset_type": "hospital",
       "row": 14,
       "col": 16,
-      "starting_health": 65
+      "starting_health": 55
     },
     {
       "id": "boros_telecom_01",
@@ -151,7 +151,7 @@
       "asset_type": "telecom_tower",
       "row": 18,
       "col": 15,
-      "starting_health": 80
+      "starting_health": 70
     },
     {
       "id": "boros_transport_01",
@@ -160,7 +160,7 @@
       "asset_type": "transport_hub",
       "row": 13,
       "col": 13,
-      "starting_health": 15
+      "starting_health": 10
     },
     {
       "id": "boros_transport_02",
@@ -169,7 +169,7 @@
       "asset_type": "transport_hub",
       "row": 15,
       "col": 17,
-      "starting_health": 40
+      "starting_health": 30
     },
     {
       "id": "boros_fuel_01",
@@ -178,7 +178,7 @@
       "asset_type": "fuel_depot",
       "row": 17,
       "col": 11,
-      "starting_health": 50
+      "starting_health": 40
     },
     {
       "id": "boros_shelter_01",
@@ -187,7 +187,7 @@
       "asset_type": "shelter",
       "row": 18,
       "col": 17,
-      "starting_health": 70
+      "starting_health": 60
     },
     {
       "id": "boros_shelter_02",
@@ -196,7 +196,7 @@
       "asset_type": "shelter",
       "row": 12,
       "col": 14,
-      "starting_health": 60
+      "starting_health": 50
     },
     {
       "id": "boros_cmd_01",
@@ -205,7 +205,7 @@
       "asset_type": "command_center",
       "row": 18,
       "col": 13,
-      "starting_health": 80
+      "starting_health": 70
     }
   ],
   "population_zones": [

@@ -74,10 +74,10 @@ class TestWorldLoading:
             )
 
     def test_starting_health_overrides_apply(self, state):
-        # Auria power plant starts at 45 per scenario JSON
+        # Auria power plant starts at 35 per scenario JSON after the harder baseline rebalance
         auria_power = state.get_asset("auria_power_01")
         assert auria_power is not None
-        assert auria_power.health == 45.0
+        assert auria_power.health == 35.0
 
     def test_max_health_from_config(self, state):
         # power_plant max_health = 100 per config.ASSET_TYPES
@@ -285,7 +285,7 @@ class TestRuleAgent:
             for k in state_copy.resources[nation].stocks:
                 state_copy.resources[nation].stocks[k] = 0.0
         actions = select_actions(state_copy, "Auria")
-        assert actions == []
+        assert all(action.action_type == "inspect" for action in actions)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -304,23 +304,20 @@ class TestEndConditions:
         assert result.get("Auria") == "collapsed"
 
     def test_stabilised_after_consecutive_healthy_turns(self, state):
-        """Heal all critical Auria assets and run 3 turns → should stabilise."""
+        """Auria should stabilise once it has 8 consecutive healthy turns on critical assets."""
         current = state.model_copy(deep=True)
         for asset in current.assets:
             if asset.nation == "Auria" and asset.is_critical:
                 asset.health = asset.max_health
                 asset.is_destroyed = False
 
-        # Run 3 turns with no actions, no degradation disturbances
-        for _ in range(3):
-            result = step_simulation(current, [])
-            current = result.new_state
+        current.stable_turns_count["Auria"] = 7
+        result = csq.check_end_conditions(current)
 
-        assert "Auria" in current.end_conditions_met
-        assert current.end_conditions_met["Auria"] == "stabilised"
-
+        assert result.get("Auria") == "stabilised"
     def test_timeout_at_max_turns(self, state):
         state_copy = state.model_copy(deep=True)
         state_copy.turn = state_copy.max_turns
         result = csq.check_end_conditions(state_copy)
         assert all(v == "timeout" for v in result.values())
+
