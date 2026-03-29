@@ -11,7 +11,7 @@ def draw_timeline(history: List[dict]) -> None:
     if len(history) < 2:
         return
 
-    st.markdown('<div class="section-label">Service Coverage Timeline</div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#94a3b8;margin-bottom:8px;">Service Coverage Timeline</div>', unsafe_allow_html=True)
 
     try:
         import plotly.graph_objects as go
@@ -50,10 +50,11 @@ def draw_timeline(history: List[dict]) -> None:
     fig.update_layout(
         height=180,
         margin={"l": 18, "r": 18, "t": 10, "b": 20},
-        paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(15,23,42,0.42)",
+        paper_bgcolor="#0f172a",
+        plot_bgcolor="#1e293b",
         legend={"orientation": "h", "yanchor": "bottom", "y": 1.02, "x": 0.0, "title": {"text": ""}},
-        xaxis={"title": "", "showgrid": False, "color": "#cbd5e1"},
-        yaxis={"title": "", "range": [0, 100], "gridcolor": "rgba(148,163,184,0.14)", "color": "#cbd5e1"},
+        font={"color": "#94a3b8"},
+        xaxis={"title": "", "showgrid": False, "color": "#94a3b8"},
+        yaxis={"title": "", "range": [0, 100], "gridcolor": "#334155", "color": "#94a3b8"},
     )
     st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})

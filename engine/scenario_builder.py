@@ -525,7 +525,112 @@ def load_and_validate(path: str | Path) -> Tuple[Dict[str, Any], List[str]]:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# CLI entry point
+def merge_vision_assets(
+    scenario: Dict[str, Any],
+    vision_assets: List[Dict[str, Any]],
+) -> Tuple[Dict[str, Any], List[str], List[str]]:
+    """Merge vision-detected asset suggestions into an existing scenario dict."""
+    merged_scenario = json.loads(json.dumps(scenario))
+    existing_cells = {(asset["row"], asset["col"]) for asset in merged_scenario.get("assets", [])}
+    merged_ids: List[str] = []
+    skipped_reasons: List[str] = []
+
+    for vision_asset in vision_assets:
+        asset = {k: v for k, v in vision_asset.items() if k != "_confidence"}
+        cell = (asset.get("row"), asset.get("col"))
+        if cell in existing_cells:
+            skipped_reasons.append(f"{asset.get('id', 'unknown')}: cell {cell} already occupied")
+            continue
+        if asset.get("asset_type") not in config.ASSET_TYPES:
+            skipped_reasons.append(f"{asset.get('id', 'unknown')}: invalid asset_type '{asset.get('asset_type')}'")
+            continue
+        merged_scenario.setdefault("assets", []).append(asset)
+        existing_cells.add(cell)
+        merged_ids.append(asset["id"])
+
+    errors = validate_scenario(merged_scenario)
+    if errors:
+        return json.loads(json.dumps(scenario)), [], [f"validation failed: {error}" for error in errors]
+
+    return merged_scenario, merged_ids, skipped_reasons
+
+
+def build_scenario_from_vision(
+    vision_assets: List[Dict[str, Any]],
+    nations: List[str] = None,
+    preset_name: str = "medium",
+    seed: int = 42,
+    name: str = "Vision-Generated Scenario",
+) -> Dict[str, Any]:
+    """Build a complete scenario seeded by vision detections."""
+    nations = nations or list(config.NATIONS)
+    scenario = build_scenario(preset_name=preset_name, seed=seed, name=name, nations=nations)
+
+    total_used = 0
+    total_skipped = 0
+    for nation in nations:
+        nation_assets = [asset for asset in vision_assets if asset.get("nation") == nation]
+        if not nation_assets:
+            continue
+        replace_types = {
+            asset["asset_type"]
+            for asset in nation_assets
+            if asset.get("asset_type") in config.ASSET_TYPES
+        }
+        removed_assets = [
+            asset
+            for asset in scenario.get("assets", [])
+            if asset.get("nation") == nation and asset.get("asset_type") in replace_types
+        ]
+        removed_ids = {asset["id"] for asset in removed_assets}
+        replacement_ids_by_type = {
+            asset_type: [
+                asset["id"]
+                for asset in nation_assets
+                if asset.get("asset_type") == asset_type and asset.get("id")
+            ]
+            for asset_type in replace_types
+        }
+        scenario["assets"] = [
+            asset for asset in scenario.get("assets", [])
+            if not (asset.get("nation") == nation and asset.get("asset_type") in replace_types)
+        ]
+        if removed_ids:
+            for zone in scenario.get("population_zones", []):
+                if zone.get("nation") != nation:
+                    continue
+                updated_served: List[str] = []
+                seen_ids = set()
+                for asset_id in zone.get("served_by_asset_ids", []):
+                    if asset_id in removed_ids:
+                        replacement_id = None
+                        removed_asset = next(
+                            (asset for asset in removed_assets if asset["id"] == asset_id),
+                            None,
+                        )
+                        if removed_asset:
+                            candidates = replacement_ids_by_type.get(removed_asset["asset_type"], [])
+                            replacement_id = candidates[0] if candidates else None
+                        if replacement_id and replacement_id not in seen_ids:
+                            updated_served.append(replacement_id)
+                            seen_ids.add(replacement_id)
+                        continue
+                    if asset_id not in seen_ids:
+                        updated_served.append(asset_id)
+                        seen_ids.add(asset_id)
+                zone["served_by_asset_ids"] = updated_served
+        scenario, merged_ids, skipped_reasons = merge_vision_assets(scenario, nation_assets)
+        total_used += len(merged_ids)
+        total_skipped += len(skipped_reasons)
+
+    errors = validate_scenario(scenario)
+    if errors:
+        raise ScenarioValidationError("Vision-seeded scenario failed validation:\n" + "\n".join(errors))
+
+    logger.info(f"Vision scenario build used {total_used} assets and skipped {total_skipped}")
+    return scenario
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 
 def _cli() -> None:

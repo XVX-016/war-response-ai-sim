@@ -78,6 +78,9 @@ def apply_dependency_penalties(state: ScenarioState) -> Tuple[Dict[str, float], 
             best_dep = max(dep_assets, key=lambda a: a.health)
             if best_dep.health < config.DEGRADED_THRESHOLD:
                 penalty = config.DEPENDENCY_PENALTY
+                if dep_type == "transport_hub":
+                    terrain = state.metadata.get(asset.nation, {}).get("terrain_difficulty", 0.5)
+                    penalty = config.DEPENDENCY_PENALTY * (1.0 + terrain * 0.5)
                 if best_dep.health_fraction() < 0.25:
                     penalty *= 1.5
                 penalties[asset.id] = penalties.get(asset.id, 0) + penalty

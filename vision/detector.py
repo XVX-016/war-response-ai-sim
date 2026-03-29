@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from collections import Counter
 from pathlib import Path
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 from loguru import logger
 
@@ -11,46 +10,68 @@ from schemas import Detection, DetectionResult
 
 
 class YOLOv8Detector:
-    def __init__(self, weights_path: Optional[str | Path] = None) -> None:
+    def __init__(self, weights_path: Optional[str | Path] = None):
+        """
+        Load model weights with fallback priority while remaining optional-safe.
+        """
         self._available = False
         self._model = None
-        self._ultralytics = None
+        self._loaded_weights: Optional[str] = None
+        self._using_pretrained = False
+
+        candidate: Optional[Path | str] = None
+        if weights_path is not None and Path(weights_path).exists():
+            candidate = Path(weights_path)
+            self._using_pretrained = False
+        elif Path(config.YOLO_WEIGHTS).exists():
+            candidate = Path(config.YOLO_WEIGHTS)
+            self._using_pretrained = False
+        elif config.USE_PRETRAINED_YOLO:
+            candidate = config.YOLO_PRETRAINED
+            self._using_pretrained = True
+        else:
+            logger.warning(
+                "YOLOv8Detector unavailable: no fine-tuned weights found and pretrained fallback disabled"
+            )
+            return
 
         try:
-            import ultralytics  # type: ignore
+            from ultralytics import YOLO  # type: ignore
         except ImportError:
             logger.warning("YOLOv8Detector unavailable: ultralytics is not installed")
             return
-
-        self._ultralytics = ultralytics
-
-        candidate_weights = None
-        if weights_path is not None and Path(weights_path).exists():
-            candidate_weights = str(Path(weights_path))
-        elif Path(config.YOLO_WEIGHTS).exists():
-            candidate_weights = str(config.YOLO_WEIGHTS)
-        elif config.USE_PRETRAINED_YOLO:
-            candidate_weights = config.YOLO_PRETRAINED
-        else:
-            logger.warning("YOLOv8Detector unavailable: no weights configured")
+        except Exception as exc:
+            logger.warning(f"YOLOv8Detector unavailable: ultralytics failed to import: {exc}")
             return
 
         try:
-            self._model = ultralytics.YOLO(candidate_weights)
+            self._model = YOLO(str(candidate))
+            self._loaded_weights = str(candidate)
             self._available = True
-            logger.info("YOLOv8Detector loaded with weights {}", candidate_weights)
+            logger.info(f"YOLOv8Detector loaded weights: {self._loaded_weights}")
         except Exception as exc:
-            logger.warning("YOLOv8Detector model load failed: {}", exc)
-            self._model = None
+            logger.warning(f"YOLOv8Detector model load failed: {exc}")
             self._available = False
+            self._model = None
+            self._loaded_weights = None
 
     def is_available(self) -> bool:
         return bool(self._available and self._model is not None)
 
+    @property
+    def using_pretrained(self) -> bool:
+        return bool(self._using_pretrained and self.is_available())
+
+    @property
+    def loaded_weights(self) -> Optional[str]:
+        return self._loaded_weights
+
     def detect(self, image_path: str | Path) -> DetectionResult:
+        """Run inference on one image and return civilian-only detections."""
         image_path = Path(image_path)
-        if not self.is_available() or not image_path.exists():
-            return DetectionResult(image_path=str(image_path), detections=[], suggested_assets=[])
+        empty = DetectionResult(image_path=str(image_path), detections=[], inferred_asset_type=None, suggested_assets=[])
+        if not self.is_available():
+            return empty
 
         try:
             results = self._model(
@@ -58,82 +79,113 @@ class YOLOv8Detector:
                 conf=config.YOLO_CONF_THRESHOLD,
                 iou=config.YOLO_IOU_THRESHOLD,
                 imgsz=config.YOLO_IMG_SIZE,
+                verbose=False,
+            )
+            detections: List[Detection] = []
+            best_mapped: Optional[str] = None
+            best_conf = -1.0
+
+            for result in results:
+                boxes = getattr(result, "boxes", None)
+                if boxes is None:
+                    continue
+                names = getattr(self._model, "names", getattr(result, "names", {}))
+                for box in boxes:
+                    class_name = names[int(box.cls)]
+                    confidence = float(box.conf)
+                    bbox_xyxy = [float(v) for v in box.xyxy[0].tolist()]
+                    mapped = config.YOLO_CLASS_MAP.get(class_name)
+                    if mapped is None:
+                        continue
+                    detections.append(
+                        Detection(
+                            class_name=class_name,
+                            confidence=confidence,
+                            bbox_xyxy=bbox_xyxy,
+                            mapped_asset_type=mapped,
+                        )
+                    )
+                    if confidence > best_conf:
+                        best_conf = confidence
+                        best_mapped = mapped
+
+            return DetectionResult(
+                image_path=str(image_path),
+                detections=detections,
+                inferred_asset_type=best_mapped,
+                suggested_assets=[],
             )
         except Exception as exc:
-            logger.warning("YOLO detection failed for {}: {}", image_path, exc)
-            return DetectionResult(image_path=str(image_path), detections=[], suggested_assets=[])
+            logger.warning(f"YOLO detection failed for {image_path}: {exc}")
+            return empty
 
-        detections: list[Detection] = []
-        mapped_types: list[str] = []
-        for result in results:
-            names = getattr(result, 'names', getattr(self._model, 'names', {}))
-            boxes = getattr(result, 'boxes', None)
-            if boxes is None:
-                continue
-            classes = getattr(boxes, 'cls', [])
-            confidences = getattr(boxes, 'conf', [])
-            xyxy_values = getattr(boxes, 'xyxy', [])
-            for cls_id, confidence, bbox in zip(classes, confidences, xyxy_values):
-                class_index = int(cls_id.item() if hasattr(cls_id, 'item') else cls_id)
-                score = float(confidence.item() if hasattr(confidence, 'item') else confidence)
-                bbox_list = [float(value.item() if hasattr(value, 'item') else value) for value in bbox]
-                class_name = names[class_index] if isinstance(names, dict) else names[class_index]
-                mapped_asset_type = config.YOLO_CLASS_MAP.get(class_name)
-                if mapped_asset_type is None:
-                    continue
-                mapped_types.append(mapped_asset_type)
-                detections.append(
-                    Detection(
-                        class_name=class_name,
-                        confidence=score,
-                        bbox_xyxy=bbox_list,
-                        mapped_asset_type=mapped_asset_type,
-                    )
-                )
+    def detect_batch(
+        self,
+        image_paths: List[str | Path],
+        progress: bool = False,
+    ) -> List[DetectionResult]:
+        """Detect on multiple images without raising on individual failures."""
+        iterator = image_paths
+        if progress:
+            try:
+                from tqdm import tqdm  # type: ignore
 
-        inferred = Counter(mapped_types).most_common(1)[0][0] if mapped_types else None
-        return DetectionResult(
-            image_path=str(image_path),
-            detections=detections,
-            suggested_assets=[],
-        ).model_copy(update={"suggested_assets": [], "image_path": str(image_path), "detections": detections})
+                iterator = tqdm(image_paths)
+            except ImportError:
+                logger.info("tqdm not installed; continuing without progress bar")
 
-    def detect_batch(self, image_paths: List[str | Path]) -> List[DetectionResult]:
-        return [self.detect(path) for path in image_paths]
+        results: List[DetectionResult] = []
+        for image_path in iterator:
+            try:
+                results.append(self.detect(image_path))
+            except Exception as exc:
+                logger.warning(f"Batch detection failed for {image_path}: {exc}")
+                results.append(DetectionResult(image_path=str(Path(image_path)), detections=[], inferred_asset_type=None, suggested_assets=[]))
+        return results
 
-    def suggest_scenario_assets(self, image_path: str | Path, grid_rows: int, grid_cols: int) -> List[dict]:
+    def suggest_scenario_assets(
+        self,
+        image_path: str | Path,
+        grid_rows: int = config.GRID_ROWS,
+        grid_cols: int = config.GRID_COLS,
+    ) -> List[Dict[str, Any]]:
+        """Convert detections into deduplicated grid cell placement suggestions."""
         image_path = Path(image_path)
-        result = self.detect(image_path)
-        if not result.detections:
+        detection_result = self.detect(image_path)
+        if not detection_result.detections:
             return []
 
         try:
             from PIL import Image
+
             with Image.open(image_path) as image:
-                width, height = image.size
+                img_w, img_h = image.size
         except Exception as exc:
-            logger.warning("Unable to read image dimensions for {}: {}", image_path, exc)
+            logger.warning(f"Unable to open image for scenario suggestions {image_path}: {exc}")
             return []
 
-        suggestions_by_cell: dict[tuple[int, int], dict] = {}
-        for detection in result.detections:
+        by_cell: Dict[tuple[int, int], Dict[str, Any]] = {}
+        for detection in detection_result.detections:
             if detection.mapped_asset_type is None:
                 continue
             x1, y1, x2, y2 = detection.bbox_xyxy
-            center_x = (x1 + x2) / 2.0
-            center_y = (y1 + y2) / 2.0
-            col = min(max(int((center_x / max(width, 1)) * grid_cols), 0), grid_cols - 1)
-            row = min(max(int((center_y / max(height, 1)) * grid_rows), 0), grid_rows - 1)
+            cx = (x1 + x2) / 2.0
+            cy = (y1 + y2) / 2.0
+            row = int(cy / img_h * grid_rows)
+            col = int(cx / img_w * grid_cols)
+            row = max(0, min(grid_rows - 1, row))
+            col = max(0, min(grid_cols - 1, col))
             suggestion = {
                 "asset_type": detection.mapped_asset_type,
                 "row": row,
                 "col": col,
                 "confidence": float(detection.confidence),
-                "source_bbox": list(detection.bbox_xyxy),
+                "class_name": detection.class_name,
+                "bbox_xyxy": list(detection.bbox_xyxy),
             }
             key = (row, col)
-            existing = suggestions_by_cell.get(key)
+            existing = by_cell.get(key)
             if existing is None or suggestion["confidence"] > existing["confidence"]:
-                suggestions_by_cell[key] = suggestion
+                by_cell[key] = suggestion
 
-        return list(suggestions_by_cell.values())
+        return list(by_cell.values())

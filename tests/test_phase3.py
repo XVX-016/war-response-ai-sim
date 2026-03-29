@@ -41,6 +41,10 @@ class TestRenderState:
 
     def test_event_log_capped_at_50(self):
         state, _ = _load()
+        if not state.event_log:
+            from schemas import SimEvent
+
+            state.event_log.append(SimEvent(turn=0, event_type="test", description="seed event"))
         for idx in range(60):
             state.event_log.append(deepcopy(state.event_log[-1]).model_copy(update={"turn": idx + 1, "description": f"event {idx}"}))
         data = render_state(state)

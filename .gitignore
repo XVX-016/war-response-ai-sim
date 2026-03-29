@@ -15,3 +15,6 @@ models/
 dist/
 build/
 *.egg-info/
+ResilienceSim_ProjectPlan.docx
+cascade_crisis.json
+streamlit*.log

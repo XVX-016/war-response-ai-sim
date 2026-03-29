@@ -204,7 +204,11 @@ def _assign_grid_ownership(grid: WorldGrid, assets: List[Asset]) -> None:
 # Public API
 # ─────────────────────────────────────────────────────────────────────────────
 
-def load_scenario(path: str | Path) -> tuple[ScenarioState, WorldGrid]:
+def load_scenario(
+    path: str | Path,
+    apply_profiles: bool = True,
+    countries_dir: str | Path = None,
+) -> tuple[ScenarioState, WorldGrid]:
     """
     Load a scenario JSON file and return (ScenarioState, WorldGrid).
 
@@ -276,20 +280,24 @@ def load_scenario(path: str | Path) -> tuple[ScenarioState, WorldGrid]:
         reinforcements      = reinforcements,
         stable_turns_count  = stable_turns_count,
         end_conditions_met  = end_conditions_met,
+        metadata            = {
+            "_scenario": {
+                "exogenous_event_overrides": exogenous_overrides,
+            }
+        },
         is_terminal         = False,
         event_log           = setup_events,
     )
 
-    # Stash overrides in metadata so turn_engine can read them
-    # (ScenarioState has no metadata field; we attach to the first event's tags)
-    if exogenous_overrides:
-        state.event_log.append(SimEvent(
-            turn        = 0,
-            event_type  = "scenario_meta",
-            description = f"Exogenous overrides: {exogenous_overrides}",
-            tags        = [f"{k}:{v}" for k, v in exogenous_overrides.items()],
-            severity    = "info",
-        ))
+    if apply_profiles:
+        from engine.country import apply_profile_to_state, load_country_profile
+
+        profiles = {
+            nation: load_country_profile(nation, countries_dir)
+            for nation in state.nations
+        }
+        apply_profile_to_state(state, profiles)
+        state.metadata["_profiles_applied"] = True
 
     # ── Build WorldGrid ───────────────────────────────────────────────────────
     _assign_grid_ownership(grid, assets)
