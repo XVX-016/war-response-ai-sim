@@ -108,7 +108,20 @@ def select_actions(state: ScenarioState, actor_id: str) -> List[Action]:
         return []
 
     chosen: List[Action] = []
-    max_actions = 2 if _command_center_supports_full_budget(state, actor_id) else 1
+    military = state.metadata.get(actor_id, {}).get("military_strength", 0.5)
+    if military >= 0.85:
+        max_actions = 3
+    elif military >= 0.60:
+        max_actions = 2
+    else:
+        max_actions = 1
+
+    cmd_assets = [
+        a for a in state.get_assets_for(actor_id)
+        if a.asset_type == "command_center" and not a.is_destroyed
+    ]
+    if not cmd_assets or cmd_assets[0].health < config.DEGRADED_THRESHOLD:
+        max_actions = min(max_actions, 1)
 
     # ?? 1. Repair most urgent degraded asset ?????????????????
     if len(chosen) < max_actions and _can_afford(state, actor_id, "repair"):

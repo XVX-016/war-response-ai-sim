@@ -213,7 +213,14 @@ def _apply_exogenous_events(
 
     for evt_name, evt_cfg in config.EXOGENOUS_EVENTS.items():
         # Check for per-scenario probability override
-        prob = event_overrides.get(evt_name, {}).get("probability", evt_cfg["probability"])
+        base_prob = event_overrides.get(evt_name, {}).get("probability", evt_cfg["probability"])
+
+        event_probabilities = []
+        for nation in state.nations:
+            alliance = state.metadata.get(nation, {}).get("alliance_strength", 0.5)
+            event_probabilities.append(base_prob * (1.0 - alliance * 0.25))
+        prob = min(event_probabilities) if event_probabilities else base_prob
+
         if random.random() > prob:
             continue
 
@@ -326,6 +333,32 @@ def _apply_resupply(state: ScenarioState, events: List[SimEvent]) -> None:
                 tags        = ["supply_lines_disrupted", "repair_crews_penalty"],
                 severity    = "warning",
             ))
+        alliance = state.metadata.get(nation, {}).get("alliance_strength", 0.5)
+        if alliance > 0.0:
+            alliance_gains = {
+                "fuel": round(alliance * 8),
+                "medical_supplies": round(alliance * 4),
+                "food_rations": round(alliance * 5),
+                "repair_crews": 1 if alliance >= 0.6 else 0,
+            }
+            gains.update({
+                k: gains.get(k, 0.0) + v
+                for k, v in alliance_gains.items()
+                if v > 0
+            })
+            if alliance >= 0.6:
+                events.append(SimEvent(
+                    turn=state.turn,
+                    event_type="alliance_resupply",
+                    nation=nation,
+                    description=(
+                        f"{nation}: alliance resupply received ? "
+                        f"+{alliance_gains['fuel']:.0f} fuel, "
+                        f"+{alliance_gains['medical_supplies']:.0f} medical"
+                    ),
+                    severity="info",
+                ))
+
         res.add(gains)
         if factor < 1.0:
             events.append(SimEvent(
@@ -391,7 +424,7 @@ def step_simulation(
     # ── Deep copy ─────────────────────────────────────────────────────────────
     s = state.model_copy(deep=True)
     s.turn += 1
-    exogenous_overrides = exogenous_overrides or {}
+    exogenous_overrides = exogenous_overrides or s.metadata.get("_scenario", {}).get("exogenous_event_overrides", {})
 
     # Collect all events for this turn
     turn_events: List[SimEvent] = []

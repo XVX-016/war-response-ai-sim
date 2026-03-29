@@ -42,15 +42,15 @@ def _tooltip_markup(asset: dict) -> str:
     abbrev = ASSET_ABBREV.get(asset_type, "?")
     if abbrev == "?":
         logger.warning("Missing asset abbreviation for asset_type '{}'", asset_type)
-    reinforced = "<div style='margin-top:6px;color:#dbeafe;'>Reinforced &#128737;</div>" if asset["is_reinforced"] else ""
+    reinforced = "<div style='margin-top:6px;color:#94a3b8;'>Reinforced</div>" if asset["is_reinforced"] else ""
     return (
         "<div style='min-width:220px;'>"
-        f"<div style='font-weight:700;font-size:14px;color:#f8fafc;margin-bottom:4px;'>{escape(asset['name'])}</div>"
-        f"<div style='font-size:12px;color:#cbd5e1;margin-bottom:8px;'>{escape(abbrev)} &mdash; {escape(TYPE_LABELS.get(asset_type, asset_type.replace('_', ' ').title()))}</div>"
-        "<div style='height:7px;background:#0f172a;border-radius:999px;overflow:hidden;border:1px solid rgba(148,163,184,0.2);'>"
+        f"<div style='font-weight:700;font-size:14px;color:#f1f5f9;margin-bottom:4px;'>{escape(asset['name'])}</div>"
+        f"<div style='font-size:12px;color:#94a3b8;margin-bottom:8px;'>{escape(abbrev)} &mdash; {escape(TYPE_LABELS.get(asset_type, asset_type.replace('_', ' ').title()))}</div>"
+        "<div style='height:7px;background:#334155;border-radius:4px;overflow:hidden;'>"
         f"<div style='width:{hp_pct:.1f}%;height:100%;background:{status_color};'></div>"
         "</div>"
-        f"<div style='font-size:12px;color:#cbd5e1;margin-top:6px;'>HP {asset['health']:.0f}/{asset['max_health']:.0f}</div>"
+        f"<div style='font-size:12px;color:#f1f5f9;font-family:monospace;margin-top:6px;'>HP {asset['health']:.0f}/{asset['max_health']:.0f}</div>"
         f"<div style='font-size:12px;color:#94a3b8;margin-top:3px;'>{escape(asset['nation'])}</div>"
         f"{reinforced}"
         "</div>"
@@ -81,7 +81,7 @@ def draw_map(render_data: dict, grid_data: list, selected_nation: str = "All") -
             y = cell["row"] * (cell_size + gap) + gap
             assets = cell.get("assets", [])
             primary = assets[0] if assets else None
-            cell_fill = primary["color"] if primary else "#e2e8f0"
+            cell_fill = primary["color"] if primary else "#253347"
             opacity = 1.0
             if primary and selected_nation != "All" and primary["nation"] != selected_nation:
                 opacity = 0.2
@@ -89,18 +89,18 @@ def draw_map(render_data: dict, grid_data: list, selected_nation: str = "All") -
                 occupied_assets.append(primary)
 
             label = ""
-            stroke = "#cbd5e1"
+            stroke = "#334155"
             stroke_width = 1.25
             overlay = ""
             tooltip = escape(f"Cell {cell['row']},{cell['col']} | empty")
 
             if primary:
-                stroke = NATION_BORDER.get(primary["nation"], "#94a3b8")
+                stroke = NATION_BORDER.get(primary["nation"], "#334155")
                 stroke_width = 2
                 if primary["is_reinforced"]:
-                    overlay += f"<rect x=\"{x + 3}\" y=\"{y + 3}\" width=\"{cell_size - 6}\" height=\"{cell_size - 6}\" rx=\"6\" fill=\"none\" stroke=\"#f8fafc\" stroke-width=\"1.4\" />"
+                    overlay += f"<rect x=\"{x + 3}\" y=\"{y + 3}\" width=\"{cell_size - 6}\" height=\"{cell_size - 6}\" rx=\"4\" fill=\"none\" stroke=\"#f1f5f9\" stroke-width=\"1.2\" />"
                 if primary["status"] == "destroyed":
-                    overlay += f"<rect x=\"{x}\" y=\"{y}\" width=\"{cell_size}\" height=\"{cell_size}\" rx=\"6\" fill=\"rgba(15,23,42,0.72)\" />"
+                    overlay += f"<rect x=\"{x}\" y=\"{y}\" width=\"{cell_size}\" height=\"{cell_size}\" rx=\"4\" fill=\"#0f172a\" />"
                     label = "&#10005;"
                 else:
                     label = escape(ASSET_ABBREV.get(primary["asset_type"], "?"))
@@ -111,9 +111,9 @@ def draw_map(render_data: dict, grid_data: list, selected_nation: str = "All") -
             cells.append(
                 f"""
                 <g class="map-cell" opacity="{opacity}" data-tooltip="{tooltip}">
-                  <rect x="{x}" y="{y}" width="{cell_size}" height="{cell_size}" rx="6" fill="{cell_fill}" stroke="{stroke}" stroke-width="{stroke_width}" />
+                  <rect x="{x}" y="{y}" width="{cell_size}" height="{cell_size}" rx="4" fill="{cell_fill}" stroke="{stroke}" stroke-width="{stroke_width}" />
                   {overlay}
-                  <text x="{x + cell_size/2}" y="{y + 21}" text-anchor="middle" font-size="15" font-family="monospace" font-weight="700" fill="#0f172a">{label}</text>
+                  <text x="{x + cell_size/2}" y="{y + 21}" text-anchor="middle" font-size="15" font-family="monospace" font-weight="700" fill="#f1f5f9">{label}</text>
                 </g>
                 """
             )
@@ -123,22 +123,22 @@ def draw_map(render_data: dict, grid_data: list, selected_nation: str = "All") -
     if not assets_by_nation.get(config.NATION_A):
         overlays.append(
             f"<text x=\"{width / 2}\" y=\"{height / 4}\" text-anchor=\"middle\" font-size=\"24\" "
-            f"font-family=\"sans-serif\" fill=\"#94a3b8\" opacity=\"0.45\">No assets</text>"
+            f"font-family=\"sans-serif\" fill=\"#475569\">No assets</text>"
         )
     if not assets_by_nation.get(config.NATION_B):
         overlays.append(
             f"<text x=\"{width / 2}\" y=\"{height * 3 / 4}\" text-anchor=\"middle\" font-size=\"24\" "
-            f"font-family=\"sans-serif\" fill=\"#94a3b8\" opacity=\"0.45\">No assets</text>"
+            f"font-family=\"sans-serif\" fill=\"#475569\">No assets</text>"
         )
 
     svg = f"""
-    <div id="map-wrap" style="position:relative;overflow:auto;border:1px solid rgba(148,163,184,0.14);border-radius:14px;padding:10px;background:linear-gradient(180deg,#dbeafe 0%, #f8fafc 100%);">
+    <div id="map-wrap" class="map-panel" style="position:relative;overflow:auto;">
       <svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg">
-        <line x1="0" y1="{divider_y}" x2="{width}" y2="{divider_y}" stroke="#64748B" stroke-dasharray="6 6" stroke-width="1.4" />
+        <line x1="0" y1="{divider_y}" x2="{width}" y2="{divider_y}" stroke="#334155" stroke-dasharray="6 6" stroke-width="1.4" />
         {''.join(cells)}
         {''.join(overlays)}
       </svg>
-      <div id="map-tooltip" style="position:absolute;display:none;pointer-events:none;z-index:10;background:rgba(15,23,42,0.96);border:1px solid rgba(148,163,184,0.22);border-radius:12px;padding:10px 12px;box-shadow:0 18px 36px rgba(15,23,42,0.35);"></div>
+      <div id="map-tooltip" style="position:absolute;display:none;pointer-events:none;z-index:10;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:10px 12px;"></div>
     </div>
     <script>
     const wrap = document.getElementById("map-wrap");
@@ -160,18 +160,18 @@ def draw_map(render_data: dict, grid_data: list, selected_nation: str = "All") -
     }});
     </script>
     """
-    components.html(svg, height=min(max(height + 30, 260), 760), scrolling=True)
+    components.html(svg, height=min(max(height + 34, 260), 760), scrolling=True)
 
     st.markdown(
         """
-        <div style="margin-top:0.65rem;margin-bottom:0.7rem;padding:0.8rem 0.95rem;border-radius:12px;background:rgba(15,23,42,0.45);border:1px solid rgba(148,163,184,0.12);">
-          <div style="display:flex;flex-wrap:wrap;gap:0.85rem 1rem;align-items:center;margin-bottom:0.55rem;">
-            <span style="display:flex;align-items:center;gap:0.45rem;"><span style="width:12px;height:12px;background:#2ecc71;border-radius:2px;display:inline-block;"></span>Healthy</span>
-            <span style="display:flex;align-items:center;gap:0.45rem;"><span style="width:12px;height:12px;background:#f39c12;border-radius:2px;display:inline-block;"></span>Degraded</span>
-            <span style="display:flex;align-items:center;gap:0.45rem;"><span style="width:12px;height:12px;background:#e74c3c;border-radius:2px;display:inline-block;"></span>Critical</span>
-            <span style="display:flex;align-items:center;gap:0.45rem;"><span style="width:12px;height:12px;background:#7f8c8d;border-radius:2px;display:inline-block;"></span>Destroyed</span>
+        <div class="map-panel" style="margin-top:12px;">
+          <div style="display:flex;flex-wrap:wrap;gap:12px 16px;align-items:center;margin-bottom:8px;">
+            <span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:12px;background:#22c55e;display:inline-block;"></span>Healthy</span>
+            <span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:12px;background:#f59c12;display:inline-block;"></span>Degraded</span>
+            <span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:12px;background:#ef4444;display:inline-block;"></span>Critical</span>
+            <span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:12px;background:#7f8c8d;display:inline-block;"></span>Destroyed</span>
           </div>
-          <div style="font-size:12px;color:#cbd5e1;">P=Power &nbsp; W=Water &nbsp; H=Hospital &nbsp; T=Telecom &nbsp; X=Transport &nbsp; F=Fuel &nbsp; S=Shelter &nbsp; C=Command</div>
+          <div style="font-size:12px;color:#94a3b8;">P=Power W=Water H=Hospital T=Telecom X=Transport F=Fuel S=Shelter C=Command</div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -179,7 +179,7 @@ def draw_map(render_data: dict, grid_data: list, selected_nation: str = "All") -
 
     options = ["None"] + [f"{asset['id']} - {asset['name']}" for asset in occupied_assets]
     current = st.session_state.get("selected_asset")
-    current_label = next((option for option in options if option.startswith(f"{current} - ")) , "None") if current else "None"
+    current_label = next((option for option in options if option.startswith(f"{current} - ")), "None") if current else "None"
     selected_label = st.selectbox("Inspect asset", options, index=options.index(current_label) if current_label in options else 0, key="map_asset_selector")
     selected_asset = None if selected_label == "None" else selected_label.split(" - ", 1)[0]
     st.session_state.selected_asset = selected_asset

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import config
+from engine.country import CountryProfile
 
 
 def _delta(prev_render: dict | None, nation: str, key: str) -> float | None:
@@ -21,11 +22,47 @@ def _coverage_color(value: float) -> str:
 
 
 def _resource_color(value: float) -> str:
-    if value > 0.5:
+    if value > 0.6:
         return "#22c55e"
-    if value >= 0.2:
+    if value >= 0.3:
         return "#f59e0b"
     return "#ef4444"
+
+
+def _mini_bar_row(label: str, value: float, pill: str) -> str:
+    color = "#22c55e" if value > 0.66 else "#f59e0b" if value > 0.33 else "#ef4444"
+    return f"""
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;">
+      <div style="width:110px;font-size:12px;color:#94a3b8;">{label}</div>
+      <div style="flex:1;height:6px;background:#334155;border-radius:3px;overflow:hidden;">
+        <div style="width:{max(0.0, min(1.0, value)) * 100:.1f}%;height:100%;background:{color};"></div>
+      </div>
+      <div style="font-size:11px;color:#94a3b8;text-transform:uppercase;white-space:nowrap;">{pill}</div>
+    </div>
+    """
+
+
+def draw_country_profile_summary(profile: CountryProfile) -> None:
+    import streamlit as st
+
+    population_norm = min(profile.population_millions / 20.0, 1.0)
+    terrain_ease = 1.0 - profile.terrain_difficulty
+    rows = [
+        _mini_bar_row("GDP", profile.gdp_index, profile.gdp_label()),
+        _mini_bar_row("Military", profile.military_strength, profile.military_label()),
+        _mini_bar_row("Population", population_norm, f"{profile.population_millions:.1f}M"),
+        _mini_bar_row("Resources", profile.resource_richness, "Rich" if profile.resource_richness >= 0.65 else "Moderate" if profile.resource_richness >= 0.35 else "Scarce"),
+        _mini_bar_row("Terrain", terrain_ease, profile.terrain_label()),
+        _mini_bar_row("Alliance", profile.alliance_strength, profile.alliance_label()),
+    ]
+
+    st.markdown('<div class="kpi-card">', unsafe_allow_html=True)
+    st.markdown(f"#### {profile.flag_emoji} {profile.display_name}")
+    if profile.lore:
+        st.caption(profile.lore)
+    st.markdown(''.join(rows), unsafe_allow_html=True)
+    st.divider()
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 def draw_nation_kpis(render_data: dict, nation: str) -> None:
@@ -35,34 +72,26 @@ def draw_nation_kpis(render_data: dict, nation: str) -> None:
     kpis = render_data["kpis"][nation]
 
     prev_service = _delta(prev_render, nation, "service_coverage_score")
-    prev_displaced = _delta(prev_render, nation, "total_displaced")
-    prev_stable = _delta(prev_render, nation, "stable_turns")
-
     delta_service = None if prev_service is None else f"{(kpis['service_coverage_score'] - prev_service):+.1%}"
-    delta_displaced = None if prev_displaced is None else f"{int(kpis['total_displaced'] - prev_displaced):+d}"
-    delta_stable = None if prev_stable is None else f"{int(kpis['stable_turns'] - prev_stable):+d}"
     coverage_color = _coverage_color(float(kpis["service_coverage_score"]))
 
     st.markdown('<div class="kpi-card">', unsafe_allow_html=True)
-    st.markdown(f'<div class="section-label">{nation} Overview</div>', unsafe_allow_html=True)
     st.markdown(
         f"""
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:0.85rem;">
-          <div>
-            <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.12em;color:#94a3b8;">Service coverage</div>
-            <div style="display:flex;align-items:center;gap:0.75rem;margin-top:0.4rem;">
-              <span style="display:inline-flex;align-items:center;justify-content:center;width:88px;height:88px;border-radius:999px;border:5px solid {coverage_color};color:{coverage_color};font-size:1.55rem;font-weight:700;background:rgba(15,23,42,0.45);">
-                {kpis['service_coverage_score']:.0%}
-              </span>
-              <div style="color:#94a3b8;font-size:12px;">
-                Delta<br /><span style="color:#e2e8f0;font-size:14px;">{delta_service or 'n/a'}</span>
-              </div>
-            </div>
-          </div>
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#94a3b8;margin-bottom:8px;">{nation} Overview</div>
+        <div style="margin-bottom:12px;">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#94a3b8;margin-bottom:4px;">Service Coverage</div>
+          <div style="font-family:monospace;font-size:36px;color:{coverage_color};line-height:1;">{kpis['service_coverage_score']:.0%}</div>
+          <div style="font-family:monospace;font-size:13px;color:#94a3b8;margin-top:4px;">{delta_service or 'n/a'}</div>
         </div>
         """,
         unsafe_allow_html=True,
     )
+
+    prev_displaced = _delta(prev_render, nation, "total_displaced")
+    prev_stable = _delta(prev_render, nation, "stable_turns")
+    delta_displaced = None if prev_displaced is None else f"{int(kpis['total_displaced'] - prev_displaced):+d}"
+    delta_stable = None if prev_stable is None else f"{int(kpis['stable_turns'] - prev_stable):+d}"
 
     metric_cols = st.columns(2)
     with metric_cols[0]:
@@ -88,7 +117,7 @@ def draw_resource_bars(render_data: dict, nation: str) -> None:
     previous_resources = prev_render.get("resources", {}).get(nation, {}) if prev_render else {}
 
     st.markdown('<div class="kpi-card">', unsafe_allow_html=True)
-    st.markdown('<div class="section-label">Resource Stocks</div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#94a3b8;margin-bottom:8px;">Resource Stocks</div>', unsafe_allow_html=True)
     for resource_type, spec in config.RESOURCE_TYPES.items():
         resource = current_resources[resource_type]
         previous = previous_resources.get(resource_type)
@@ -96,12 +125,12 @@ def draw_resource_bars(render_data: dict, nation: str) -> None:
         bar_color = _resource_color(float(resource["fraction"]))
         st.markdown(
             f"""
-            <div style="margin-bottom:0.8rem;">
-              <div style="display:flex;justify-content:space-between;gap:1rem;font-size:12px;color:#cbd5e1;margin-bottom:0.3rem;">
+            <div style="margin-bottom:12px;">
+              <div style="display:flex;justify-content:space-between;gap:12px;font-size:12px;color:#f1f5f9;margin-bottom:4px;">
                 <span>{resource_type.replace('_', ' ').title()}</span>
-                <span>{resource['amount']:.0f} {resource['unit']} ({delta_amount:+.0f})</span>
+                <span style="font-family:monospace;">{resource['amount']:.0f} {resource['unit']} ({delta_amount:+.0f})</span>
               </div>
-              <div style="height:9px;background:rgba(15,23,42,0.72);border-radius:999px;overflow:hidden;border:1px solid rgba(148,163,184,0.14);">
+              <div style="height:9px;background:#334155;border-radius:4px;overflow:hidden;">
                 <div style="width:{resource['fraction'] * 100:.1f}%;height:100%;background:{bar_color};"></div>
               </div>
             </div>
@@ -116,36 +145,32 @@ def draw_consequence_badges(render_data: dict, nation: str) -> None:
 
     tags = render_data.get("active_consequences", {}).get(nation, [])
     st.markdown('<div class="kpi-card">', unsafe_allow_html=True)
-    st.markdown('<div class="section-label">Active Consequences</div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#94a3b8;margin-bottom:8px;">Active Consequences</div>', unsafe_allow_html=True)
 
     if not tags:
         st.markdown(
-            "<div style='color:#86efac;font-size:13px;'>All systems nominal</div>",
+            "<div style='color:#94a3b8;font-size:13px;'>All systems nominal</div>",
             unsafe_allow_html=True,
         )
         st.markdown("</div>", unsafe_allow_html=True)
         return
 
-    pills = []
+    badges = []
     for tag in tags:
         lower = tag.lower()
         if "risk" in lower or "mortality" in lower:
             color = "#7f1d1d"
-            text = "#fecaca"
+            text = "#fca5a5"
         elif "degraded" in lower or "impaired" in lower or "shortage" in lower:
             color = "#78350f"
-            text = "#fde68a"
+            text = "#fcd34d"
         else:
             color = "#1e3a5f"
-            text = "#bfdbfe"
-        pills.append(
-            f"<span style='display:inline-flex;align-items:center;padding:0.3rem 0.6rem;border-radius:999px;"
-            f"background:{color};color:{text};font-size:10px;letter-spacing:0.05em;text-transform:uppercase;'>{tag.replace('_', ' ')}</span>"
+            text = "#93c5fd"
+        badges.append(
+            f"<span style='display:inline-block;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:500;letter-spacing:0.03em;background:{color};color:{text};margin:0 6px 6px 0;'>{tag.replace('_', ' ')}</span>"
         )
-    st.markdown(
-        f"<div style='display:flex;flex-wrap:wrap;gap:0.45rem;'>{''.join(pills)}</div>",
-        unsafe_allow_html=True,
-    )
+    st.markdown("".join(badges), unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
 
@@ -159,7 +184,7 @@ def draw_asset_detail(asset_dict: dict) -> None:
     st.caption(f"{asset_dict['asset_type'].replace('_', ' ').title()} - {asset_dict['nation']}")
     st.markdown(
         f"""
-        <div style="height:10px;background:rgba(15,23,42,0.72);border-radius:999px;overflow:hidden;border:1px solid rgba(148,163,184,0.14);margin:0.5rem 0;">
+        <div style="height:10px;background:#334155;border-radius:4px;overflow:hidden;margin:8px 0;">
           <div style="width:{asset_dict['health_fraction'] * 100:.1f}%;height:100%;background:{color};"></div>
         </div>
         """,
@@ -167,7 +192,7 @@ def draw_asset_detail(asset_dict: dict) -> None:
     )
     st.caption(f"Health: {asset_dict['health']:.0f}/{asset_dict['max_health']:.0f}")
     st.markdown(
-        f"<span style='display:inline-block;padding:0.25rem 0.6rem;border-radius:999px;background:{color};color:white;font-size:0.85rem;'>{status.upper()}</span>",
+        f"<span style='display:inline-block;padding:2px 8px;border-radius:3px;background:{color};color:#f1f5f9;font-size:11px;font-weight:500;letter-spacing:0.03em;'>{status.upper()}</span>",
         unsafe_allow_html=True,
     )
     st.checkbox("Critical asset", value=bool(asset_dict["is_critical"]), disabled=True)

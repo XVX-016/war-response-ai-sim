@@ -191,6 +191,9 @@ class ScenarioState(BaseModel):
     # Resources (one ResourceStock per nation)
     resources: Dict[str, ResourceStock] = Field(default_factory=dict)
 
+    # Per-nation simulation metadata and loader/runtime modifiers
+    metadata: Dict[str, Dict[str, Any]] = Field(default_factory=dict)
+
     # Active consequence tags (nation → set of active consequence strings)
     active_consequences: Dict[str, List[str]] = Field(default_factory=dict)
 
@@ -319,5 +322,6 @@ class DetectionResult(BaseModel):
     """All detections for one image, used for scenario annotation."""
     image_path: str
     detections: List[Detection]
+    inferred_asset_type: Optional[str] = None
     suggested_assets: List[Dict[str, Any]] = Field(default_factory=list)
     # each dict: {"asset_type": str, "row": int, "col": int, "confidence": float}

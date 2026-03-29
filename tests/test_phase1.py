@@ -84,7 +84,8 @@ class TestWorldLoading:
         auria_power = state.get_asset("auria_power_01")
         assert auria_power.max_health == config.ASSET_TYPES["power_plant"]["max_health"]
 
-    def test_resource_stocks_initialised(self, state):
+    def test_resource_stocks_initialised(self):
+        state, _ = load_scenario(SCENARIO_PATH, apply_profiles=False)
         for nation in state.nations:
             assert nation in state.resources
             res = state.resources[nation]
