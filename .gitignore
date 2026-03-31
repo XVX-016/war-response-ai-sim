@@ -2,6 +2,12 @@ __pycache__/
 .pytest_cache/
 .venv/
 venv/
+env/
+ENV/
+**/.venv/
+**/venv/
+**/env/
+**/ENV/
 .env
 .streamlit/secrets.toml
 *.pyc
@@ -18,3 +24,13 @@ build/
 ResilienceSim_ProjectPlan.docx
 cascade_crisis.json
 streamlit*.log
+
+# Node / Next.js
+node_modules/
+frontend/node_modules/
+frontend/.next/
+.next/
+
+# Local env files
+.env.local
+frontend/.env.local

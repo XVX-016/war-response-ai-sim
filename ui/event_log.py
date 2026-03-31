@@ -2,15 +2,40 @@ from __future__ import annotations
 
 from typing import List
 
+from ui.components import card
 
-def _event_type_color(event_type: str, severity: str) -> tuple[str, str]:
-    if event_type in {"action_complete", "action_queued", "action_rejected"}:
-        return ("#1d4ed8", "#93c5fd")
-    if event_type == "exogenous":
-        return ("#a855f7", "#f3e8ff")
-    if event_type == "end_condition":
-        return ("#7f1d1d" if severity == "critical" else "#1e3a5f", "#fca5a5" if severity == "critical" else "#93c5fd")
-    return ("#78350f", "#fcd34d")
+
+def _event_row(event: dict) -> str:
+    severity = event.get("severity", "info")
+    colours = {"critical": "#EF4444", "warning": "#F59E0B", "info": "#3B82F6"}
+    type_bg = {
+        "action_complete": "#1E3A5F", "action_queued": "#1E3A5F",
+        "action_rejected": "#3B0000", "consequence": "#3B2500",
+        "exogenous": "#2D1B69", "alliance_resupply": "#14292A",
+        "end_condition": "#14291A",
+    }
+    border_colour = colours.get(severity, "#333333")
+    evt_type = event.get("event_type", "")
+    tag_bg = type_bg.get(evt_type, "#1A1A1A")
+    turn = event.get("turn", 0)
+    desc = event.get("description", "")
+
+    return f"""
+    <div style="
+        border-left: 3px solid {border_colour};
+        padding: 7px 10px 7px 12px;
+        margin-bottom: 3px;
+        background: #0A0A0A;
+        border-radius: 0 3px 3px 0;
+        transition: background {150}ms ease;
+    ">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:3px;">
+            <span style="font-family:monospace; font-size:10px; color:#525252; min-width:36px;">T{turn:02d}</span>
+            <span style="font-size:10px; font-weight:500; background:{tag_bg}; color:#A3A3A3; padding:1px 5px; border-radius:2px; text-transform:uppercase; letter-spacing:0.05em;">{evt_type.replace("_"," ")}</span>
+        </div>
+        <span style="font-size:12px; color:#D4D4D4; line-height:1.4;">{desc}</span>
+    </div>
+    """
 
 
 def draw_event_log(events: List[dict], max_rows: int = 30, narrative: str = "") -> None:
@@ -38,41 +63,15 @@ def draw_event_log(events: List[dict], max_rows: int = 30, narrative: str = "") 
         filtered = [event for event in events if event.get("event_type") in {"action_complete", "action_queued", "action_rejected"}]
 
     if narrative:
-        st.markdown(
-            f"""
-            <div class="kpi-card" style="border-left:3px solid #3b82f6;">
-              <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:#94a3b8;margin-bottom:6px;">AI Summary</div>
-              <div style="color:#f1f5f9;font-style:italic;">{narrative}</div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
+        def _narrative() -> None:
+            st.markdown('<div style="font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-secondary);margin-bottom:6px;">AI Summary</div>', unsafe_allow_html=True)
+            st.markdown(f'<div style="color:var(--text-primary);font-style:italic;">{narrative}</div>', unsafe_allow_html=True)
+        card(_narrative, border_left_colour="#3B82F6")
 
     if not filtered:
         st.caption("No events to display.")
         return
 
-    severity_colors = {
-        "critical": "#ef4444",
-        "warning": "#f59e0b",
-        "info": "#3b82f6",
-    }
-
     with st.container(height=520):
         for event in filtered[:max_rows]:
-            severity = event.get("severity", "info")
-            border_color = severity_colors.get(severity, "#3b82f6")
-            event_type = event.get("event_type", "event")
-            tag_bg, tag_fg = _event_type_color(event_type, severity)
-            st.markdown(
-                f"""
-                <div class="event-row" style="border-left:3px solid {border_color};">
-                  <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:4px;">
-                    <span style="padding:2px 8px;border-radius:3px;background:#334155;color:#f1f5f9;font-size:11px;font-family:monospace;">T{event.get('turn', 0)}</span>
-                    <span style="padding:2px 8px;border-radius:3px;background:{tag_bg};color:{tag_fg};font-size:11px;font-weight:500;letter-spacing:0.03em;">{event_type.replace('_', ' ')}</span>
-                  </div>
-                  <div style="color:#f1f5f9;font-size:13px;line-height:1.45;">{event.get('description', '')}</div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
+            st.markdown(_event_row(event), unsafe_allow_html=True)

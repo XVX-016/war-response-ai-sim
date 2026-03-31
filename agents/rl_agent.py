@@ -6,17 +6,25 @@ from typing import Optional
 import numpy as np
 from loguru import logger
 
-try:
-    import supersuit as ss
-except ImportError:  # pragma: no cover - optional dependency
-    ss = None
-
-try:
-    from stable_baselines3 import PPO
-except ImportError:  # pragma: no cover - optional dependency
-    PPO = None
-
 from agents.env import WarEnv
+
+
+def _load_supersuit():
+    try:
+        import supersuit as ss  # type: ignore
+    except Exception as exc:  # pragma: no cover - optional dependency
+        logger.warning("SuperSuit unavailable: {}", exc)
+        return None
+    return ss
+
+
+def _load_ppo():
+    try:
+        from stable_baselines3 import PPO  # type: ignore
+    except Exception as exc:  # pragma: no cover - optional dependency
+        logger.warning("stable-baselines3 unavailable: {}", exc)
+        return None
+    return PPO
 
 
 class RLAgent:
@@ -34,6 +42,8 @@ class RLAgent:
         opponent: str = "rule",
     ) -> None:
         del opponent
+        ss = _load_supersuit()
+        PPO = _load_ppo()
         if PPO is None or ss is None:
             raise RuntimeError(
                 "RLAgent.train requires stable-baselines3 and supersuit to be installed."
@@ -68,6 +78,7 @@ class RLAgent:
         self._model.save(path)
 
     def load(self, path: str) -> None:
+        PPO = _load_ppo()
         if PPO is None:
             raise RuntimeError("RLAgent.load requires stable-baselines3 to be installed.")
         self._model = PPO.load(path)

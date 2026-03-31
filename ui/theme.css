@@ -1,0 +1,219 @@
+/* -- ResilienceSim Design System -----------------------------------------
+   Warm dark palette anchored to #0A0A0A base and #212020 surface.
+   Reference aesthetic: Vercel / Linear dark mode.
+   Rules: no gradients, no glow, no blur, no pill shapes, warm blacks only.
+   ------------------------------------------------------------------------ */
+
+/* -- Tokens ------------------------------------------------------------- */
+:root {
+  --bg-base:        #0A0A0A;
+  --bg-surface:     #212020;
+  --bg-raised:      #2D2C2C;
+  --bg-input:       #1A1A1A;
+  --border:         #333333;
+  --border-subtle:  #1F1F1F;
+  --text-primary:   #F5F5F5;
+  --text-secondary: #A3A3A3;
+  --text-muted:     #525252;
+  --accent:         #3B82F6;
+  --accent-dim:     #1D4ED8;
+  --green:          #22C55E;
+  --amber:          #F59E0B;
+  --red:            #EF4444;
+  --purple:         #A855F7;
+  --radius:         4px;
+  --transition:     150ms ease;
+}
+
+/* -- Page --------------------------------------------------------------- */
+[data-testid="stAppViewContainer"],
+[data-testid="stApp"] {
+  background-color: var(--bg-base) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-testid="stMain"] {
+  background-color: var(--bg-base) !important;
+}
+
+/* -- Sidebar ------------------------------------------------------------ */
+[data-testid="stSidebar"] {
+  background-color: var(--bg-surface) !important;
+  border-right: 1px solid var(--border) !important;
+}
+
+[data-testid="stSidebar"] * {
+  color: var(--text-primary) !important;
+}
+
+/* -- Typography --------------------------------------------------------- */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary) !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.02em;
+}
+
+p, li, span, label {
+  color: var(--text-secondary) !important;
+}
+
+/* Metric numbers — monospace */
+[data-testid="stMetricValue"] {
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code",
+               ui-monospace, monospace !important;
+  font-size: 2rem !important;
+  font-weight: 500 !important;
+  color: var(--text-primary) !important;
+  letter-spacing: -0.03em;
+}
+
+[data-testid="stMetricLabel"] {
+  font-size: 0.65rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  color: var(--text-muted) !important;
+}
+
+[data-testid="stMetricDelta"] {
+  font-family: ui-monospace, monospace !important;
+  font-size: 0.75rem !important;
+}
+
+/* -- Buttons ------------------------------------------------------------ */
+[data-testid="stButton"] > button {
+  background-color: var(--bg-surface) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+  font-size: 0.85rem !important;
+  font-weight: 500 !important;
+  padding: 0.4rem 1rem !important;
+  transition: background-color var(--transition),
+              border-color var(--transition) !important;
+  box-shadow: none !important;
+}
+
+[data-testid="stButton"] > button:hover {
+  background-color: var(--bg-raised) !important;
+  border-color: var(--accent) !important;
+}
+
+[data-testid="stButton"] > button:disabled {
+  opacity: 0.35 !important;
+  cursor: not-allowed !important;
+}
+
+/* Primary action button — "Start Simulation", "Advance Turn" */
+[data-testid="stButton"] > button[kind="primary"],
+button.primary-action {
+  background-color: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: #ffffff !important;
+}
+
+[data-testid="stButton"] > button[kind="primary"]:hover {
+  background-color: var(--accent-dim) !important;
+  border-color: var(--accent-dim) !important;
+}
+
+/* -- Inputs and selects ------------------------------------------------- */
+[data-testid="stSelectbox"] > div > div,
+[data-testid="stTextInput"] > div > div > input,
+[data-testid="stNumberInput"] > div > div > input {
+  background-color: var(--bg-input) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+  color: var(--text-primary) !important;
+}
+
+/* -- Sliders ------------------------------------------------------------ */
+[data-testid="stSlider"] > div > div > div > div {
+  background-color: var(--accent) !important;
+}
+
+[data-testid="stSlider"] label {
+  color: var(--text-secondary) !important;
+  font-size: 0.8rem !important;
+}
+
+/* -- Progress bars ------------------------------------------------------ */
+/* Override Streamlit's default blue progress with theme colour.
+   Individual bars should set inline colour via the data-value approach
+   or via wrapper divs — see draw_resource_bars() implementation notes. */
+[data-testid="stProgress"] > div > div > div {
+  background-color: var(--bg-raised) !important;
+}
+
+/* -- Tabs --------------------------------------------------------------- */
+[data-testid="stTabs"] [data-testid="stTab"] {
+  background-color: transparent !important;
+  border: none !important;
+  color: var(--text-muted) !important;
+  font-size: 0.85rem !important;
+  font-weight: 500 !important;
+  padding: 0.5rem 1rem !important;
+  border-bottom: 2px solid transparent !important;
+  transition: color var(--transition),
+              border-color var(--transition) !important;
+}
+
+[data-testid="stTabs"] [data-testid="stTab"][aria-selected="true"] {
+  color: var(--text-primary) !important;
+  border-bottom-color: var(--accent) !important;
+}
+
+[data-testid="stTabs"] [data-testid="stTab"]:hover {
+  color: var(--text-primary) !important;
+}
+
+/* -- Expander ----------------------------------------------------------- */
+[data-testid="stExpander"] {
+  background-color: var(--bg-surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+}
+
+[data-testid="stExpander"] summary {
+  color: var(--text-secondary) !important;
+  font-size: 0.85rem !important;
+}
+
+/* -- Dataframe / tables ------------------------------------------------- */
+[data-testid="stDataFrame"] {
+  background-color: var(--bg-surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+}
+
+/* -- Info / warning / error / success boxes ----------------------------- */
+[data-testid="stAlert"] {
+  background-color: var(--bg-surface) !important;
+  border-radius: var(--radius) !important;
+  border-left-width: 3px !important;
+  border-top: none !important;
+  border-right: none !important;
+  border-bottom: none !important;
+}
+
+/* -- Scrollbar (Webkit) ------------------------------------------------- */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--bg-raised); }
+
+/* -- Remove Streamlit default decorations ------------------------------- */
+[data-testid="stDecoration"] { display: none !important; }
+footer { display: none !important; }
+#MainMenu { display: none !important; }
+[data-testid="stToolbar"] { display: none !important; }
+
+/* -- Horizontal rule ---------------------------------------------------- */
+hr {
+  border: none !important;
+  border-top: 1px solid var(--border) !important;
+  margin: 1rem 0 !important;
+}

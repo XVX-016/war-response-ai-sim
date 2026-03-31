@@ -19,7 +19,7 @@ except ImportError:  # pragma: no cover - optional dependency
 
 try:
     from pettingzoo import AECEnv
-    from pettingzoo.utils import agent_selector
+    from pettingzoo.utils.agent_selector import agent_selector
 except ImportError:  # pragma: no cover - optional dependency
     AECEnv = object
     agent_selector = None
@@ -88,9 +88,9 @@ class WarEnv(AECEnv):
             self._was_dead_step(action)
             return
 
+        self._cumulative_rewards[agent] = 0.0
         decoded_action = self.decode_action(agent, action)
         self._pending_actions[agent] = decoded_action
-        self._cumulative_rewards[agent] = 0.0
 
         if self._agent_selector.is_last():
             submitted_actions = [
@@ -112,6 +112,7 @@ class WarEnv(AECEnv):
             self._clear_rewards()
 
         self.agent_selection = self._agent_selector.next()
+        self._accumulate_rewards()
 
     def observe(self, agent: str) -> np.ndarray:
         if self._state is None:

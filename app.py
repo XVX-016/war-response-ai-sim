@@ -11,30 +11,17 @@ import config
 from ai_narrator import ClaudeNarrator
 from agents.rule_agent import select_actions
 from engine.country import apply_profile_to_state, load_country_profile
-from engine.scenario_builder import (
-    ScenarioValidationError,
-    build_scenario_from_vision,
-    load_and_validate,
-    merge_vision_assets,
-    save_scenario,
-)
+from engine.scenario_builder import ScenarioValidationError, build_scenario_from_vision, load_and_validate, merge_vision_assets, save_scenario
 from engine.turn_engine import step_simulation
 from engine.world import load_scenario
 from render import render_grid, render_state
 from ui.controls import draw_auto_step, draw_scenario_selector, draw_turn_controls
 from ui.country_setup import draw_country_setup
 from ui.event_log import draw_event_log
-from ui.kpi_panel import (
-    draw_asset_detail,
-    draw_consequence_badges,
-    draw_country_profile_summary,
-    draw_nation_kpis,
-    draw_resource_bars,
-)
+from ui.kpi_panel import draw_asset_detail, draw_consequence_badges, draw_country_profile_summary, draw_nation_kpis, draw_resource_bars
 from ui.map_panel import draw_map
 from ui.timeline import draw_timeline
 from ui.vision_panel import draw_vision_panel
-
 
 st.set_page_config(layout="wide", page_title=config.PAGE_TITLE)
 
@@ -51,7 +38,6 @@ def _init_session_state() -> None:
         "balloons_shown": False,
         "narrator": None,
         "last_narrative": "",
-        "theme_css_injected": False,
         "setup_complete": False,
         "country_profiles": {},
         "detector": None,
@@ -63,53 +49,51 @@ def _init_session_state() -> None:
             st.session_state[key] = value
 
 
-def _inject_theme_css() -> None:
-    if st.session_state.get("theme_css_injected"):
+def _inject_theme():
+    """Inject the design system CSS. Called once per session."""
+    if st.session_state.get("_theme_injected"):
         return
-    st.markdown(
-        """
-        <style>
-        :root {
-          --bg-base: #0f172a;
-          --bg-surface: #1e293b;
-          --bg-raised: #253347;
-          --border: #334155;
-          --accent: #3b82f6;
-          --accent-dim: #1d4ed8;
-          --text-primary: #f1f5f9;
-          --text-secondary: #94a3b8;
-          --text-muted: #475569;
-          --green: #22c55e;
-          --amber: #f59e0b;
-          --red: #ef4444;
-          --purple: #a855f7;
-        }
+    css_path = Path(__file__).parent / "ui" / "theme.css"
+    if css_path.exists():
+        css = css_path.read_text(encoding="utf-8")
+        st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
+        st.session_state["_theme_injected"] = True
 
-        [data-testid="stAppViewContainer"] { background: #0f172a; }
-        [data-testid="stAppViewContainer"] > .main { padding-top: 0.75rem; }
-        .stApp { background: #0f172a; color: #f1f5f9; }
-        [data-testid="stSidebar"] { background: #1e293b; border-right: 1px solid #334155; }
-        [data-testid="stSidebar"] * { color: #f1f5f9; }
-        .kpi-card, .panel-card, .map-panel { background: #1e293b; border: 1px solid #334155; border-radius: 6px; padding: 16px; }
-        .dashboard-header { background: #1e293b; border-bottom: 1px solid #334155; padding: 12px 24px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
-        .dashboard-title { font-size: 18px; font-weight: 600; color: #f1f5f9; }
-        .dashboard-turn { font-size: 13px; font-family: monospace; color: #94a3b8; }
-        [data-testid="stMetric"] { background: #1e293b; border: 1px solid #334155; border-radius: 6px; padding: 16px; }
-        [data-testid="stMetricLabel"] { color: #94a3b8; }
-        [data-testid="stMetricValue"] { font-family: monospace; font-size: 28px; color: #f1f5f9; }
-        [data-testid="stMetricDelta"] { font-family: monospace; }
-        button[kind], .stButton > button, [data-testid="stBaseButton-secondary"] { background: #1e293b; border: 1px solid #334155; color: #f1f5f9; border-radius: 4px; box-shadow: none; }
-        [data-testid="stBaseButton-primary"] { background: #3b82f6; border: 1px solid #3b82f6; color: #f1f5f9; border-radius: 6px; box-shadow: none; }
-        button[kind]:hover, .stButton > button:hover, [data-testid="stBaseButton-secondary"]:hover { background: #253347; border-color: #3b82f6; color: #f1f5f9; }
-        [data-testid="stBaseButton-primary"]:hover { background: #1d4ed8; border-color: #1d4ed8; color: #f1f5f9; }
-        button[kind]:disabled, .stButton > button:disabled, [data-testid="stBaseButton-secondary"]:disabled, [data-testid="stBaseButton-primary"]:disabled { opacity: 0.4; cursor: not-allowed; }
-        .event-row { background: transparent; padding: 8px 12px; margin-bottom: 4px; }
-        .event-row:hover { background: #253347; }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
-    st.session_state.theme_css_injected = True
+
+def _render_header(scenario_name: str, turn: int, max_turns: int, coverage_a: float, coverage_b: float) -> None:
+    if coverage_a > 0.7 and coverage_b > 0.7:
+        dot_colour = "#22C55E"
+        dot_label = "Stable"
+    elif coverage_a < 0.5 or coverage_b < 0.5:
+        dot_colour = "#EF4444"
+        dot_label = "Critical"
+    else:
+        dot_colour = "#F59E0B"
+        dot_label = "Active"
+
+    st.markdown(f"""
+    <div style="
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 0 12px 0;
+        border-bottom: 1px solid #333333;
+        margin-bottom: 16px;
+    ">
+        <div style="display:flex; align-items:center; gap:12px;">
+            <span style="font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #525252;">ResilienceSim</span>
+            <span style="color:#333333;">|</span>
+            <span style="font-size: 15px; font-weight: 600; color: #F5F5F5; letter-spacing: -0.01em;">{scenario_name}</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:16px;">
+            <span style="font-family: ui-monospace, monospace; font-size: 13px; color: #A3A3A3;">Turn <span style="color:#F5F5F5;">{turn}</span> / {max_turns}</span>
+            <div style="display:flex; align-items:center; gap:6px;">
+                <div style="width: 7px; height: 7px; border-radius: 50%; background-color: {dot_colour};"></div>
+                <span style="font-size:12px; color:{dot_colour};">{dot_label}</span>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 
 def _load_selected_scenario(path: str) -> None:
@@ -134,7 +118,6 @@ def step_one_turn() -> None:
     state = st.session_state.state
     if state is None or state.is_terminal:
         return
-
     with st.spinner("Simulating turn..."):
         actions = []
         for nation in state.nations:
@@ -148,35 +131,16 @@ def step_one_turn() -> None:
     st.rerun()
 
 
-def _status_tone(render_data: dict) -> tuple[str, str]:
-    if render_data.get("end_conditions"):
-        if any(value == "collapsed" for value in render_data["end_conditions"].values()):
-            return ("#ef4444", "Critical")
-        if all(value == "stabilised" for value in render_data["end_conditions"].values()):
-            return ("#22c55e", "Stable")
-    coverage_values = [float(data.get("service_coverage_score", 0.0)) for data in render_data.get("kpis", {}).values()]
-    if not coverage_values:
-        return ("#3b82f6", "Monitoring")
-    min_coverage = min(coverage_values)
-    if min_coverage < 0.4:
-        return ("#ef4444", "Critical")
-    if min_coverage < 0.7:
-        return ("#f59e0b", "Active")
-    return ("#22c55e", "Stable")
-
-
-def _draw_header(state, render_data: dict | None) -> None:
-    if state is None or render_data is None:
-        st.markdown('<div class="dashboard-header"><div class="dashboard-title">ResilienceSim</div><div class="dashboard-turn">Awaiting scenario</div></div>', unsafe_allow_html=True)
-        return
-    status_color, status_label = _status_tone(render_data)
-    st.markdown(f'<div class="dashboard-header"><div class="dashboard-title">ResilienceSim - {state.scenario_name}</div><div class="dashboard-turn"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:{status_color};margin-right:8px;vertical-align:middle;"></span>Turn {state.turn} / {state.max_turns} - {status_label}</div></div>', unsafe_allow_html=True)
-
-
 def draw_simulation() -> None:
     state = st.session_state.state
     render_data = st.session_state.render_data
-    _draw_header(state, render_data)
+    if state is None or render_data is None:
+        _render_header("Awaiting scenario", 0, 60, 0.0, 0.0)
+    else:
+        coverage_a = float(render_data.get("kpis", {}).get(config.NATION_A, {}).get("service_coverage_score", 0.0))
+        coverage_b = float(render_data.get("kpis", {}).get(config.NATION_B, {}).get("service_coverage_score", 0.0))
+        _render_header(state.scenario_name, state.turn, state.max_turns, coverage_a, coverage_b)
+
     col_left, col_main, col_right = st.columns([1.2, 2.8, 2.0])
 
     with col_left:
@@ -281,7 +245,6 @@ def _draw_vision_merge_ui(patch: list[dict]) -> None:
             st.session_state._vision_merge_details = {"merged_ids": merged_ids, "skipped_reasons": skipped_reasons}
             _load_selected_scenario(st.session_state.scenario_path)
             st.rerun()
-
         details = st.session_state.get("_vision_merge_details")
         if details:
             with st.expander("Details"):
@@ -290,12 +253,11 @@ def _draw_vision_merge_ui(patch: list[dict]) -> None:
 
 def main() -> None:
     _init_session_state()
-    _inject_theme_css()
+    _inject_theme()
     if st.session_state.narrator is None:
         st.session_state.narrator = ClaudeNarrator()
     if st.session_state.detector is None:
         from vision import YOLOv8Detector
-
         st.session_state.detector = YOLOv8Detector()
     if not st.session_state.country_profiles:
         st.session_state.country_profiles = {nation: load_country_profile(nation, config.DATA_DIR / "countries") for nation in config.NATIONS}
