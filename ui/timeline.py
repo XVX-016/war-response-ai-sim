@@ -11,7 +11,7 @@ def draw_timeline(history: List[dict]) -> None:
     if len(history) < 2:
         return
 
-    st.markdown('<div style="font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:#94a3b8;margin-bottom:8px;">Service Coverage Timeline</div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-size:11px;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-secondary);margin-bottom:8px;">Service Coverage Timeline</div>', unsafe_allow_html=True)
 
     try:
         import plotly.graph_objects as go
@@ -24,37 +24,19 @@ def draw_timeline(history: List[dict]) -> None:
     boros = [100 * snapshot.get("kpis", {}).get(config.NATION_B, {}).get("service_coverage_score", 0.0) for snapshot in history]
 
     fig = go.Figure()
-    fig.add_trace(
-        go.Scatter(
-            x=turns,
-            y=auria,
-            mode="lines+markers",
-            name=config.NATION_A,
-            line={"color": "#3b82f6", "width": 3},
-            marker={"size": 6},
-        )
-    )
-    fig.add_trace(
-        go.Scatter(
-            x=turns,
-            y=boros,
-            mode="lines+markers",
-            name=config.NATION_B,
-            line={"color": "#f59e0b", "width": 3},
-            marker={"size": 6},
-        )
-    )
-    for threshold, color in ((50, "#ef4444"), (70, "#22c55e")):
+    fig.add_trace(go.Scatter(x=turns, y=auria, mode="lines+markers", name=config.NATION_A, line={"color": "#3B82F6", "width": 3}, marker={"size": 6}))
+    fig.add_trace(go.Scatter(x=turns, y=boros, mode="lines+markers", name=config.NATION_B, line={"color": "#F59E0B", "width": 3}, marker={"size": 6}))
+    for threshold, color in ((50, "#EF4444"), (70, "#22C55E")):
         fig.add_hline(y=threshold, line_dash="dash", line_color=color, opacity=0.55)
 
     fig.update_layout(
         height=180,
         margin={"l": 18, "r": 18, "t": 10, "b": 20},
-        paper_bgcolor="#0f172a",
-        plot_bgcolor="#1e293b",
-        legend={"orientation": "h", "yanchor": "bottom", "y": 1.02, "x": 0.0, "title": {"text": ""}},
-        font={"color": "#94a3b8"},
-        xaxis={"title": "", "showgrid": False, "color": "#94a3b8"},
-        yaxis={"title": "", "range": [0, 100], "gridcolor": "#334155", "color": "#94a3b8"},
+        paper_bgcolor="#0A0A0A",
+        plot_bgcolor="#212020",
+        font={"color": "#F5F5F5", "family": "Inter, system-ui, sans-serif"},
+        legend={"orientation": "h", "yanchor": "bottom", "y": 1.02, "x": 0.0, "title": {"text": ""}, "bgcolor": "rgba(33,32,32,0.8)", "bordercolor": "#333333", "borderwidth": 1, "font": {"color": "#F5F5F5"}},
+        xaxis={"title": "", "showgrid": False, "linecolor": "#333333", "tickfont": {"color": "#A3A3A3"}},
+        yaxis={"title": "", "range": [0, 100], "gridcolor": "#333333", "linecolor": "#333333", "tickfont": {"color": "#A3A3A3"}},
     )
     st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
