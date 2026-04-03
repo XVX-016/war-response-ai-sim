@@ -1,9 +1,10 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import Navbar from "@/components/layout/Navbar"
+import EndScreen from "@/components/sim/EndScreen"
 import GridMap from "@/components/sim/GridMap"
 import KpiPanel from "@/components/sim/KpiPanel"
 import SimControls from "@/components/sim/SimControls"
@@ -12,12 +13,67 @@ import Timeline from "@/components/sim/Timeline"
 import { api } from "@/lib/api"
 import { useSimStore } from "@/store/simStore"
 
+const WEIGHTS = {
+  power_plant: 0.25,
+  water_treatment: 0.2,
+  hospital: 0.2,
+  telecom_tower: 0.05,
+  transport_hub: 0.1,
+  fuel_depot: 0.05,
+  shelter: 0.05,
+  command_center: 0.1,
+}
+
+function computeCoverage(assets, nation) {
+  const nationAssets = (assets || []).filter((asset) => asset.nation === nation)
+  let score = 0
+  for (const asset of nationAssets) {
+    const weight = WEIGHTS[asset.asset_type] ?? 0
+    const fraction = asset.is_destroyed ? 0 : asset.health / asset.max_health
+    score += weight * fraction
+  }
+  return Math.min(1, score)
+}
+
+function computeCoverageMap(state) {
+  const assets = state?.assets || []
+  return {
+    Auria: computeCoverage(assets, "Auria"),
+    Boros: computeCoverage(assets, "Boros"),
+  }
+}
+
+function BackendErrorPanel({ message, onRetry }) {
+  return (
+    <div className="max-w-4xl mx-auto rounded border border-[#EF4444] p-8 font-mono text-sm text-[#EF4444] space-y-4">
+      <p>{message}</p>
+      <p>Backend unavailable. Start the FastAPI server:</p>
+      <pre className="text-[#A3A3A3]">uvicorn backend.main:app --reload --port 8000</pre>
+      <button onClick={onRetry} className="rounded border border-[#333333] px-4 py-2 text-[#F5F5F5]">Retry</button>
+    </div>
+  )
+}
+
+function LoadingGridSkeleton() {
+  return (
+    <div className="mx-auto flex h-[640px] w-[640px] max-w-full animate-pulse items-center justify-center rounded border border-[#333333] bg-[#212020]">
+      <p className="font-mono text-sm text-[#525252]">Loading scenario...</p>
+    </div>
+  )
+}
+
 export default function SimulationPage() {
   const router = useRouter()
+  const queryClient = useQueryClient()
+  const hasAutoLoaded = useRef(false)
   const profiles = useSimStore((s) => s.profiles)
   const scenarioPath = useSimStore((s) => s.scenarioPath)
   const simState = useSimStore((s) => s.simState)
+  const coverageMap = useSimStore((s) => s.coverageMap)
   const history = useSimStore((s) => s.history)
+  const eventLog = useSimStore((s) => s.eventLog)
+  const endConditions = useSimStore((s) => s.endConditions)
+  const isTerminal = useSimStore((s) => s.isTerminal)
   const isRunning = useSimStore((s) => s.isRunning)
   const autoStep = useSimStore((s) => s.autoStep)
   const stepDelay = useSimStore((s) => s.stepDelay)
@@ -26,6 +82,7 @@ export default function SimulationPage() {
   const setProfiles = useSimStore((s) => s.setProfiles)
   const setScenario = useSimStore((s) => s.setScenario)
   const setSimState = useSimStore((s) => s.setSimState)
+  const setNarrative = useSimStore((s) => s.setNarrative)
   const setIsRunning = useSimStore((s) => s.setIsRunning)
   const setAutoStep = useSimStore((s) => s.setAutoStep)
   const setStepDelay = useSimStore((s) => s.setStepDelay)
@@ -33,97 +90,165 @@ export default function SimulationPage() {
   const resetStore = useSimStore((s) => s.reset)
   const [previousState, setPreviousState] = useState(null)
   const [errorMessage, setErrorMessage] = useState("")
+  const [isScenarioLoading, setIsScenarioLoading] = useState(false)
 
   const scenariosQuery = useQuery({
     queryKey: ["scenarios"],
     queryFn: api.listScenarios,
+    retry: 2,
+    retryDelay: 1000,
   })
 
   const profilesQuery = useQuery({
     queryKey: ["profiles", "sim"],
     queryFn: api.getProfiles,
-    enabled: !profiles || Object.keys(profiles).length === 0,
+    retry: 2,
+    retryDelay: 1000,
   })
 
   useEffect(() => {
-    if (profilesQuery.data?.profiles) {
-      setProfiles(profilesQuery.data.profiles)
+    if (profilesQuery.data && Object.keys(profiles || {}).length === 0) {
+      setProfiles(profilesQuery.data)
     }
-  }, [profilesQuery.data, setProfiles])
+  }, [profiles, profilesQuery.data, setProfiles])
 
   const profilesReady = Object.keys(profiles || {}).length > 0
   const scenarios = scenariosQuery.data?.scenarios || []
 
   useEffect(() => {
-    if (!profilesReady && profilesQuery.isFetched && !profilesQuery.isLoading && !profilesQuery.data?.profiles) {
+    if (scenariosQuery.isSuccess && scenarios.length > 0 && profilesReady && !simState && !isRunning && !hasAutoLoaded.current) {
+      hasAutoLoaded.current = true
+      const firstScenario = scenarios[0]
+      ;(async () => {
+        try {
+          setIsRunning(true)
+          setIsScenarioLoading(true)
+          const response = await api.loadScenario(firstScenario.path, true, useSimStore.getState().profiles)
+          const nextCoverage = computeCoverageMap(response.state)
+          setScenario(firstScenario.path, firstScenario)
+          setSimState(response.state, null, nextCoverage)
+          setPreviousState(null)
+        } catch (error) {
+          setErrorMessage(error.message || "Failed to load scenario")
+        } finally {
+          setIsRunning(false)
+          setIsScenarioLoading(false)
+        }
+      })()
+    }
+  }, [isRunning, profilesReady, scenarios, scenariosQuery.isSuccess, setIsRunning, setScenario, setSimState, simState])
+
+  useEffect(() => {
+    if (profilesQuery.isSuccess && Object.keys(profilesQuery.data?.profiles || {}).length === 0) {
       router.replace("/setup")
     }
-  }, [profilesReady, profilesQuery.data, profilesQuery.isFetched, profilesQuery.isLoading, router])
+  }, [profilesQuery.data, profilesQuery.isSuccess, router])
 
   const loadScenario = async (path) => {
     if (!path) return
     try {
       setErrorMessage("")
       setIsRunning(true)
+      setIsScenarioLoading(true)
       resetStore()
-      const response = await api.loadScenario(path, true, profiles)
-      setScenario(path, scenarios.find((item) => item.path === path) || null)
+      const selected = scenarios.find((item) => item.path === path) || null
+      const response = await api.loadScenario(path, true, useSimStore.getState().profiles)
+      const nextCoverage = computeCoverageMap(response.state)
+      setScenario(path, selected)
       setPreviousState(null)
-      setSimState(response.state)
+      setSimState(response.state, null, nextCoverage)
     } catch (error) {
       setErrorMessage(error.message || "Failed to load scenario")
     } finally {
       setIsRunning(false)
+      setIsScenarioLoading(false)
     }
   }
 
-  const stepOneTurn = async () => {
-    if (!simState || isRunning || simState.is_terminal) return
+  async function stepOneTurn() {
+    if (!useSimStore.getState().simState || isRunning || useSimStore.getState().isTerminal) return
+    setIsRunning(true)
     try {
-      setErrorMessage("")
-      setIsRunning(true)
-      const currentState = simState
-      const result = await api.stepSimulation(currentState, "auto")
-      setPreviousState(currentState)
-      setSimState(result.state, result)
+      const previous = useSimStore.getState().simState
+      const result = await api.stepSimulation(previous, "auto")
+      const nextCoverage = computeCoverageMap(result.state)
+      setPreviousState(previous)
+      useSimStore.getState().setSimState(result.state, result, nextCoverage)
+      useSimStore.getState().setNarrative(result.turn, result.narrative)
       if (result.is_terminal) setAutoStep(false)
     } catch (error) {
-      setErrorMessage(error.message || "Failed to step simulation")
-      setAutoStep(false)
+      console.error("Step failed:", error)
+      setErrorMessage(error.message || "Step failed")
     } finally {
       setIsRunning(false)
     }
   }
 
+  async function onRestart() {
+    const store = useSimStore.getState()
+    const path = store.scenarioPath
+    if (!path) return
+    store.reset()
+    setPreviousState(null)
+    setIsScenarioLoading(true)
+    try {
+      const result = await api.loadScenario(path, true, store.profiles)
+      const nextCoverage = computeCoverageMap(result.state)
+      useSimStore.getState().setScenario(path, scenarios.find((item) => item.path === path) || null)
+      useSimStore.getState().setSimState(result.state, null, nextCoverage)
+    } catch (error) {
+      setErrorMessage(error.message || "Failed to restart scenario")
+    } finally {
+      setIsScenarioLoading(false)
+    }
+  }
+
+  const resetScenario = async () => {
+    if (!scenarioPath) return
+    hasAutoLoaded.current = true
+    await loadScenario(scenarioPath)
+  }
+
   useEffect(() => {
-    if (!autoStep || !simState || isRunning || simState.is_terminal) return undefined
+    if (!autoStep || !simState || isRunning || isTerminal) return undefined
     const timer = window.setTimeout(() => {
       stepOneTurn()
     }, stepDelay)
     return () => window.clearTimeout(timer)
-  }, [autoStep, simState, isRunning, stepDelay])
+  }, [autoStep, simState, isRunning, isTerminal, stepDelay])
 
   const coverage = useMemo(() => {
-    if (history.length > 0) return history[history.length - 1].service_coverage || {}
-    const fallback = {}
-    ;(simState?.nations || []).forEach((nation) => {
-      fallback[nation] = 1
-    })
-    return fallback
-  }, [history, simState])
+    if (coverageMap && Object.keys(coverageMap).length > 0) return coverageMap
+    if (simState) return computeCoverageMap(simState)
+    return { Auria: 1, Boros: 1 }
+  }, [coverageMap, simState])
 
   const previousCoverage = useMemo(() => {
     if (history.length > 1) return history[history.length - 2].service_coverage || {}
     return coverage
   }, [coverage, history])
 
-  if (!profilesReady && profilesQuery.isLoading) {
+  if (profilesQuery.isLoading || scenariosQuery.isLoading) {
     return (
       <main className="min-h-screen bg-[#0A0A0A] pt-20 px-6">
         <Navbar />
-        <div className="max-w-4xl mx-auto border border-[#333333] rounded p-8 text-[#A3A3A3] font-mono text-sm">
-          Loading country profiles from backend...
-        </div>
+        <div className="max-w-4xl mx-auto rounded border border-[#333333] p-8 font-mono text-sm text-[#A3A3A3]">Loading country profiles from backend...</div>
+      </main>
+    )
+  }
+
+  if (profilesQuery.isError || scenariosQuery.isError) {
+    return (
+      <main className="min-h-screen bg-[#0A0A0A] pt-20 px-6">
+        <Navbar />
+        <BackendErrorPanel
+          message={profilesQuery.error?.message || scenariosQuery.error?.message || "Failed to reach backend."}
+          onRetry={() => {
+            queryClient.invalidateQueries({ queryKey: ["profiles"] })
+            queryClient.invalidateQueries({ queryKey: ["profiles", "sim"] })
+            queryClient.invalidateQueries({ queryKey: ["scenarios"] })
+          }}
+        />
       </main>
     )
   }
@@ -133,30 +258,29 @@ export default function SimulationPage() {
       <Navbar />
       <div className="pt-14">
         <SimHeader scenarioName={simState?.scenario_name || "Simulation"} turn={simState?.turn || 0} maxTurns={simState?.max_turns || 60} coverage={coverage} />
-        <div className="px-6 py-6 max-w-[1680px] mx-auto">
-          {errorMessage ? <div className="mb-4 border border-[#EF4444] rounded p-3 text-sm font-mono text-[#EF4444]">{errorMessage}</div> : null}
-          <div className="grid grid-cols-[280px_minmax(0,1fr)_380px] gap-6 items-start">
+        <div className="max-w-[1680px] mx-auto px-6 py-6">
+          {errorMessage ? <div className="mb-4 rounded border border-[#EF4444] p-3 text-sm font-mono text-[#EF4444]">{errorMessage}</div> : null}
+          <div className="grid grid-cols-[280px_minmax(0,1fr)_380px] items-start gap-6">
             <SimControls
               scenarios={scenarios}
               scenarioPath={scenarioPath}
               simState={simState}
               isRunning={isRunning}
+              isTerminal={isTerminal}
               autoStep={autoStep}
               stepDelay={stepDelay}
               nationFilter={nationFilter}
               onScenarioChange={loadScenario}
-              onAdvance={stepOneTurn}
-              onReset={() => loadScenario(scenarioPath)}
+              onAdvanceTurn={stepOneTurn}
+              onReset={resetScenario}
               onAutoStepChange={setAutoStep}
               onStepDelayChange={setStepDelay}
               onNationFilterChange={setNationFilter}
             />
 
-            <div className="space-y-6">
-              {!simState ? (
-                <div className="border border-[#333333] rounded p-12 bg-[#212020] text-center text-[#525252] font-mono">
-                  Select a scenario to begin the simulation.
-                </div>
+            <div className="space-y-3">
+              {!simState || isScenarioLoading ? (
+                <LoadingGridSkeleton />
               ) : (
                 <>
                   <GridMap simState={simState} nationFilter={nationFilter} />
@@ -165,9 +289,10 @@ export default function SimulationPage() {
               )}
             </div>
 
-            <KpiPanel simState={simState} previousState={previousState} profiles={profiles} selectedAssetId={selectedAsset} coverageMap={coverage} previousCoverageMap={previousCoverage} />
+            <KpiPanel simState={simState} previousState={previousState} profiles={profiles} selectedAssetId={selectedAsset} coverageMap={coverage} previousCoverageMap={previousCoverage} eventLog={eventLog} endConditions={endConditions} />
           </div>
         </div>
+        <EndScreen onRestart={onRestart} />
       </div>
     </main>
   )

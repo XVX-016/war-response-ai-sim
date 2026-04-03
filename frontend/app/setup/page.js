@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import Navbar from "@/components/layout/Navbar"
 import CountrySliders from "@/components/setup/CountrySliders"
 import RadarChart from "@/components/setup/RadarChart"
@@ -14,33 +14,63 @@ function StartSimulationButton() {
   const router = useRouter()
   const profiles = useSimStore((s) => s.profiles)
   const hasProfiles = Object.keys(profiles || {}).length > 0
+  const [isSaving, setIsSaving] = useState(false)
+
+  const handleStart = async () => {
+    if (!hasProfiles || isSaving) return
+    setIsSaving(true)
+    try {
+      await Promise.all(
+        Object.entries(profiles).map(([nation, profile]) => api.saveProfile(nation, profile))
+      )
+      router.push("/sim")
+    } finally {
+      setIsSaving(false)
+    }
+  }
 
   return (
     <button
-      disabled={!hasProfiles}
-      onClick={() => router.push("/sim")}
+      disabled={!hasProfiles || isSaving}
+      onClick={handleStart}
       className="px-8 py-3 bg-[#3B82F6] text-white text-sm font-mono tracking-widest uppercase border border-[#3B82F6] rounded hover:bg-[#1D4ED8] transition-colors disabled:opacity-40"
     >
-      Start Simulation
+      {isSaving ? "Saving..." : "Start Simulation"}
     </button>
   )
 }
 
+function BackendErrorPanel({ message, onRetry }) {
+  return (
+    <div className="border border-[#EF4444] rounded p-8 text-[#EF4444] font-mono text-sm space-y-4">
+      <p>{message}</p>
+      <p>Backend unavailable. Start the FastAPI server:</p>
+      <pre className="text-[#A3A3A3]">uvicorn backend.main:app --reload --port 8000</pre>
+      <button onClick={onRetry} className="px-4 py-2 border border-[#333333] rounded text-[#F5F5F5]">
+        Retry
+      </button>
+    </div>
+  )
+}
+
 export default function SetupPage() {
+  const queryClient = useQueryClient()
   const setProfiles = useSimStore((s) => s.setProfiles)
   const profiles = useSimStore((s) => s.profiles)
   const [errorMessage, setErrorMessage] = useState("")
 
-  const profilesQuery = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ["profiles"],
     queryFn: api.getProfiles,
+    retry: 2,
+    retryDelay: 1000,
   })
 
   useEffect(() => {
-    if (profilesQuery.data?.profiles) {
-      setProfiles(profilesQuery.data.profiles)
+    if (data) {
+      setProfiles(data)
     }
-  }, [profilesQuery.data, setProfiles])
+  }, [data, setProfiles])
 
   const ready = Object.keys(profiles || {}).length > 0
 
@@ -57,14 +87,15 @@ export default function SetupPage() {
           </p>
         </div>
 
-        {profilesQuery.isLoading && !ready ? (
-          <div className="border border-[#333333] rounded p-8 text-[#A3A3A3] font-mono text-sm">Loading country profiles...</div>
+        {isLoading && !ready ? (
+          <div className="border border-[#333333] rounded p-8 text-[#A3A3A3] font-mono text-sm">Loading country profiles from backend...</div>
         ) : null}
 
-        {profilesQuery.isError ? (
-          <div className="border border-[#333333] rounded p-8 text-[#EF4444] font-mono text-sm">
-            Failed to load country profiles from the backend.
-          </div>
+        {isError ? (
+          <BackendErrorPanel
+            message={error?.message || "Failed to load country profiles from backend."}
+            onRetry={() => queryClient.invalidateQueries({ queryKey: ["profiles"] })}
+          />
         ) : null}
 
         {ready ? (

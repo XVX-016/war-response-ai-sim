@@ -1,16 +1,16 @@
-"use client"
+﻿"use client"
 
 import Link from "next/link"
 import { motion } from "framer-motion"
 
 export default function HeroText() {
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center z-10 pointer-events-none px-6">
+    <div className="absolute inset-0 z-10 flex flex-col items-center justify-center px-6 pointer-events-none">
       <motion.p
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="text-xs font-mono tracking-[0.2em] uppercase text-[#3B82F6] mb-4"
+        className="mb-4 text-xs font-mono uppercase tracking-[0.2em] text-[#3B82F6]"
       >
         Civil Protection · Infrastructure Resilience · AI Simulation
       </motion.p>
@@ -19,7 +19,7 @@ export default function HeroText() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
-        className="text-6xl md:text-8xl font-bold text-center text-[#F5F5F5] leading-tight tracking-tight mb-4"
+        className="mb-4 text-center text-6xl font-bold leading-tight tracking-tight text-[#F5F5F5] md:text-8xl"
       >
         Infrastructure
         <br />
@@ -30,7 +30,7 @@ export default function HeroText() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.7 }}
-        className="text-sm md:text-base font-mono tracking-widest uppercase text-[#525252] mb-12 text-center"
+        className="mb-12 text-center text-sm font-mono uppercase tracking-widest text-[#525252] md:text-base"
       >
         Multi-Agent Crisis Simulation · Cascade Failure Modelling · AI Recovery
       </motion.p>
@@ -39,10 +39,10 @@ export default function HeroText() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.9 }}
-        className="flex gap-4 pointer-events-auto"
+        className="pointer-events-auto flex gap-4"
       >
         <Link href="/setup">
-          <button className="px-8 py-3 bg-[#3B82F6] text-white text-sm font-mono tracking-widest uppercase border border-[#3B82F6] rounded hover:bg-[#1D4ED8] transition-colors">
+          <button className="rounded border border-[#3B82F6] bg-[#3B82F6] px-8 py-3 text-sm font-mono uppercase tracking-widest text-white transition-colors hover:bg-[#1D4ED8]">
             Enter Simulator
           </button>
         </Link>
@@ -50,20 +50,10 @@ export default function HeroText() {
           href="https://github.com/YOUR_USERNAME/war-response-ai-sim"
           target="_blank"
           rel="noreferrer"
-          className="px-8 py-3 bg-transparent text-[#A3A3A3] text-sm font-mono tracking-widest uppercase border border-[#333333] rounded hover:border-[#A3A3A3] hover:text-[#F5F5F5] transition-colors pointer-events-auto"
+          className="pointer-events-auto rounded border border-[#333333] bg-transparent px-8 py-3 text-sm font-mono uppercase tracking-widest text-[#A3A3A3] transition-colors hover:border-[#A3A3A3] hover:text-[#F5F5F5]"
         >
           GitHub
         </a>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.4 }}
-        className="absolute bottom-8 flex flex-col items-center gap-2"
-      >
-        <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-[#525252]">Scroll</span>
-        <div className="w-px h-8 bg-gradient-to-b from-[#333333] to-transparent" />
       </motion.div>
     </div>
   )

@@ -1,4 +1,4 @@
-import dynamic from "next/dynamic"
+﻿import dynamic from "next/dynamic"
 import HeroText from "@/components/hero/HeroText"
 import Navbar from "@/components/layout/Navbar"
 import CapabilityCards from "@/components/home/CapabilityCards"

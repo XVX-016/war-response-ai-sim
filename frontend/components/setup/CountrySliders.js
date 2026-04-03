@@ -26,7 +26,6 @@ function deriveLabel(profile, key) {
 
 export default function CountrySliders({ nation, accentColour, onError }) {
   const profiles = useSimStore((s) => s.profiles)
-  const updateProfile = useSimStore((s) => s.updateProfile)
   const setProfiles = useSimStore((s) => s.setProfiles)
   const [toast, setToast] = useState("")
   const profile = profiles?.[nation]
@@ -43,7 +42,7 @@ export default function CountrySliders({ nation, accentColour, onError }) {
   const onReset = async () => {
     try {
       const data = await api.getProfiles()
-      setProfiles(data.profiles || {})
+      setProfiles(data)
       showToast("Reset to defaults")
       onError?.("")
     } catch (error) {
@@ -92,7 +91,10 @@ export default function CountrySliders({ nation, accentColour, onError }) {
                 max={factor.max}
                 step={factor.step}
                 value={value}
-                onChange={(e) => updateProfile(nation, { ...profile, [factor.key]: Number(e.target.value) })}
+                onChange={(e) => {
+                  const updatedProfile = { ...profile, [factor.key]: Number(e.target.value) }
+                  useSimStore.getState().updateProfile(nation, updatedProfile)
+                }}
                 className="w-full accent-current"
                 style={{ accentColor: accentColour }}
               />
