@@ -21,6 +21,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 import config
 from agents.rule_agent import select_actions
 from engine.country import CountryProfile, apply_profile_to_state, load_country_profile
+from engine.diplomacy import initialise_diplomatic_state
 from engine.scenario_builder import PRESETS, build_scenario, load_and_validate, validate_scenario
 from engine.turn_engine import step_simulation
 from engine.world import load_scenario
@@ -41,6 +42,7 @@ class LoadScenarioRequest(BaseModel):
     path: str
     apply_profiles: bool = True
     profiles: Optional[Dict[str, Any]] = None
+    geo_nations: Optional[Dict[str, str]] = None
 
 
 class StepRequest(BaseModel):
@@ -100,7 +102,7 @@ def api_load_scenario(req: LoadScenarioRequest) -> Dict[str, Any]:
     if not path.exists():
         raise HTTPException(status_code=404, detail=f"Scenario not found: {req.path}")
     try:
-        state, _ = load_scenario(path, apply_profiles=False)
+        state, _ = load_scenario(path, apply_profiles=False, geo_nations=req.geo_nations)
         if req.apply_profiles and req.profiles:
             profiles = {nation: CountryProfile(**pdata) for nation, pdata in req.profiles.items()}
             apply_profile_to_state(state, profiles)
@@ -145,6 +147,79 @@ def api_step(req: StepRequest) -> Dict[str, Any]:
         }
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@app.post("/api/scenario/init-diplomacy")
+def api_init_diplomacy(req: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Initialise diplomatic state after scenario load.
+    """
+    state = _deserialise_state(req["state"])
+    profiles = req.get("profiles", {})
+    state.diplomatic_state = initialise_diplomatic_state(state, profiles)
+    return {"state": state.model_dump()}
+
+
+def _explain_action(action: Action, state: ScenarioState) -> str:
+    from config import ASSET_PRIORITY
+
+    if action.action_type == "repair":
+        asset = state.get_asset(action.target_asset_id)
+        if asset:
+            return f"Repairing {asset.name} (health {asset.health:.0f}/{asset.max_health:.0f}) - priority {ASSET_PRIORITY.get(asset.asset_type, 0)}/10"
+    elif action.action_type == "restore_power":
+        asset = state.get_asset(action.target_asset_id)
+        if asset:
+            return f"Deploying generator to {asset.name} - power dependency broken"
+    elif action.action_type == "evacuate":
+        zone = state.get_zone(action.target_zone_id) if action.target_zone_id else None
+        if zone:
+            return f"Evacuating {zone.name} - coverage at {zone.service_coverage:.0%}"
+    elif action.action_type == "reinforce":
+        asset = state.get_asset(action.target_asset_id)
+        if asset:
+            return f"Reinforcing {asset.name} - protecting against further damage"
+    return f"{action.action_type} action"
+
+
+@app.post("/api/scenario/propose")
+def api_propose_actions(req: Dict[str, Any]) -> Dict[str, Any]:
+    state = _deserialise_state(req["state"])
+    actions: List[Action] = []
+    for nation in state.nations:
+        actions.extend(select_actions(state, nation))
+    return {
+        "proposed_actions": [action.model_dump() for action in actions],
+        "reasoning": [
+            {
+                "nation": action.actor_nation,
+                "action_type": action.action_type,
+                "target": action.target_asset_id or action.target_zone_id,
+                "reason": _explain_action(action, state),
+            }
+            for action in actions
+        ],
+    }
+
+
+@app.get("/api/geo/countries")
+def api_geo_countries() -> Dict[str, Any]:
+    geo_path = Path("data/countries/geo_coordinates.json")
+    if not geo_path.exists():
+        return {"countries": []}
+    with open(geo_path, "r", encoding="utf-8") as handle:
+        data = json.load(handle)
+    return {
+        "countries": [
+            {
+                "name": name,
+                "map_center": entry.get("map_center"),
+                "map_zoom": entry.get("map_zoom"),
+                "asset_count": len(entry.get("assets", {})),
+            }
+            for name, entry in data.get("countries", {}).items()
+        ]
+    }
 
 
 @app.get("/api/country/profiles")

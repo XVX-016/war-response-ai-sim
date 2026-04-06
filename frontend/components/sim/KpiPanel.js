@@ -229,7 +229,7 @@ function NationPanel({ nation, simState, previousState, profile, selectedAssetId
   )
 }
 
-export default function KpiPanel({ simState, previousState, profiles, selectedAssetId, coverageMap, previousCoverageMap, eventLog, endConditions }) {
+export default function KpiPanel({ simState, previousState, profiles, selectedAssetId, coverageMap, previousCoverageMap, eventLog, endConditions, lastNarrative }) {
   const [tab, setTab] = useState("Auria")
 
   const tabs = [
@@ -250,7 +250,7 @@ export default function KpiPanel({ simState, previousState, profiles, selectedAs
 
       {tab === "Events" ? (
         <div className="flex h-[600px] flex-col p-0">
-          <EventLog events={eventLog} />
+          <EventLog events={eventLog} lastNarrative={lastNarrative} lastTurn={simState?.turn ?? 0} />
         </div>
       ) : (
         <NationPanel nation={tab} simState={simState} previousState={previousState} profile={profiles?.[tab]} selectedAssetId={selectedAssetId} coverageMap={coverageMap} previousCoverageMap={previousCoverageMap} endCondition={endConditions?.[tab]} />

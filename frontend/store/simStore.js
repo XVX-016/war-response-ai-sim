@@ -17,6 +17,8 @@ export const useSimStore = create((set) => ({
   scenarioPath: null,
   scenarioMeta: null,
   setScenario: (path, meta) => set({ scenarioPath: path, scenarioMeta: meta }),
+  geoNations: {},
+  setGeoNations: (geoNations) => set({ geoNations }),
 
   simState: null,
   coverageMap: {},
@@ -31,6 +33,9 @@ export const useSimStore = create((set) => ({
   stepDelay: 1000,
   selectedAsset: null,
   nationFilter: "All",
+  turnPhase: "idle",
+  proposedActions: [],
+  actionReasonings: [],
 
   setEventLog: (log) => set({ eventLog: log ?? [] }),
   setNarrative: (turn, text) =>
@@ -38,6 +43,18 @@ export const useSimStore = create((set) => ({
       lastNarrative: text || "",
       narrativeHistory: text ? [...s.narrativeHistory, { turn, text }] : s.narrativeHistory,
     })),
+  setTurnPhase: (phase) => set({ turnPhase: phase }),
+  setProposedActions: (actions, reasonings) =>
+    set({
+      proposedActions: actions ?? [],
+      actionReasonings: reasonings ?? [],
+    }),
+  clearProposal: () =>
+    set({
+      proposedActions: [],
+      actionReasonings: [],
+      turnPhase: "idle",
+    }),
 
   setSimState: (newState, result, coverageMap = null) =>
     set((s) => ({
@@ -67,6 +84,8 @@ export const useSimStore = create((set) => ({
 
   reset: () =>
     set({
+      scenarioPath: null,
+      scenarioMeta: null,
       simState: null,
       coverageMap: {},
       history: [],
@@ -79,5 +98,8 @@ export const useSimStore = create((set) => ({
       autoStep: false,
       selectedAsset: null,
       nationFilter: "All",
+      turnPhase: "idle",
+      proposedActions: [],
+      actionReasonings: [],
     }),
 }))

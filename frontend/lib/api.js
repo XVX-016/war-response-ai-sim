@@ -26,16 +26,27 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ nation, profile }),
     }),
-  loadScenario: (path, apply_profiles, profiles) =>
+  loadScenario: (path, apply_profiles, profiles, geo_nations = undefined) =>
     apiFetch("/api/scenario/load", {
       method: "POST",
-      body: JSON.stringify({ path, apply_profiles, profiles }),
+      body: JSON.stringify({ path, apply_profiles, profiles, geo_nations }),
     }),
   stepSimulation: (state, actions = "auto") =>
     apiFetch("/api/scenario/step", {
       method: "POST",
       body: JSON.stringify({ state, actions }),
     }),
+  initDiplomacy: (state, profiles, geo_nations = undefined) =>
+    apiFetch("/api/scenario/init-diplomacy", {
+      method: "POST",
+      body: JSON.stringify({ state, profiles, geo_nations }),
+    }),
+  proposeActions: (state) =>
+    apiFetch("/api/scenario/propose", {
+      method: "POST",
+      body: JSON.stringify({ state }),
+    }),
+  listGeoCountries: () => apiFetch("/api/geo/countries"),
   buildScenario: (preset, seed, name) =>
     apiFetch("/api/scenario/build", {
       method: "POST",

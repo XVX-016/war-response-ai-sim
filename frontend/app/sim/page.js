@@ -4,8 +4,12 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import Navbar from "@/components/layout/Navbar"
+import ActionProposal from "@/components/sim/ActionProposal"
+import DiplomacyPanel from "@/components/sim/DiplomacyPanel"
 import EndScreen from "@/components/sim/EndScreen"
+import GeoMap from "@/components/sim/GeoMap"
 import GridMap from "@/components/sim/GridMap"
+import InsightsPanel from "@/components/sim/InsightsPanel"
 import KpiPanel from "@/components/sim/KpiPanel"
 import SimControls from "@/components/sim/SimControls"
 import SimHeader from "@/components/sim/SimHeader"
@@ -37,10 +41,8 @@ function computeCoverage(assets, nation) {
 
 function computeCoverageMap(state) {
   const assets = state?.assets || []
-  return {
-    Auria: computeCoverage(assets, "Auria"),
-    Boros: computeCoverage(assets, "Boros"),
-  }
+  const nations = state?.nations || ["Auria", "Boros"]
+  return Object.fromEntries(nations.map((nation) => [nation, computeCoverage(assets, nation)]))
 }
 
 function BackendErrorPanel({ message, onRetry }) {
@@ -67,6 +69,7 @@ export default function SimulationPage() {
   const queryClient = useQueryClient()
   const hasAutoLoaded = useRef(false)
   const profiles = useSimStore((s) => s.profiles)
+  const geoNations = useSimStore((s) => s.geoNations)
   const scenarioPath = useSimStore((s) => s.scenarioPath)
   const simState = useSimStore((s) => s.simState)
   const coverageMap = useSimStore((s) => s.coverageMap)
@@ -79,6 +82,9 @@ export default function SimulationPage() {
   const stepDelay = useSimStore((s) => s.stepDelay)
   const selectedAsset = useSimStore((s) => s.selectedAsset)
   const nationFilter = useSimStore((s) => s.nationFilter)
+  const turnPhase = useSimStore((s) => s.turnPhase)
+  const proposedActions = useSimStore((s) => s.proposedActions)
+  const lastNarrative = useSimStore((s) => s.lastNarrative)
   const setProfiles = useSimStore((s) => s.setProfiles)
   const setScenario = useSimStore((s) => s.setScenario)
   const setSimState = useSimStore((s) => s.setSimState)
@@ -87,6 +93,9 @@ export default function SimulationPage() {
   const setAutoStep = useSimStore((s) => s.setAutoStep)
   const setStepDelay = useSimStore((s) => s.setStepDelay)
   const setNationFilter = useSimStore((s) => s.setNationFilter)
+  const setTurnPhase = useSimStore((s) => s.setTurnPhase)
+  const setProposedActions = useSimStore((s) => s.setProposedActions)
+  const clearProposal = useSimStore((s) => s.clearProposal)
   const resetStore = useSimStore((s) => s.reset)
   const [previousState, setPreviousState] = useState(null)
   const [errorMessage, setErrorMessage] = useState("")
@@ -123,10 +132,11 @@ export default function SimulationPage() {
         try {
           setIsRunning(true)
           setIsScenarioLoading(true)
-          const response = await api.loadScenario(firstScenario.path, true, useSimStore.getState().profiles)
-          const nextCoverage = computeCoverageMap(response.state)
+          const response = await api.loadScenario(firstScenario.path, true, useSimStore.getState().profiles, useSimStore.getState().geoNations)
+          const dipResult = await api.initDiplomacy(response.state, useSimStore.getState().profiles, useSimStore.getState().geoNations)
+          const nextCoverage = computeCoverageMap(dipResult.state)
           setScenario(firstScenario.path, firstScenario)
-          setSimState(response.state, null, nextCoverage)
+          setSimState(dipResult.state, null, nextCoverage)
           setPreviousState(null)
         } catch (error) {
           setErrorMessage(error.message || "Failed to load scenario")
@@ -150,13 +160,14 @@ export default function SimulationPage() {
       setErrorMessage("")
       setIsRunning(true)
       setIsScenarioLoading(true)
-      resetStore()
+      clearProposal()
       const selected = scenarios.find((item) => item.path === path) || null
-      const response = await api.loadScenario(path, true, useSimStore.getState().profiles)
-      const nextCoverage = computeCoverageMap(response.state)
+      const response = await api.loadScenario(path, true, useSimStore.getState().profiles, useSimStore.getState().geoNations)
+      const dipResult = await api.initDiplomacy(response.state, useSimStore.getState().profiles, useSimStore.getState().geoNations)
+      const nextCoverage = computeCoverageMap(dipResult.state)
       setScenario(path, selected)
       setPreviousState(null)
-      setSimState(response.state, null, nextCoverage)
+      setSimState(dipResult.state, null, nextCoverage)
     } catch (error) {
       setErrorMessage(error.message || "Failed to load scenario")
     } finally {
@@ -165,37 +176,64 @@ export default function SimulationPage() {
     }
   }
 
-  async function stepOneTurn() {
-    if (!useSimStore.getState().simState || isRunning || useSimStore.getState().isTerminal) return
+  async function proposeTurn() {
+    const store = useSimStore.getState()
+    if (store.isRunning || store.simState?.is_terminal) return
+    setTurnPhase("proposing")
+    try {
+      const result = await api.proposeActions(store.simState)
+      setProposedActions(result.proposed_actions, result.reasoning)
+      setTurnPhase("reviewing")
+    } catch (error) {
+      console.error("Propose failed:", error)
+      setErrorMessage(error.message || "Propose failed")
+      setTurnPhase("idle")
+    }
+  }
+
+  async function executeTurn(confirmedActions) {
+    setTurnPhase("executing")
     setIsRunning(true)
     try {
       const previous = useSimStore.getState().simState
-      const result = await api.stepSimulation(previous, "auto")
+      const result = await api.stepSimulation(previous, confirmedActions)
       const nextCoverage = computeCoverageMap(result.state)
       setPreviousState(previous)
       useSimStore.getState().setSimState(result.state, result, nextCoverage)
       useSimStore.getState().setNarrative(result.turn, result.narrative)
+      useSimStore.getState().clearProposal()
       if (result.is_terminal) setAutoStep(false)
     } catch (error) {
-      console.error("Step failed:", error)
-      setErrorMessage(error.message || "Step failed")
+      console.error("Execute failed:", error)
+      setErrorMessage(error.message || "Execute failed")
     } finally {
       setIsRunning(false)
+      setTurnPhase("idle")
     }
+  }
+
+  function cancelProposal() {
+    clearProposal()
   }
 
   async function onRestart() {
     const store = useSimStore.getState()
     const path = store.scenarioPath
     if (!path) return
-    store.reset()
+    const preservedProfiles = store.profiles
+    const preservedGeo = store.geoNations
+    const selectedMeta = scenarios.find((item) => item.path === path) || null
+    resetStore()
+    useSimStore.getState().setProfiles(preservedProfiles)
+    useSimStore.getState().setGeoNations(preservedGeo)
     setPreviousState(null)
     setIsScenarioLoading(true)
     try {
-      const result = await api.loadScenario(path, true, store.profiles)
-      const nextCoverage = computeCoverageMap(result.state)
-      useSimStore.getState().setScenario(path, scenarios.find((item) => item.path === path) || null)
-      useSimStore.getState().setSimState(result.state, null, nextCoverage)
+      const result = await api.loadScenario(path, true, preservedProfiles, preservedGeo)
+      const dipResult = await api.initDiplomacy(result.state, preservedProfiles, preservedGeo)
+      const nextCoverage = computeCoverageMap(dipResult.state)
+      useSimStore.getState().setScenario(path, selectedMeta)
+      useSimStore.getState().setSimState(dipResult.state, null, nextCoverage)
     } catch (error) {
       setErrorMessage(error.message || "Failed to restart scenario")
     } finally {
@@ -210,12 +248,19 @@ export default function SimulationPage() {
   }
 
   useEffect(() => {
-    if (!autoStep || !simState || isRunning || isTerminal) return undefined
+    if (!autoStep || !simState || isRunning || isTerminal || turnPhase !== "idle") return undefined
     const timer = window.setTimeout(() => {
-      stepOneTurn()
+      proposeTurn().then(() => {
+        window.setTimeout(() => {
+          const store = useSimStore.getState()
+          if (store.turnPhase === "reviewing") {
+            executeTurn(store.proposedActions)
+          }
+        }, 800)
+      })
     }, stepDelay)
     return () => window.clearTimeout(timer)
-  }, [autoStep, simState, isRunning, isTerminal, stepDelay])
+  }, [autoStep, simState, isRunning, isTerminal, stepDelay, turnPhase])
 
   const coverage = useMemo(() => {
     if (coverageMap && Object.keys(coverageMap).length > 0) return coverageMap
@@ -270,8 +315,9 @@ export default function SimulationPage() {
               autoStep={autoStep}
               stepDelay={stepDelay}
               nationFilter={nationFilter}
+              turnPhase={turnPhase}
               onScenarioChange={loadScenario}
-              onAdvanceTurn={stepOneTurn}
+              onProposeTurn={proposeTurn}
               onReset={resetScenario}
               onAutoStepChange={setAutoStep}
               onStepDelayChange={setStepDelay}
@@ -283,13 +329,34 @@ export default function SimulationPage() {
                 <LoadingGridSkeleton />
               ) : (
                 <>
-                  <GridMap simState={simState} nationFilter={nationFilter} />
+                  {simState?.metadata?.["_has_geo"] ? (
+                    <GeoMap
+                      onAssetClick={(id) => useSimStore.getState().setSelectedAsset(id)}
+                      proposedActions={proposedActions}
+                      nationFilter={nationFilter}
+                    />
+                  ) : (
+                    <GridMap simState={simState} nationFilter={nationFilter} onAssetClick={(id) => useSimStore.getState().setSelectedAsset(id)} />
+                  )}
+                  {turnPhase === "reviewing" ? <ActionProposal onExecute={executeTurn} onCancel={cancelProposal} /> : null}
+                  <InsightsPanel />
                   <Timeline history={history} />
+                  <DiplomacyPanel />
                 </>
               )}
             </div>
 
-            <KpiPanel simState={simState} previousState={previousState} profiles={profiles} selectedAssetId={selectedAsset} coverageMap={coverage} previousCoverageMap={previousCoverage} eventLog={eventLog} endConditions={endConditions} />
+            <KpiPanel
+              simState={simState}
+              previousState={previousState}
+              profiles={profiles}
+              selectedAssetId={selectedAsset}
+              coverageMap={coverage}
+              previousCoverageMap={previousCoverage}
+              eventLog={eventLog}
+              endConditions={endConditions}
+              lastNarrative={lastNarrative}
+            />
           </div>
         </div>
         <EndScreen onRestart={onRestart} />

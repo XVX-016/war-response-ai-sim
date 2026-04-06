@@ -1,4 +1,6 @@
-﻿"use client"
+"use client"
+
+import TurnControl from "@/components/sim/TurnControl"
 
 export default function SimControls({
   scenarios,
@@ -9,8 +11,9 @@ export default function SimControls({
   autoStep,
   stepDelay,
   nationFilter,
+  turnPhase,
   onScenarioChange,
-  onAdvanceTurn,
+  onProposeTurn,
   onReset,
   onAutoStepChange,
   onStepDelayChange,
@@ -32,10 +35,10 @@ export default function SimControls({
       </div>
 
       <div style={{ marginBottom: "16px" }}>
-        <div style={{ fontFamily: "monospace", fontSize: "9px", letterSpacing: "0.15em", textTransform: "uppercase", color: "#525252", marginBottom: "4px" }}>
+        <div style={{ fontFamily: "Space Mono, monospace", fontSize: "9px", letterSpacing: "0.15em", textTransform: "uppercase", color: "#525252", marginBottom: "4px" }}>
           Turn Counter
         </div>
-        <div style={{ fontFamily: "monospace", fontSize: "28px", fontWeight: 500, color: "#F5F5F5", letterSpacing: "-0.02em", lineHeight: 1 }}>
+        <div style={{ fontFamily: "Space Mono, monospace", fontSize: "28px", fontWeight: 500, color: "#F5F5F5", letterSpacing: "-0.02em", lineHeight: 1 }}>
           {turn}
           <span style={{ color: "#333333", fontSize: "16px" }}> / {maxTurns}</span>
         </div>
@@ -45,14 +48,13 @@ export default function SimControls({
       </div>
 
       <div className="space-y-3">
-        <button
-          onClick={onAdvanceTurn}
-          disabled={isRunning || isTerminal || !simState}
-          style={{ width: "100%", padding: "10px", background: isRunning ? "#1D4ED8" : "#3B82F6", border: "none", borderRadius: "4px", color: "#ffffff", fontFamily: "monospace", fontSize: "11px", letterSpacing: "0.12em", textTransform: "uppercase", cursor: isRunning || isTerminal ? "not-allowed" : "pointer", opacity: isTerminal ? 0.35 : !simState ? 0.4 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", transition: "background 150ms ease" }}
-        >
-          {isRunning ? <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#ffffff", animation: "pulse 1s ease infinite" }} /> : null}
-          {isTerminal ? "Simulation Ended" : isRunning ? "Simulating..." : "Advance Turn"}
-        </button>
+        <TurnControl
+          turnPhase={turnPhase}
+          isRunning={isRunning}
+          isTerminal={isTerminal}
+          disabled={!simState || turnPhase !== "idle"}
+          onProposeTurn={onProposeTurn}
+        />
         <button onClick={onReset} disabled={!scenarioPath || isRunning} className="w-full rounded border border-[#333333] px-4 py-2 text-xs font-mono uppercase tracking-[0.15em] text-[#A3A3A3] disabled:opacity-40">
           Reset Scenario
         </button>

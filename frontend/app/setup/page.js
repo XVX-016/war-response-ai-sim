@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import Navbar from "@/components/layout/Navbar"
+import CountrySearch from "@/components/setup/CountrySearch"
 import CountrySliders from "@/components/setup/CountrySliders"
 import RadarChart from "@/components/setup/RadarChart"
 import ComparisonTable from "@/components/setup/ComparisonTable"
@@ -13,6 +14,9 @@ import { useSimStore } from "@/store/simStore"
 function StartSimulationButton() {
   const router = useRouter()
   const profiles = useSimStore((s) => s.profiles)
+  const geoNations = useSimStore((s) => s.geoNations)
+  const setScenario = useSimStore((s) => s.setScenario)
+  const setSimState = useSimStore((s) => s.setSimState)
   const hasProfiles = Object.keys(profiles || {}).length > 0
   const [isSaving, setIsSaving] = useState(false)
 
@@ -23,6 +27,14 @@ function StartSimulationButton() {
       await Promise.all(
         Object.entries(profiles).map(([nation, profile]) => api.saveProfile(nation, profile))
       )
+      const scenariosResult = await api.listScenarios()
+      const firstScenario = scenariosResult.scenarios?.[0]
+      if (firstScenario?.path) {
+        const loadResult = await api.loadScenario(firstScenario.path, true, profiles, geoNations)
+        const dipResult = await api.initDiplomacy(loadResult.state, profiles, geoNations)
+        setScenario(firstScenario.path, firstScenario)
+        setSimState(dipResult.state, null)
+      }
       router.push("/sim")
     } finally {
       setIsSaving(false)
@@ -56,6 +68,9 @@ function BackendErrorPanel({ message, onRetry }) {
 export default function SetupPage() {
   const queryClient = useQueryClient()
   const setProfiles = useSimStore((s) => s.setProfiles)
+  const updateProfile = useSimStore((s) => s.updateProfile)
+  const geoNations = useSimStore((s) => s.geoNations)
+  const setGeoNations = useSimStore((s) => s.setGeoNations)
   const profiles = useSimStore((s) => s.profiles)
   const [errorMessage, setErrorMessage] = useState("")
 
@@ -101,8 +116,26 @@ export default function SetupPage() {
         {ready ? (
           <>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
-              <CountrySliders nation="Auria" accentColour="#3B82F6" onError={setErrorMessage} />
-              <CountrySliders nation="Boros" accentColour="#F59E0B" onError={setErrorMessage} />
+              <div>
+                <CountrySearch
+                  accentColour="#3B82F6"
+                  onSelect={(profile, selectedCountryName) => {
+                    updateProfile("Auria", { ...profiles.Auria, ...profile, nation: "Auria" })
+                    setGeoNations({ ...geoNations, Auria: selectedCountryName })
+                  }}
+                />
+                <CountrySliders nation="Auria" accentColour="#3B82F6" onError={setErrorMessage} />
+              </div>
+              <div>
+                <CountrySearch
+                  accentColour="#F59E0B"
+                  onSelect={(profile, selectedCountryName) => {
+                    updateProfile("Boros", { ...profiles.Boros, ...profile, nation: "Boros" })
+                    setGeoNations({ ...geoNations, Boros: selectedCountryName })
+                  }}
+                />
+                <CountrySliders nation="Boros" accentColour="#F59E0B" onError={setErrorMessage} />
+              </div>
             </div>
 
             <div className="border-t border-[#1F1F1F] pt-16">

@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -150,6 +150,11 @@ def apply_profile_to_state(
             stocks["water_purifiers"] = base_stocks.get("water_purifiers", 0.0) * richness_multiplier
 
         p = profile.population_millions
+        nation_meta["gdp_index"] = profile.gdp_index
+        nation_meta["resource_richness"] = profile.resource_richness
+        nation_meta["population_millions"] = p
+        nation_meta["display_name"] = profile.display_name
+        nation_meta["flag_emoji"] = profile.flag_emoji
         for zone in state.get_zones_for(nation):
             base_population = int(base_meta["zone_populations"].get(zone.id, zone.population))
             zone.population = int(base_population * (p / 5.0))
@@ -166,3 +171,7 @@ def apply_profile_to_state(
         nation_meta["alliance_strength"] = profile.alliance_strength
 
     return state
+
+
+
+

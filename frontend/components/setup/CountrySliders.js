@@ -66,7 +66,7 @@ export default function CountrySliders({ nation, accentColour, onError }) {
     <div className="border border-[#333333] rounded p-6 bg-[#0A0A0A]">
       <div className="flex items-center gap-3 mb-3">
         <span className="inline-flex items-center justify-center rounded w-7 h-7 font-mono text-xs font-semibold text-white" style={{ backgroundColor: accentColour }}>
-          {nation === "Auria" ? "A" : "B"}
+          {profile.flag_emoji || (nation === "Auria" ? "A" : "B")}
         </span>
         <div>
           <h3 className="text-xl font-semibold text-[#F5F5F5]">{profile.display_name}</h3>

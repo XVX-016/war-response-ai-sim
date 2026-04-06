@@ -58,7 +58,7 @@ function easeOut(t) {
   return 1 - Math.pow(1 - t, 3)
 }
 
-export default function GridMap({ simState, nationFilter = "All" }) {
+export default function GridMap({ simState, nationFilter = "All", onAssetClick }) {
   const canvasRef = useRef(null)
   const previousStatusesRef = useRef(new Map())
   const prevColoursRef = useRef({})
@@ -201,7 +201,7 @@ export default function GridMap({ simState, nationFilter = "All" }) {
 
         ctx.globalAlpha = nationDimmed ? 0.4 : 1
         ctx.fillStyle = "#F5F5F5"
-        ctx.font = "13px JetBrains Mono, monospace"
+        ctx.font = "13px Space Mono, monospace"
         ctx.textAlign = "center"
         ctx.textBaseline = "middle"
         ctx.fillText(status === "destroyed" ? "×" : ASSET_LETTER[asset.asset_type] || "?", x + CELL_SIZE / 2, y + CELL_SIZE / 2 + 1)
@@ -250,7 +250,9 @@ export default function GridMap({ simState, nationFilter = "All" }) {
         onClick={(event) => {
           const { row, col } = getCellFromEvent(event)
           const asset = assetGrid.get(`${row},${col}`)
-          setSelectedAsset(asset ? asset.id : null)
+          const nextId = asset ? asset.id : null
+          setSelectedAsset(nextId)
+          onAssetClick?.(nextId)
         }}
       />
       <div style={{ display: "flex", gap: "16px", padding: "10px 0", alignItems: "center" }}>
@@ -262,7 +264,7 @@ export default function GridMap({ simState, nationFilter = "All" }) {
         ].map(({ colour, label }) => (
           <div key={label} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
             <div style={{ width: "8px", height: "8px", borderRadius: "2px", background: colour }} />
-            <span style={{ fontFamily: "monospace", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "#525252" }}>{label}</span>
+            <span style={{ fontFamily: "Space Mono, monospace", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "#525252" }}>{label}</span>
           </div>
         ))}
       </div>

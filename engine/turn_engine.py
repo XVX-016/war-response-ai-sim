@@ -1,10 +1,10 @@
-# ── ResilienceSim v1 ── engine/turn_engine.py ────────────────────────────────
+﻿# â”€â”€ ResilienceSim v1 â”€â”€ engine/turn_engine.py â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # Responsibilities:
 #   - step_simulation(state, actions) -> TurnResult
-#   - Orchestrates steps 2a–2q from ARCHITECTURE.md in order
+#   - Orchestrates steps 2aâ€“2q from ARCHITECTURE.md in order
 #   - Works on a deep copy of state; never mutates the caller's object
 #
-# Import order: config → schemas → consequence (no agents, no narrator direct import)
+# Import order: config â†’ schemas â†’ consequence (no agents, no narrator direct import)
 
 from __future__ import annotations
 
@@ -24,9 +24,9 @@ from schemas import (
 from engine import consequence as csq
 
 
-# ─────────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # Helpers
-# ─────────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def _validate_action(action: Action, state: ScenarioState) -> Optional[str]:
     """
@@ -48,7 +48,7 @@ def _validate_action(action: Action, state: ScenarioState) -> Optional[str]:
         if target is None:
             return f"Target asset '{action.target_asset_id}' not found"
         if target.is_destroyed and action.action_type not in ("inspect",):
-            return f"Target asset '{action.target_asset_id}' is destroyed — cannot act on it"
+            return f"Target asset '{action.target_asset_id}' is destroyed â€” cannot act on it"
         if target.asset_type not in act_cfg["valid_targets"]:
             return (
                 f"Action '{action.action_type}' not valid on asset type "
@@ -90,7 +90,7 @@ def _apply_immediate_action(
                 asset_id    = asset.id,
                 description = (
                     f"Repair complete: {asset.name} restored "
-                    f"{asset.health - hp_before:.0f} HP (→ {asset.health:.0f})"
+                    f"{asset.health - hp_before:.0f} HP (â†’ {asset.health:.0f})"
                 ),
                 tags        = ["repair"],
                 severity    = "info",
@@ -125,7 +125,7 @@ def _apply_immediate_action(
                 asset_id    = asset.id,
                 description = (
                     f"Generator deployed: {asset.name} power restored "
-                    f"+{asset.health - hp_before:.0f} HP (→ {asset.health:.0f})"
+                    f"+{asset.health - hp_before:.0f} HP (â†’ {asset.health:.0f})"
                 ),
                 tags        = ["restore_power"],
                 severity    = "info",
@@ -159,7 +159,7 @@ def _apply_immediate_action(
                 event_type  = "action_complete",
                 nation      = nation,
                 asset_id    = asset.id,
-                description = f"Supplies allocated to {asset.name} (+{hp_gain:.0f} HP → {asset.health:.0f})",
+                description = f"Supplies allocated to {asset.name} (+{hp_gain:.0f} HP â†’ {asset.health:.0f})",
                 tags        = ["allocate_supplies"],
                 severity    = "info",
             ))
@@ -173,7 +173,7 @@ def _apply_immediate_action(
                 event_type  = "action_complete",
                 nation      = nation,
                 asset_id    = asset.id,
-                description = f"Reroute established: {asset.name} partial connectivity restored (+15 HP → {asset.health:.0f})",
+                description = f"Reroute established: {asset.name} partial connectivity restored (+15 HP â†’ {asset.health:.0f})",
                 tags        = ["reroute"],
                 severity    = "info",
             ))
@@ -190,7 +190,7 @@ def _apply_immediate_action(
                 nation      = nation,
                 asset_id    = asset.id,
                 description = (
-                    f"Inspection complete: {asset.name} — health {asset.health:.0f}, "
+                    f"Inspection complete: {asset.name} â€” health {asset.health:.0f}, "
                     f"hidden damage revealed: {revealed:.0f}"
                 ),
                 tags        = ["inspect"],
@@ -247,7 +247,7 @@ def _apply_exogenous_events(
                         event_type  = "exogenous",
                         nation      = nation,
                         asset_id    = target.id,
-                        description = f"{evt_name.title()}: {target.name} took {damage:.0f} damage (→ {target.health:.0f} HP)",
+                        description = f"{evt_name.title()}: {target.name} took {damage:.0f} damage (â†’ {target.health:.0f} HP)",
                         tags        = [evt_name],
                         severity    = "warning" if target.health > 30 else "critical",
                     ))
@@ -333,7 +333,11 @@ def _apply_resupply(state: ScenarioState, events: List[SimEvent]) -> None:
                 tags        = ["supply_lines_disrupted", "repair_crews_penalty"],
                 severity    = "warning",
             ))
-        alliance = state.metadata.get(nation, {}).get("alliance_strength", 0.5)
+        alliance = (
+            state.diplomatic_state.alliance_strength.get(nation, 0.5)
+            if state.diplomatic_state
+            else state.metadata.get(nation, {}).get("alliance_strength", 0.5)
+        )
         if alliance > 0.0:
             alliance_gains = {
                 "fuel": round(alliance * 8),
@@ -352,7 +356,7 @@ def _apply_resupply(state: ScenarioState, events: List[SimEvent]) -> None:
                     event_type="alliance_resupply",
                     nation=nation,
                     description=(
-                        f"{nation}: alliance resupply received ? "
+                        f"{nation}: alliance resupply received - "
                         f"+{alliance_gains['fuel']:.0f} fuel, "
                         f"+{alliance_gains['medical_supplies']:.0f} medical"
                     ),
@@ -365,7 +369,7 @@ def _apply_resupply(state: ScenarioState, events: List[SimEvent]) -> None:
                 turn        = state.turn,
                 event_type  = "resupply_reduced",
                 nation      = nation,
-                description = f"{nation}: resupply reduced to {factor:.0%} — transport hub degraded",
+                description = f"{nation}: resupply reduced to {factor:.0%} â€” transport hub degraded",
                 tags        = ["supply_lines_disrupted"],
                 severity    = "warning",
             ))
@@ -391,9 +395,9 @@ def _update_stable_turns(state: ScenarioState) -> None:
             state.stable_turns_count[nation] = 0
 
 
-# ─────────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # Public API
-# ─────────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def step_simulation(
     state: ScenarioState,
@@ -402,10 +406,10 @@ def step_simulation(
     exogenous_overrides: Optional[Dict[str, dict]] = None,
 ) -> TurnResult:
     """
-    Advance the simulation by one turn following ARCHITECTURE.md steps 2a–2q.
+    Advance the simulation by one turn following ARCHITECTURE.md steps 2aâ€“2q.
 
     Args:
-        state     : Current ScenarioState (not mutated — deep copy is made).
+        state     : Current ScenarioState (not mutated â€” deep copy is made).
         actions   : List of Action objects from agents this turn.
         narrator  : Optional ClaudeNarrator; skipped if None.
         exogenous_overrides : Per-scenario event probability overrides.
@@ -414,14 +418,14 @@ def step_simulation(
         TurnResult with new_state and full change summary.
     """
     if state.is_terminal:
-        logger.warning("step_simulation called on terminal state — returning unchanged")
+        logger.warning("step_simulation called on terminal state â€” returning unchanged")
         return TurnResult(
             turn      = state.turn,
             new_state = state,
             end_condition = next(iter(state.end_conditions_met.values()), "terminal"),
         )
 
-    # ── Deep copy ─────────────────────────────────────────────────────────────
+    # â”€â”€ Deep copy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     s = state.model_copy(deep=True)
     s.turn += 1
     exogenous_overrides = exogenous_overrides or s.metadata.get("_scenario", {}).get("exogenous_event_overrides", {})
@@ -437,9 +441,9 @@ def step_simulation(
     zones_evacuated:   List[str]     = []
     exogenous_fired:   List[str]     = []
 
-    logger.info(f"── Turn {s.turn} ──────────────────────────────────────")
+    logger.info(f"â”€â”€ Turn {s.turn} â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€")
 
-    # ── 2a. Validate actions ──────────────────────────────────────────────────
+    # â”€â”€ 2a. Validate actions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     valid_actions: List[Action] = []
     for action in actions:
         err = _validate_action(action, s)
@@ -455,7 +459,7 @@ def step_simulation(
         else:
             valid_actions.append(action)
 
-    # ── 2b+2c. Check affordability and deduct resources ───────────────────────
+    # â”€â”€ 2b+2c. Check affordability and deduct resources â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     affordable_actions: List[Action] = []
     for action in valid_actions:
         act_cfg = config.ACTION_TYPES[action.action_type]
@@ -467,12 +471,12 @@ def step_simulation(
         else:
             logger.warning(f"Action unaffordable after re-check: {action.action_type} for {action.actor_nation}")
 
-    # ── 2d. Apply immediate and queue multi-turn actions ──────────────────────
+    # â”€â”€ 2d. Apply immediate and queue multi-turn actions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     for action in affordable_actions:
         turns_needed = config.ACTION_TYPES[action.action_type]["turns_to_complete"]
 
         if turns_needed <= 1:
-            # Instant action — apply now
+            # Instant action â€” apply now
             _apply_immediate_action(action, s, turn_events)
             actions_completed.append(action)
             if action.target_asset_id and action.action_type in ("repair", "restore_power", "allocate_supplies", "reroute"):
@@ -504,12 +508,12 @@ def step_simulation(
                 description = (
                     f"{action.action_type} queued on "
                     f"{action.target_asset_id or action.target_zone_id} "
-                    f"— completes in {turns_needed} turns"
+                    f"â€” completes in {turns_needed} turns"
                 ),
                 severity    = "info",
             ))
 
-    # ── 2e+2f. Tick pending multi-turn actions ────────────────────────────────
+    # â”€â”€ 2e+2f. Tick pending multi-turn actions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     for nation in s.nations:
         still_pending: List[PendingAction] = []
         for pa in s.pending_actions.get(nation, []):
@@ -523,10 +527,10 @@ def step_simulation(
                 still_pending.append(pa)
         s.pending_actions[nation] = still_pending
 
-    # ── 2g. Exogenous events ──────────────────────────────────────────────────
+    # â”€â”€ 2g. Exogenous events â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     exogenous_fired = _apply_exogenous_events(s, turn_events, exogenous_overrides)
 
-    # ── 2h. Dependency penalties ──────────────────────────────────────────────
+    # â”€â”€ 2h. Dependency penalties â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     penalties, dep_events = csq.apply_dependency_penalties(s)
     turn_events.extend(dep_events)
     for asset_id, penalty in penalties.items():
@@ -546,7 +550,7 @@ def step_simulation(
             if asset.id not in assets_degraded:
                 assets_degraded.append(asset.id)
 
-    # ── 2i. Apply degradation_rate ────────────────────────────────────────────
+    # â”€â”€ 2i. Apply degradation_rate â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     for asset in s.assets:
         if asset.is_destroyed:
             continue
@@ -556,10 +560,25 @@ def step_simulation(
             if asset.id not in assets_degraded:
                 assets_degraded.append(asset.id)
 
-    # ── 2j. Resource resupply ─────────────────────────────────────────────────
+    # â”€â”€ 2j. Resource resupply â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     _apply_resupply(s, turn_events)
+    # diplomacy turn
+    if s.diplomatic_state is not None:
+        from engine.diplomacy import apply_diplomatic_turn
 
-    # ── 2k. Compute consequences ──────────────────────────────────────────────
+        new_dip, dip_events = apply_diplomatic_turn(s)
+        if new_dip is not None:
+            s.diplomatic_state = new_dip
+            turn_events.extend(dip_events)
+            for nation, resources in new_dip.trade_received.items():
+                res = s.resources.get(nation)
+                if res and resources:
+                    res.add(resources)
+            for nation, resources in new_dip.aid_received.items():
+                res = s.resources.get(nation)
+                if res and resources:
+                    res.add(resources)
+    # â”€â”€ 2k. Compute consequences â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     new_consequences = csq.compute_consequences(s)
     s.active_consequences = new_consequences
 
@@ -570,12 +589,12 @@ def step_simulation(
                 turn        = s.turn,
                 event_type  = "consequence",
                 nation      = nation,
-                description = f"{nation}: consequence active — {tag.replace('_', ' ')}",
+                description = f"{nation}: consequence active â€” {tag.replace('_', ' ')}",
                 tags        = [tag],
                 severity    = "warning" if "risk" not in tag else "critical",
             ))
 
-    # ── 2l. Update population zones ───────────────────────────────────────────
+    # â”€â”€ 2l. Update population zones â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     zone_updates, zone_events = csq.update_population_zones(s)
     turn_events.extend(zone_events)
     for zone_id, updates in zone_updates.items():
@@ -585,7 +604,7 @@ def step_simulation(
             zone.displaced        = updates["displaced"]
             zone.mortality_risk   = updates["mortality_risk"]
 
-    # ── 2m. Check end conditions ──────────────────────────────────────────────
+    # â”€â”€ 2m. Check end conditions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     _update_stable_turns(s)
     newly_terminal = csq.check_end_conditions(s)
     s.end_conditions_met.update(newly_terminal)
@@ -606,7 +625,7 @@ def step_simulation(
     if set(s.nations).issubset(set(s.end_conditions_met.keys())):
         s.is_terminal = True
 
-    # ── 2n. KPI snapshots ─────────────────────────────────────────────────────
+    # â”€â”€ 2n. KPI snapshots â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     service_coverage  = csq.compute_service_coverage_scores(s)
     total_displaced   = csq.compute_total_displaced(s)
     resource_summary  = {
@@ -615,7 +634,7 @@ def step_simulation(
         if n in s.resources
     }
 
-    # ── 2o. Narrator (optional) ───────────────────────────────────────────────
+    # â”€â”€ 2o. Narrator (optional) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     narrative = ""
     if narrator is not None and not config.DISABLE_NARRATOR:
         try:
@@ -625,10 +644,10 @@ def step_simulation(
         except Exception as exc:
             logger.warning(f"Narrator failed (non-fatal): {exc}")
 
-    # ── 2p. Commit events to log ──────────────────────────────────────────────
+    # â”€â”€ 2p. Commit events to log â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     s.event_log.extend(turn_events)
 
-    # ── 2q. Build and return TurnResult ──────────────────────────────────────
+    # â”€â”€ 2q. Build and return TurnResult â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     result = TurnResult(
         turn               = s.turn,
         new_state          = s,
@@ -647,10 +666,15 @@ def step_simulation(
     )
 
     logger.info(
-        f"Turn {s.turn} complete — "
+        f"Turn {s.turn} complete â€” "
         f"coverage: { {n: f'{v:.0%}' for n,v in service_coverage.items()} } | "
         f"displaced: {total_displaced} | "
         f"end: {end_condition_this_turn or 'none'}"
     )
 
     return result
+
+
+
+
+

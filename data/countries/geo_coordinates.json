@@ -1,0 +1,2087 @@
+{
+  "_comment": "Real-world infrastructure coordinates for ResilienceSim geographic map mode.",
+  "_note": "Coordinates are approximate real locations of actual infrastructure.",
+  "_asset_types": [
+    "power_plant",
+    "water_treatment",
+    "hospital",
+    "telecom_tower",
+    "transport_hub",
+    "fuel_depot",
+    "shelter",
+    "command_center"
+  ],
+  "_format": "{ lat, lon, name } per asset type, population_zones as city centroids",
+  "countries": {
+    "United States": {
+      "map_center": [
+        38.9,
+        -97.0
+      ],
+      "map_zoom": 4,
+      "assets": {
+        "power_plant": {
+          "lat": 33.9,
+          "lon": -87.5,
+          "name": "Tennessee Valley Authority"
+        },
+        "water_treatment": {
+          "lat": 41.8,
+          "lon": -87.7,
+          "name": "Chicago Water Reclamation"
+        },
+        "hospital": {
+          "lat": 29.7,
+          "lon": -95.4,
+          "name": "Texas Medical Center"
+        },
+        "telecom_tower": {
+          "lat": 39.7,
+          "lon": -104.9,
+          "name": "Denver Telecom Hub"
+        },
+        "transport_hub": {
+          "lat": 41.9,
+          "lon": -87.6,
+          "name": "Chicago O'Hare Logistics"
+        },
+        "fuel_depot": {
+          "lat": 29.8,
+          "lon": -93.9,
+          "name": "Gulf Coast Fuel Reserve"
+        },
+        "shelter": {
+          "lat": 38.9,
+          "lon": -77.0,
+          "name": "FEMA Region III"
+        },
+        "command_center": {
+          "lat": 38.9,
+          "lon": -77.1,
+          "name": "FEMA National HQ"
+        }
+      },
+      "population_zones": [
+        {
+          "lat": 40.7,
+          "lon": -74.0,
+          "name": "New York Metro",
+          "population": 20000000
+        },
+        {
+          "lat": 34.1,
+          "lon": -118.2,
+          "name": "Los Angeles Metro",
+          "population": 13000000
+        },
+        {
+          "lat": 41.8,
+          "lon": -87.6,
+          "name": "Chicago Metro",
+          "population": 9500000
+        }
+      ]
+    },
+    "Germany": {
+      "map_center": [
+        51.2,
+        10.4
+      ],
+      "map_zoom": 6,
+      "assets": {
+        "power_plant": {
+          "lat": 51.5,
+          "lon": 6.8,
+          "name": "Rhine-Ruhr Power District"
+        },
+        "water_treatment": {
+          "lat": 48.1,
+          "lon": 11.6,
+          "name": "Munich Waterworks"
+        },
+        "hospital": {
+          "lat": 52.5,
+          "lon": 13.4,
+          "name": "Charité Berlin"
+        },
+        "telecom_tower": {
+          "lat": 50.1,
+          "lon": 8.7,
+          "name": "Frankfurt Telecom Relay"
+        },
+        "transport_hub": {
+          "lat": 53.6,
+          "lon": 10.0,
+          "name": "Hamburg Port Logistics"
+        },
+        "fuel_depot": {
+          "lat": 53.5,
+          "lon": 9.9,
+          "name": "Hamburg Oil Terminal"
+        },
+        "shelter": {
+          "lat": 48.1,
+          "lon": 11.6,
+          "name": "Munich Emergency Centre"
+        },
+        "command_center": {
+          "lat": 52.5,
+          "lon": 13.4,
+          "name": "Berlin Crisis Coordination"
+        }
+      },
+      "population_zones": [
+        {
+          "lat": 52.5,
+          "lon": 13.4,
+          "name": "Berlin",
+          "population": 3700000
+        },
+        {
+          "lat": 48.1,
+          "lon": 11.6,
+          "name": "Munich",
+          "population": 1500000
+        },
+        {
+          "lat": 51.5,
+          "lon": 7.5,
+          "name": "Ruhr Valley",
+          "population": 5100000
+        }
+      ]
+    },
+    "France": {
+      "map_center": [
+        46.6,
+        2.3
+      ],
+      "map_zoom": 6,
+      "assets": {
+        "power_plant": {
+          "lat": 47.9,
+          "lon": 4.7,
+          "name": "Nogent Nuclear Plant"
+        },
+        "water_treatment": {
+          "lat": 48.9,
+          "lon": 2.2,
+          "name": "Paris Seine Treatment"
+        },
+        "hospital": {
+          "lat": 48.8,
+          "lon": 2.3,
+          "name": "Hôpital Lariboisière"
+        },
+        "telecom_tower": {
+          "lat": 43.3,
+          "lon": 5.4,
+          "name": "Marseille Relay Tower"
+        },
+        "transport_hub": {
+          "lat": 49.0,
+          "lon": 2.5,
+          "name": "CDG Airport Logistics"
+        },
+        "fuel_depot": {
+          "lat": 43.4,
+          "lon": 4.9,
+          "name": "Fos-sur-Mer Terminal"
+        },
+        "shelter": {
+          "lat": 45.7,
+          "lon": 4.8,
+          "name": "Lyon Emergency Centre"
+        },
+        "command_center": {
+          "lat": 48.8,
+          "lon": 2.3,
+          "name": "Paris Civil Defence HQ"
+        }
+      },
+      "population_zones": [
+        {
+          "lat": 48.8,
+          "lon": 2.3,
+          "name": "Paris",
+          "population": 10000000
+        },
+        {
+          "lat": 43.3,
+          "lon": 5.4,
+          "name": "Marseille",
+          "population": 1800000
+        },
+        {
+          "lat": 45.7,
+          "lon": 4.8,
+          "name": "Lyon",
+          "population": 1700000
+        }
+      ]
+    },
+    "United Kingdom": {
+      "map_center": [
+        54.0,
+        -2.0
+      ],
+      "map_zoom": 6,
+      "assets": {
+        "power_plant": {
+          "lat": 54.0,
+          "lon": -1.5,
+          "name": "Drax Power Station"
+        },
+        "water_treatment": {
+          "lat": 51.5,
+          "lon": -0.4,
+          "name": "Thames Water Beckton"
+        },
+        "hospital": {
+          "lat": 51.5,
+          "lon": -0.1,
+          "name": "St Thomas' Hospital"
+        },
+        "telecom_tower": {
+          "lat": 52.5,
+          "lon": -1.9,
+          "name": "Birmingham Telecom Tower"
+        },
+        "transport_hub": {
+          "lat": 51.5,
+          "lon": -0.5,
+          "name": "Heathrow Air Freight"
+        },
+        "fuel_depot": {
+          "lat": 57.5,
+          "lon": -1.8,
+          "name": "North Sea Terminal"
+        },
+        "shelter": {
+          "lat": 53.8,
+          "lon": -1.5,
+          "name": "Leeds Emergency Centre"
+        },
+        "command_center": {
+          "lat": 51.5,
+          "lon": -0.1,
+          "name": "COBR Cabinet Office"
+        }
+      },
+      "population_zones": [
+        {
+          "lat": 51.5,
+          "lon": -0.1,
+          "name": "London",
+          "population": 9000000
+        },
+        {
+          "lat": 53.5,
+          "lon": -2.2,
+          "name": "Manchester",
+          "population": 2800000
+        },
+        {
+          "lat": 55.9,
+          "lon": -3.2,
+          "name": "Edinburgh",
+          "population": 500000
+        }
+      ]
+    },
+    "Japan": {
+      "map_center": [
+        36.2,
+        138.3
+      ],
+      "map_zoom": 5,
+      "assets": {
+        "power_plant": {
+          "lat": 37.4,
+          "lon": 141.0,
+          "name": "Fukushima Daiichi Area"
+        },
+        "water_treatment": {
+          "lat": 35.7,
+          "lon": 139.7,
+          "name": "Tokyo Metropolitan Water"
+        },
+        "hospital": {
+          "lat": 35.7,
+          "lon": 139.7,
+          "name": "Tokyo University Hospital"
+        },
+        "telecom_tower": {
+          "lat": 34.7,
+          "lon": 135.5,
+          "name": "Osaka Relay Station"
+        },
+        "transport_hub": {
+          "lat": 35.5,
+          "lon": 139.8,
+          "name": "Tokyo Bay Port"
+        },
+        "fuel_depot": {
+          "lat": 35.5,
+          "lon": 139.7,
+          "name": "Chiba Oil Terminal"
+        },
+        "shelter": {
+          "lat": 38.3,
+          "lon": 140.9,
+          "name": "Sendai Emergency Centre"
+        },
+        "command_center": {
+          "lat": 35.7,
+          "lon": 139.7,
+          "name": "Tokyo Crisis Management"
+        }
+      },
+      "population_zones": [
+        {
+          "lat": 35.7,
+          "lon": 139.7,
+          "name": "Tokyo",
+          "population": 37000000
+        },
+        {
+          "lat": 34.7,
+          "lon": 135.5,
+          "name": "Osaka",
+          "population": 19000000
+        },
+        {
+          "lat": 35.2,
+          "lon": 136.9,
+          "name": "Nagoya",
+          "population": 9500000
+        }
+      ]
+    },
+    "South Korea": {
+      "map_center": [
+        36.5,
+        127.8
+      ],
+      "map_zoom": 7,
+      "assets": {
+        "power_plant": {
+          "lat": 35.4,
+          "lon": 129.3,
+          "name": "Ulsan Nuclear Plant"
+        },
+        "water_treatment": {
+          "lat": 37.6,
+          "lon": 127.0,
+          "name": "Seoul Water Authority"
+        },
+        "hospital": {
+          "lat": 37.6,
+          "lon": 127.0,
+          "name": "Seoul National Univ Hospital"
+        },
+        "telecom_tower": {
+          "lat": 35.9,
+          "lon": 128.6,
+          "name": "Daegu Telecom Tower"
+        },
+        "transport_hub": {
+          "lat": 37.4,
+          "lon": 126.4,
+          "name": "Incheon Airport Logistics"
+        },
+        "fuel_depot": {
+          "lat": 35.1,
+          "lon": 129.1,
+          "name": "Busan Oil Terminal"
+        },
+        "shelter": {
+          "lat": 35.9,
+          "lon": 128.6,
+          "name": "Daegu Emergency Centre"
+        },
+        "command_center": {
+          "lat": 37.5,
+          "lon": 127.0,
+          "name": "Seoul Civil Defence HQ"
+        }
+      },
+      "population_zones": [
+        {
+          "lat": 37.6,
+          "lon": 127.0,
+          "name": "Seoul Metro",
+          "population": 25000000
+        },
+        {
+          "lat": 35.1,
+          "lon": 129.1,
+          "name": "Busan",
+          "population": 3400000
+        },
+        {
+          "lat": 35.9,
+          "lon": 128.6,
+          "name": "Daegu",
+          "population": 2500000
+        }
+      ]
+    },
+    "Australia": {
+      "map_center": [
+        -25.3,
+        133.8
+      ],
+      "map_zoom": 4,
+      "assets": {
+        "power_plant": {
+          "lat": -32.9,
+          "lon": 151.7,
+          "name": "Hunter Valley Power"
+        },
+        "water_treatment": {
+          "lat": -33.9,
+          "lon": 151.2,
+          "name": "Sydney Water Ryde"
+        },
+        "hospital": {
+          "lat": -33.9,
+          "lon": 151.2,
+          "name": "Royal Prince Alfred Hospital"
+        },
+        "telecom_tower": {
+          "lat": -27.5,
+          "lon": 153.0,
+          "name": "Brisbane Relay Tower"
+        },
+        "transport_hub": {
+          "lat": -33.9,
+          "lon": 151.2,
+          "name": "Port Botany Logistics"
+        },
+        "fuel_depot": {
+          "lat": -31.9,
+          "lon": 115.9,
+          "name": "Kwinana Fuel Terminal"
+        },
+        "shelter": {
+          "lat": -37.8,
+          "lon": 145.0,
+          "name": "Melbourne Emergency Centre"
+        },
+        "command_center": {
+          "lat": -35.3,
+          "lon": 149.1,
+          "name": "Canberra Emergency Mgmt"
+        }
+      },
+      "population_zones": [
+        {
+          "lat": -33.9,
+          "lon": 151.2,
+          "name": "Sydney",
+          "population": 5300000
+        },
+        {
+          "lat": -37.8,
+          "lon": 145.0,
+          "name": "Melbourne",
+          "population": 5000000
+        },
+        {
+          "lat": -27.5,
+          "lon": 153.0,
+          "name": "Brisbane",
+          "population": 2500000
+        }
+      ]
+    },
+    "Russia": {
+      "map_center": [
+        61.5,
+        90.0
+      ],
+      "map_zoom": 3,
+      "assets": {
+        "power_plant": {
+          "lat": 55.8,
+          "lon": 49.2,
+          "name": "Novovoronezh Nuclear Plant"
+        },
+        "water_treatment": {
+          "lat": 55.8,
+          "lon": 37.6,
+          "name": "Moscow Waterworks"
+        },
+        "hospital": {
+          "lat": 55.8,
+          "lon": 37.6,
+          "name": "Sklifosovsky Hospital Moscow"
+        },
+        "telecom_tower": {
+          "lat": 59.9,
+          "lon": 30.3,
+          "name": "St Petersburg Relay"
+        },
+        "transport_hub": {
+          "lat": 55.4,
+          "lon": 37.9,
+          "name": "Moscow Domodedovo Freight"
+        },
+        "fuel_depot": {
+          "lat": 68.9,
+          "lon": 33.1,
+          "name": "Murmansk Oil Terminal"
+        },
+        "shelter": {
+          "lat": 56.8,
+          "lon": 60.6,
+          "name": "Yekaterinburg Centre"
+        },
+        "command_center": {
+          "lat": 55.8,
+          "lon": 37.6,
+          "name": "Moscow Civil Defence"
+        }
+      },
+      "population_zones": [
+        {
+          "lat": 55.8,
+          "lon": 37.6,
+          "name": "Moscow",
+          "population": 12500000
+        },
+        {
+          "lat": 59.9,
+          "lon": 30.3,
+          "name": "St Petersburg",
+          "population": 5400000
+        },
+        {
+          "lat": 56.8,
+          "lon": 60.6,
+          "name": "Yekaterinburg",
+          "population": 1500000
+        }
+      ]
+    },
+    "China": {
+      "map_center": [
+        35.9,
+        104.2
+      ],
+      "map_zoom": 4,
+      "assets": {
+        "power_plant": {
+          "lat": 30.8,
+          "lon": 111.0,
+          "name": "Three Gorges Dam"
+        },
+        "water_treatment": {
+          "lat": 31.2,
+          "lon": 121.5,
+          "name": "Shanghai Water Authority"
+        },
+        "hospital": {
+          "lat": 39.9,
+          "lon": 116.4,
+          "name": "Peking Union Medical"
+        },
+        "telecom_tower": {
+          "lat": 23.1,
+          "lon": 113.3,
+          "name": "Guangzhou Relay Tower"
+        },
+        "transport_hub": {
+          "lat": 31.2,
+          "lon": 121.5,
+          "name": "Shanghai Yangshan Port"
+        },
+        "fuel_depot": {
+          "lat": 22.3,
+          "lon": 113.9,
+          "name": "Shenzhen Oil Terminal"
+        },
+        "shelter": {
+          "lat": 30.6,
+          "lon": 104.1,
+          "name": "Chengdu Emergency Centre"
+        },
+        "command_center": {
+          "lat": 39.9,
+          "lon": 116.4,
+          "name": "Beijing Civil Defence HQ"
+        }
+      },
+      "population_zones": [
+        {
+          "lat": 39.9,
+          "lon": 116.4,
+          "name": "Beijing",
+          "population": 21500000
+        },
+        {
+          "lat": 31.2,
+          "lon": 121.5,
+          "name": "Shanghai",
+          "population": 24000000
+        },
+        {
+          "lat": 23.1,
+          "lon": 113.3,
+          "name": "Guangzhou",
+          "population": 16000000
+        }
+      ]
+    },
+    "North Korea": {
+      "map_center": [
+        40.0,
+        127.5
+      ],
+      "map_zoom": 7,
+      "assets": {
+        "power_plant": {
+          "lat": 40.1,
+          "lon": 124.4,
+          "name": "Supung Hydroelectric"
+        },
+        "water_treatment": {
+          "lat": 39.0,
+          "lon": 125.8,
+          "name": "Pyongyang Water Plant"
+        },
+        "hospital": {
+          "lat": 39.0,
+          "lon": 125.8,
+          "name": "Pyongyang Hospital 1"
+        },
+        "telecom_tower": {
+          "lat": 39.0,
+          "lon": 125.8,
+          "name": "Pyongyang Relay Tower"
+        },
+        "transport_hub": {
+          "lat": 38.9,
+          "lon": 125.7,
+          "name": "Nampo Port"
+        },
+        "fuel_depot": {
+          "lat": 39.0,
+          "lon": 125.8,
+          "name": "Pyongyang Fuel Store"
+        },
+        "shelter": {
+          "lat": 42.5,
+          "lon": 129.8,
+          "name": "Chongjin Centre"
+        },
+        "command_center": {
+          "lat": 39.0,
+          "lon": 125.8,
+          "name": "Pyongyang Civil Command"
+        }
+      },
+      "population_zones": [
+        {
+          "lat": 39.0,
+          "lon": 125.8,
+          "name": "Pyongyang",
+          "population": 3000000
+        },
+        {
+          "lat": 42.5,
+          "lon": 129.8,
+          "name": "Chongjin",
+          "population": 700000
+        },
+        {
+          "lat": 39.9,
+          "lon": 127.5,
+          "name": "Hamhung",
+          "population": 800000
+        }
+      ]
+    },
+    "Saudi Arabia": {
+      "map_center": [
+        24.7,
+        45.7
+      ],
+      "map_zoom": 5,
+      "assets": {
+        "power_plant": {
+          "lat": 26.4,
+          "lon": 50.1,
+          "name": "Qatif Power Plant"
+        },
+        "water_treatment": {
+          "lat": 21.5,
+          "lon": 39.2,
+          "name": "Jeddah Desalination"
+        },
+        "hospital": {
+          "lat": 24.7,
+          "lon": 46.7,
+          "name": "King Fahad Medical City"
+        },
+        "telecom_tower": {
+          "lat": 21.4,
+          "lon": 39.8,
+          "name": "Mecca Relay Tower"
+        },
+        "transport_hub": {
+          "lat": 24.5,
+          "lon": 39.7,
+          "name": "Madinah Airport Logistics"
+        },
+        "fuel_depot": {
+          "lat": 26.3,
+          "lon": 50.2,
+          "name": "Ras Tanura Oil Terminal"
+        },
+        "shelter": {
+          "lat": 21.5,
+          "lon": 39.2,
+          "name": "Jeddah Emergency Centre"
+        },
+        "command_center": {
+          "lat": 24.7,
+          "lon": 46.7,
+          "name": "Riyadh Civil Defence HQ"
+        }
+      },
+      "population_zones": [
+        {
+          "lat": 24.7,
+          "lon": 46.7,
+          "name": "Riyadh",
+          "population": 7500000
+        },
+        {
+          "lat": 21.5,
+          "lon": 39.2,
+          "name": "Jeddah",
+          "population": 4700000
+        },
+        {
+          "lat": 26.4,
+          "lon": 50.1,
+          "name": "Dammam",
+          "population": 1200000
+        }
+      ]
+    },
+    "Iran": {
+      "map_center": [
+        32.4,
+        53.7
+      ],
+      "map_zoom": 5,
+      "assets": {
+        "power_plant": {
+          "lat": 30.7,
+          "lon": 49.2,
+          "name": "Ahvaz Power Plant"
+        },
+        "water_treatment": {
+          "lat": 35.7,
+          "lon": 51.4,
+          "name": "Tehran Water Treatment"
+        },
+        "hospital": {
+          "lat": 35.7,
+          "lon": 51.4,
+          "name": "Imam Khomeini Hospital"
+        },
+        "telecom_tower": {
+          "lat": 36.6,
+          "lon": 52.0,
+          "name": "Alborz Relay Station"
+        },
+        "transport_hub": {
+          "lat": 35.7,
+          "lon": 51.3,
+          "name": "Imam Khomeini Airport"
+        },
+        "fuel_depot": {
+          "lat": 29.6,
+          "lon": 50.8,
+          "name": "Kharg Island Terminal"
+        },
+        "shelter": {
+          "lat": 32.7,
+          "lon": 51.7,
+          "name": "Isfahan Emergency Centre"
+        },
+        "command_center": {
+          "lat": 35.7,
+          "lon": 51.4,
+          "name": "Tehran Civil Defence"
+        }
+      },
+      "population_zones": [
+        {
+          "lat": 35.7,
+          "lon": 51.4,
+          "name": "Tehran",
+          "population": 9000000
+        },
+        {
+          "lat": 32.7,
+          "lon": 51.7,
+          "name": "Isfahan",
+          "population": 2100000
+        },
+        {
+          "lat": 36.3,
+          "lon": 59.6,
+          "name": "Mashhad",
+          "population": 3400000
+        }
+      ]
+    },
+    "Norway": {
+      "map_center": [
+        64.5,
+        17.0
+      ],
+      "map_zoom": 5,
+      "assets": {
+        "power_plant": {
+          "lat": 59.9,
+          "lon": 10.7,
+          "name": "Tonstad Hydroelectric"
+        },
+        "water_treatment": {
+          "lat": 59.9,
+          "lon": 10.8,
+          "name": "Oslo Waterworks"
+        },
+        "hospital": {
+          "lat": 59.9,
+          "lon": 10.7,
+          "name": "Oslo University Hospital"
+        },
+        "telecom_tower": {
+          "lat": 63.4,
+          "lon": 10.4,
+          "name": "Trondheim Relay Tower"
+        },
+        "transport_hub": {
+          "lat": 60.2,
+          "lon": 11.1,
+          "name": "Oslo Airport Gardermoen"
+        },
+        "fuel_depot": {
+          "lat": 58.9,
+          "lon": 5.7,
+          "name": "Stavanger Oil Terminal"
+        },
+        "shelter": {
+          "lat": 60.4,
+          "lon": 5.3,
+          "name": "Bergen Emergency Centre"
+        },
+        "command_center": {
+          "lat": 59.9,
+          "lon": 10.7,
+          "name": "Oslo Civil Defence HQ"
+        }
+      },
+      "population_zones": [
+        {
+          "lat": 59.9,
+          "lon": 10.7,
+          "name": "Oslo",
+          "population": 1000000
+        },
+        {
+          "lat": 60.4,
+          "lon": 5.3,
+          "name": "Bergen",
+          "population": 280000
+        },
+        {
+          "lat": 63.4,
+          "lon": 10.4,
+          "name": "Trondheim",
+          "population": 210000
+        }
+      ]
+    },
+    "UAE": {
+      "map_center": [
+        24.0,
+        54.4
+      ],
+      "map_zoom": 7,
+      "assets": {
+        "power_plant": {
+          "lat": 23.6,
+          "lon": 54.3,
+          "name": "Barakah Nuclear Plant"
+        },
+        "water_treatment": {
+          "lat": 24.5,
+          "lon": 54.4,
+          "name": "Abu Dhabi Desalination"
+        },
+        "hospital": {
+          "lat": 25.2,
+          "lon": 55.3,
+          "name": "Dubai Health Authority"
+        },
+        "telecom_tower": {
+          "lat": 25.2,
+          "lon": 55.3,
+          "name": "Burj Khalifa Relay"
+        },
+        "transport_hub": {
+          "lat": 25.3,
+          "lon": 55.4,
+          "name": "Dubai International Freight"
+        },
+        "fuel_depot": {
+          "lat": 24.5,
+          "lon": 54.4,
+          "name": "ADNOC Ruwais Terminal"
+        },
+        "shelter": {
+          "lat": 25.4,
+          "lon": 55.5,
+          "name": "Sharjah Emergency Centre"
+        },
+        "command_center": {
+          "lat": 24.5,
+          "lon": 54.4,
+          "name": "Abu Dhabi Civil Defence"
+        }
+      },
+      "population_zones": [
+        {
+          "lat": 25.2,
+          "lon": 55.3,
+          "name": "Dubai",
+          "population": 3300000
+        },
+        {
+          "lat": 24.5,
+          "lon": 54.4,
+          "name": "Abu Dhabi",
+          "population": 1500000
+        },
+        {
+          "lat": 25.4,
+          "lon": 55.5,
+          "name": "Sharjah",
+          "population": 1400000
+        }
+      ]
+    },
+    "India": {
+      "map_center": [
+        20.6,
+        79.1
+      ],
+      "map_zoom": 5,
+      "assets": {
+        "power_plant": {
+          "lat": 24.1,
+          "lon": 82.7,
+          "name": "Vindhyachal Super Thermal"
+        },
+        "water_treatment": {
+          "lat": 19.1,
+          "lon": 72.9,
+          "name": "Mumbai Bhandup Complex"
+        },
+        "hospital": {
+          "lat": 28.6,
+          "lon": 77.2,
+          "name": "AIIMS New Delhi"
+        },
+        "telecom_tower": {
+          "lat": 12.9,
+          "lon": 77.6,
+          "name": "Bengaluru Relay Station"
+        },
+        "transport_hub": {
+          "lat": 22.7,
+          "lon": 88.4,
+          "name": "Kolkata Port Trust"
+        },
+        "fuel_depot": {
+          "lat": 20.4,
+          "lon": 86.8,
+          "name": "Paradip Oil Terminal"
+        },
+        "shelter": {
+          "lat": 17.4,
+          "lon": 78.5,
+          "name": "Hyderabad Emergency Centre"
+        },
+        "command_center": {
+          "lat": 28.6,
+          "lon": 77.2,
+          "name": "NDMA New Delhi"
+        }
+      },
+      "population_zones": [
+        {
+          "lat": 19.1,
+          "lon": 72.9,
+          "name": "Mumbai",
+          "population": 20700000
+        },
+        {
+          "lat": 28.6,
+          "lon": 77.2,
+          "name": "Delhi",
+          "population": 31000000
+        },
+        {
+          "lat": 22.6,
+          "lon": 88.4,
+          "name": "Kolkata",
+          "population": 14900000
+        }
+      ]
+    },
+    "Brazil": {
+      "map_center": [
+        -14.2,
+        -51.9
+      ],
+      "map_zoom": 4,
+      "assets": {
+        "power_plant": {
+          "lat": -25.4,
+          "lon": -54.6,
+          "name": "Itaipu Hydroelectric"
+        },
+        "water_treatment": {
+          "lat": -23.5,
+          "lon": -46.6,
+          "name": "São Paulo SABESP"
+        },
+        "hospital": {
+          "lat": -23.5,
+          "lon": -46.6,
+          "name": "Hospital das Clínicas SP"
+        },
+        "telecom_tower": {
+          "lat": -22.9,
+          "lon": -43.2,
+          "name": "Rio de Janeiro Relay"
+        },
+        "transport_hub": {
+          "lat": -23.4,
+          "lon": -46.5,
+          "name": "São Paulo Guarulhos Freight"
+        },
+        "fuel_depot": {
+          "lat": -22.9,
+          "lon": -43.2,
+          "name": "Angra dos Reis Terminal"
+        },
+        "shelter": {
+          "lat": -15.8,
+          "lon": -47.9,
+          "name": "Brasília Emergency Centre"
+        },
+        "command_center": {
+          "lat": -15.8,
+          "lon": -47.9,
+          "name": "Brasília Civil Defence"
+        }
+      },
+      "population_zones": [
+        {
+          "lat": -23.5,
+          "lon": -46.6,
+          "name": "São Paulo",
+          "population": 22000000
+        },
+        {
+          "lat": -22.9,
+          "lon": -43.2,
+          "name": "Rio de Janeiro",
+          "population": 13500000
+        },
+        {
+          "lat": -15.8,
+          "lon": -47.9,
+          "name": "Brasília",
+          "population": 3000000
+        }
+      ]
+    },
+    "Nigeria": {
+      "map_center": [
+        9.1,
+        8.7
+      ],
+      "map_zoom": 6,
+      "assets": {
+        "power_plant": {
+          "lat": 8.9,
+          "lon": 6.5,
+          "name": "Kainji Hydroelectric"
+        },
+        "water_treatment": {
+          "lat": 6.5,
+          "lon": 3.4,
+          "name": "Lagos Water Corporation"
+        },
+        "hospital": {
+          "lat": 6.5,
+          "lon": 3.4,
+          "name": "Lagos Island General"
+        },
+        "telecom_tower": {
+          "lat": 9.1,
+          "lon": 7.4,
+          "name": "Abuja Relay Tower"
+        },
+        "transport_hub": {
+          "lat": 6.5,
+          "lon": 3.4,
+          "name": "Apapa Port Lagos"
+        },
+        "fuel_depot": {
+          "lat": 4.8,
+          "lon": 7.0,
+          "name": "Port Harcourt Terminal"
+        },
+        "shelter": {
+          "lat": 12.0,
+          "lon": 8.5,
+          "name": "Kano Emergency Centre"
+        },
+        "command_center": {
+          "lat": 9.1,
+          "lon": 7.4,
+          "name": "Abuja NEMA HQ"
+        }
+      },
+      "population_zones": [
+        {
+          "lat": 6.5,
+          "lon": 3.4,
+          "name": "Lagos",
+          "population": 14800000
+        },
+        {
+          "lat": 9.1,
+          "lon": 7.4,
+          "name": "Abuja",
+          "population": 3600000
+        },
+        {
+          "lat": 12.0,
+          "lon": 8.5,
+          "name": "Kano",
+          "population": 3600000
+        }
+      ]
+    },
+    "Indonesia": {
+      "map_center": [
+        -2.5,
+        118.0
+      ],
+      "map_zoom": 5,
+      "assets": {
+        "power_plant": {
+          "lat": -6.9,
+          "lon": 107.6,
+          "name": "Suralaya Coal Plant"
+        },
+        "water_treatment": {
+          "lat": -6.2,
+          "lon": 106.8,
+          "name": "Jakarta PAM Jaya"
+        },
+        "hospital": {
+          "lat": -6.2,
+          "lon": 106.8,
+          "name": "RSUPN Cipto Mangunkusumo"
+        },
+        "telecom_tower": {
+          "lat": -7.2,
+          "lon": 112.7,
+          "name": "Surabaya Relay Tower"
+        },
+        "transport_hub": {
+          "lat": -6.1,
+          "lon": 106.7,
+          "name": "Tanjung Priok Port"
+        },
+        "fuel_depot": {
+          "lat": -1.3,
+          "lon": 116.8,
+          "name": "Balikpapan Oil Terminal"
+        },
+        "shelter": {
+          "lat": -7.8,
+          "lon": 110.4,
+          "name": "Yogyakarta Emergency Centre"
+        },
+        "command_center": {
+          "lat": -6.2,
+          "lon": 106.8,
+          "name": "Jakarta BNPB HQ"
+        }
+      },
+      "population_zones": [
+        {
+          "lat": -6.2,
+          "lon": 106.8,
+          "name": "Jakarta",
+          "population": 33000000
+        },
+        {
+          "lat": -7.2,
+          "lon": 112.7,
+          "name": "Surabaya",
+          "population": 9000000
+        },
+        {
+          "lat": -6.9,
+          "lon": 107.6,
+          "name": "Bandung",
+          "population": 8200000
+        }
+      ]
+    },
+    "Pakistan": {
+      "map_center": [
+        30.4,
+        69.3
+      ],
+      "map_zoom": 6,
+      "assets": {
+        "power_plant": {
+          "lat": 32.5,
+          "lon": 71.5,
+          "name": "Tarbela Dam Power"
+        },
+        "water_treatment": {
+          "lat": 33.7,
+          "lon": 73.1,
+          "name": "Islamabad Water Authority"
+        },
+        "hospital": {
+          "lat": 24.9,
+          "lon": 67.1,
+          "name": "Aga Khan University Hospital"
+        },
+        "telecom_tower": {
+          "lat": 31.5,
+          "lon": 74.3,
+          "name": "Lahore Relay Tower"
+        },
+        "transport_hub": {
+          "lat": 24.9,
+          "lon": 67.1,
+          "name": "Karachi Port Trust"
+        },
+        "fuel_depot": {
+          "lat": 24.8,
+          "lon": 67.0,
+          "name": "Keamari Oil Terminal"
+        },
+        "shelter": {
+          "lat": 31.5,
+          "lon": 74.3,
+          "name": "Lahore Emergency Centre"
+        },
+        "command_center": {
+          "lat": 33.7,
+          "lon": 73.1,
+          "name": "Islamabad NDMA HQ"
+        }
+      },
+      "population_zones": [
+        {
+          "lat": 24.9,
+          "lon": 67.1,
+          "name": "Karachi",
+          "population": 16100000
+        },
+        {
+          "lat": 31.5,
+          "lon": 74.3,
+          "name": "Lahore",
+          "population": 13100000
+        },
+        {
+          "lat": 33.7,
+          "lon": 73.1,
+          "name": "Islamabad",
+          "population": 1100000
+        }
+      ]
+    },
+    "Ukraine": {
+      "map_center": [
+        48.4,
+        31.2
+      ],
+      "map_zoom": 6,
+      "assets": {
+        "power_plant": {
+          "lat": 47.8,
+          "lon": 33.1,
+          "name": "Zaporizhzhia Nuclear Plant"
+        },
+        "water_treatment": {
+          "lat": 50.4,
+          "lon": 30.5,
+          "name": "Kyiv Waterworks"
+        },
+        "hospital": {
+          "lat": 50.4,
+          "lon": 30.5,
+          "name": "Oleksandrivska Hospital Kyiv"
+        },
+        "telecom_tower": {
+          "lat": 49.9,
+          "lon": 36.2,
+          "name": "Kharkiv Relay Tower"
+        },
+        "transport_hub": {
+          "lat": 50.4,
+          "lon": 30.5,
+          "name": "Kyiv Boryspil Freight"
+        },
+        "fuel_depot": {
+          "lat": 46.5,
+          "lon": 30.7,
+          "name": "Odesa Oil Terminal"
+        },
+        "shelter": {
+          "lat": 49.4,
+          "lon": 32.1,
+          "name": "Cherkasy Emergency Centre"
+        },
+        "command_center": {
+          "lat": 50.4,
+          "lon": 30.5,
+          "name": "Kyiv State Emergency Service"
+        }
+      },
+      "population_zones": [
+        {
+          "lat": 50.4,
+          "lon": 30.5,
+          "name": "Kyiv",
+          "population": 2900000
+        },
+        {
+          "lat": 49.9,
+          "lon": 36.2,
+          "name": "Kharkiv",
+          "population": 1400000
+        },
+        {
+          "lat": 46.5,
+          "lon": 30.7,
+          "name": "Odesa",
+          "population": 1000000
+        }
+      ]
+    },
+    "Syria": {
+      "map_center": [
+        35.0,
+        38.0
+      ],
+      "map_zoom": 7,
+      "assets": {
+        "power_plant": {
+          "lat": 36.0,
+          "lon": 38.5,
+          "name": "Tishreen Dam Power"
+        },
+        "water_treatment": {
+          "lat": 33.5,
+          "lon": 36.3,
+          "name": "Damascus Water Authority"
+        },
+        "hospital": {
+          "lat": 33.5,
+          "lon": 36.3,
+          "name": "Al-Mouwasat Hospital"
+        },
+        "telecom_tower": {
+          "lat": 35.2,
+          "lon": 37.1,
+          "name": "Homs Relay Tower"
+        },
+        "transport_hub": {
+          "lat": 36.2,
+          "lon": 37.2,
+          "name": "Aleppo Airport"
+        },
+        "fuel_depot": {
+          "lat": 35.5,
+          "lon": 40.7,
+          "name": "Deir ez-Zor Oil Field"
+        },
+        "shelter": {
+          "lat": 35.9,
+          "lon": 36.9,
+          "name": "Latakia Emergency Centre"
+        },
+        "command_center": {
+          "lat": 33.5,
+          "lon": 36.3,
+          "name": "Damascus Civil Command"
+        }
+      },
+      "population_zones": [
+        {
+          "lat": 33.5,
+          "lon": 36.3,
+          "name": "Damascus",
+          "population": 2500000
+        },
+        {
+          "lat": 36.2,
+          "lon": 37.2,
+          "name": "Aleppo",
+          "population": 1900000
+        },
+        {
+          "lat": 35.5,
+          "lon": 36.8,
+          "name": "Hama",
+          "population": 900000
+        }
+      ]
+    },
+    "Afghanistan": {
+      "map_center": [
+        33.9,
+        67.7
+      ],
+      "map_zoom": 6,
+      "assets": {
+        "power_plant": {
+          "lat": 34.5,
+          "lon": 69.2,
+          "name": "Naghlu Dam Power"
+        },
+        "water_treatment": {
+          "lat": 34.5,
+          "lon": 69.2,
+          "name": "Kabul Water Authority"
+        },
+        "hospital": {
+          "lat": 34.5,
+          "lon": 69.2,
+          "name": "Wazir Akbar Khan Hospital"
+        },
+        "telecom_tower": {
+          "lat": 36.7,
+          "lon": 67.1,
+          "name": "Mazar-i-Sharif Relay"
+        },
+        "transport_hub": {
+          "lat": 34.5,
+          "lon": 69.2,
+          "name": "Kabul International Airport"
+        },
+        "fuel_depot": {
+          "lat": 31.6,
+          "lon": 65.7,
+          "name": "Kandahar Fuel Depot"
+        },
+        "shelter": {
+          "lat": 34.4,
+          "lon": 62.2,
+          "name": "Herat Emergency Centre"
+        },
+        "command_center": {
+          "lat": 34.5,
+          "lon": 69.2,
+          "name": "Kabul Crisis Coordination"
+        }
+      },
+      "population_zones": [
+        {
+          "lat": 34.5,
+          "lon": 69.2,
+          "name": "Kabul",
+          "population": 4600000
+        },
+        {
+          "lat": 36.7,
+          "lon": 67.1,
+          "name": "Mazar-i-Sharif",
+          "population": 500000
+        },
+        {
+          "lat": 34.4,
+          "lon": 62.2,
+          "name": "Herat",
+          "population": 600000
+        }
+      ]
+    },
+    "Yemen": {
+      "map_center": [
+        15.6,
+        48.5
+      ],
+      "map_zoom": 6,
+      "assets": {
+        "power_plant": {
+          "lat": 15.4,
+          "lon": 44.2,
+          "name": "Marib Gas Power"
+        },
+        "water_treatment": {
+          "lat": 15.4,
+          "lon": 44.2,
+          "name": "Sana'a Water Authority"
+        },
+        "hospital": {
+          "lat": 15.4,
+          "lon": 44.2,
+          "name": "Al-Thawra Hospital"
+        },
+        "telecom_tower": {
+          "lat": 14.8,
+          "lon": 42.9,
+          "name": "Hodeidah Relay Tower"
+        },
+        "transport_hub": {
+          "lat": 12.8,
+          "lon": 45.0,
+          "name": "Aden Port"
+        },
+        "fuel_depot": {
+          "lat": 14.5,
+          "lon": 49.1,
+          "name": "Mukalla Oil Terminal"
+        },
+        "shelter": {
+          "lat": 15.6,
+          "lon": 48.5,
+          "name": "Dhamar Emergency Centre"
+        },
+        "command_center": {
+          "lat": 15.4,
+          "lon": 44.2,
+          "name": "Sana'a Civil Command"
+        }
+      },
+      "population_zones": [
+        {
+          "lat": 15.4,
+          "lon": 44.2,
+          "name": "Sana'a",
+          "population": 3900000
+        },
+        {
+          "lat": 12.8,
+          "lon": 45.0,
+          "name": "Aden",
+          "population": 900000
+        },
+        {
+          "lat": 14.8,
+          "lon": 42.9,
+          "name": "Hodeidah",
+          "population": 700000
+        }
+      ]
+    },
+    "Cuba": {
+      "map_center": [
+        21.5,
+        -79.5
+      ],
+      "map_zoom": 7,
+      "assets": {
+        "power_plant": {
+          "lat": 20.0,
+          "lon": -75.8,
+          "name": "Renté Thermoelectric"
+        },
+        "water_treatment": {
+          "lat": 23.1,
+          "lon": -82.4,
+          "name": "Havana Water Authority"
+        },
+        "hospital": {
+          "lat": 23.1,
+          "lon": -82.4,
+          "name": "Hospital Hermanos Ameijeiras"
+        },
+        "telecom_tower": {
+          "lat": 22.2,
+          "lon": -80.4,
+          "name": "Santa Clara Relay Tower"
+        },
+        "transport_hub": {
+          "lat": 23.0,
+          "lon": -82.4,
+          "name": "Havana Port"
+        },
+        "fuel_depot": {
+          "lat": 23.1,
+          "lon": -81.6,
+          "name": "Matanzas Oil Terminal"
+        },
+        "shelter": {
+          "lat": 20.0,
+          "lon": -75.8,
+          "name": "Santiago Emergency Centre"
+        },
+        "command_center": {
+          "lat": 23.1,
+          "lon": -82.4,
+          "name": "Havana Civil Defence HQ"
+        }
+      },
+      "population_zones": [
+        {
+          "lat": 23.1,
+          "lon": -82.4,
+          "name": "Havana",
+          "population": 2200000
+        },
+        {
+          "lat": 22.2,
+          "lon": -80.4,
+          "name": "Santa Clara",
+          "population": 250000
+        },
+        {
+          "lat": 20.0,
+          "lon": -75.8,
+          "name": "Santiago",
+          "population": 430000
+        }
+      ]
+    },
+    "Venezuela": {
+      "map_center": [
+        6.4,
+        -66.6
+      ],
+      "map_zoom": 6,
+      "assets": {
+        "power_plant": {
+          "lat": 7.7,
+          "lon": -62.9,
+          "name": "Guri Hydroelectric Dam"
+        },
+        "water_treatment": {
+          "lat": 10.5,
+          "lon": -66.9,
+          "name": "Caracas Water Authority"
+        },
+        "hospital": {
+          "lat": 10.5,
+          "lon": -66.9,
+          "name": "Hospital Vargas Caracas"
+        },
+        "telecom_tower": {
+          "lat": 10.2,
+          "lon": -67.6,
+          "name": "Maracay Relay Tower"
+        },
+        "transport_hub": {
+          "lat": 10.6,
+          "lon": -71.6,
+          "name": "Maracaibo Port"
+        },
+        "fuel_depot": {
+          "lat": 10.6,
+          "lon": -71.6,
+          "name": "Lake Maracaibo Terminal"
+        },
+        "shelter": {
+          "lat": 8.6,
+          "lon": -70.2,
+          "name": "Barinas Emergency Centre"
+        },
+        "command_center": {
+          "lat": 10.5,
+          "lon": -66.9,
+          "name": "Caracas CONRED HQ"
+        }
+      },
+      "population_zones": [
+        {
+          "lat": 10.5,
+          "lon": -66.9,
+          "name": "Caracas",
+          "population": 2900000
+        },
+        {
+          "lat": 10.6,
+          "lon": -71.6,
+          "name": "Maracaibo",
+          "population": 2200000
+        },
+        {
+          "lat": 10.2,
+          "lon": -67.6,
+          "name": "Maracay",
+          "population": 1100000
+        }
+      ]
+    },
+    "Israel": {
+      "map_center": [
+        31.0,
+        34.9
+      ],
+      "map_zoom": 8,
+      "assets": {
+        "power_plant": {
+          "lat": 31.9,
+          "lon": 34.7,
+          "name": "Rutenberg Power Station"
+        },
+        "water_treatment": {
+          "lat": 32.1,
+          "lon": 34.9,
+          "name": "National Water Carrier"
+        },
+        "hospital": {
+          "lat": 32.1,
+          "lon": 34.8,
+          "name": "Ichilov Hospital Tel Aviv"
+        },
+        "telecom_tower": {
+          "lat": 31.8,
+          "lon": 35.2,
+          "name": "Jerusalem Relay Tower"
+        },
+        "transport_hub": {
+          "lat": 32.0,
+          "lon": 34.9,
+          "name": "Ben Gurion Airport"
+        },
+        "fuel_depot": {
+          "lat": 29.6,
+          "lon": 34.9,
+          "name": "Eilat Oil Terminal"
+        },
+        "shelter": {
+          "lat": 32.8,
+          "lon": 35.0,
+          "name": "Haifa Emergency Centre"
+        },
+        "command_center": {
+          "lat": 31.8,
+          "lon": 35.2,
+          "name": "Jerusalem NEMA HQ"
+        }
+      },
+      "population_zones": [
+        {
+          "lat": 32.1,
+          "lon": 34.8,
+          "name": "Tel Aviv",
+          "population": 4000000
+        },
+        {
+          "lat": 31.8,
+          "lon": 35.2,
+          "name": "Jerusalem",
+          "population": 900000
+        },
+        {
+          "lat": 32.8,
+          "lon": 35.0,
+          "name": "Haifa",
+          "population": 600000
+        }
+      ]
+    },
+    "Singapore": {
+      "map_center": [
+        1.35,
+        103.82
+      ],
+      "map_zoom": 12,
+      "assets": {
+        "power_plant": {
+          "lat": 1.26,
+          "lon": 103.96,
+          "name": "Tuas Power Plant"
+        },
+        "water_treatment": {
+          "lat": 1.37,
+          "lon": 103.74,
+          "name": "Chestnut Avenue WRP"
+        },
+        "hospital": {
+          "lat": 1.3,
+          "lon": 103.84,
+          "name": "Singapore General Hospital"
+        },
+        "telecom_tower": {
+          "lat": 1.28,
+          "lon": 103.85,
+          "name": "Bukit Timah Relay"
+        },
+        "transport_hub": {
+          "lat": 1.36,
+          "lon": 103.99,
+          "name": "Changi Airport Logistics"
+        },
+        "fuel_depot": {
+          "lat": 1.26,
+          "lon": 103.74,
+          "name": "Jurong Island Terminal"
+        },
+        "shelter": {
+          "lat": 1.44,
+          "lon": 103.79,
+          "name": "Woodlands Emergency Centre"
+        },
+        "command_center": {
+          "lat": 1.3,
+          "lon": 103.85,
+          "name": "SCDF HQ"
+        }
+      },
+      "population_zones": [
+        {
+          "lat": 1.35,
+          "lon": 103.82,
+          "name": "Central Singapore",
+          "population": 2000000
+        },
+        {
+          "lat": 1.44,
+          "lon": 103.79,
+          "name": "North Region",
+          "population": 600000
+        },
+        {
+          "lat": 1.32,
+          "lon": 103.94,
+          "name": "East Region",
+          "population": 700000
+        }
+      ]
+    },
+    "Switzerland": {
+      "map_center": [
+        46.8,
+        8.2
+      ],
+      "map_zoom": 8,
+      "assets": {
+        "power_plant": {
+          "lat": 47.6,
+          "lon": 8.2,
+          "name": "Leibstadt Nuclear Plant"
+        },
+        "water_treatment": {
+          "lat": 47.4,
+          "lon": 8.5,
+          "name": "Zürich Water Authority"
+        },
+        "hospital": {
+          "lat": 47.4,
+          "lon": 8.5,
+          "name": "UniversitätsSpital Zürich"
+        },
+        "telecom_tower": {
+          "lat": 46.9,
+          "lon": 7.4,
+          "name": "Bern Relay Tower"
+        },
+        "transport_hub": {
+          "lat": 47.5,
+          "lon": 8.6,
+          "name": "Zürich Airport Freight"
+        },
+        "fuel_depot": {
+          "lat": 47.1,
+          "lon": 8.3,
+          "name": "Lucerne Fuel Reserve"
+        },
+        "shelter": {
+          "lat": 46.2,
+          "lon": 7.4,
+          "name": "Sion Emergency Centre"
+        },
+        "command_center": {
+          "lat": 46.9,
+          "lon": 7.4,
+          "name": "Bern Federal Crisis Cell"
+        }
+      },
+      "population_zones": [
+        {
+          "lat": 47.4,
+          "lon": 8.5,
+          "name": "Zürich",
+          "population": 1400000
+        },
+        {
+          "lat": 46.9,
+          "lon": 7.4,
+          "name": "Bern",
+          "population": 430000
+        },
+        {
+          "lat": 46.2,
+          "lon": 6.1,
+          "name": "Geneva",
+          "population": 600000
+        }
+      ]
+    },
+    "Ethiopia": {
+      "map_center": [
+        9.1,
+        40.5
+      ],
+      "map_zoom": 6,
+      "assets": {
+        "power_plant": {
+          "lat": 11.2,
+          "lon": 37.9,
+          "name": "Grand Ethiopian Renaissance Dam"
+        },
+        "water_treatment": {
+          "lat": 9.0,
+          "lon": 38.7,
+          "name": "Addis Ababa Water Authority"
+        },
+        "hospital": {
+          "lat": 9.0,
+          "lon": 38.7,
+          "name": "Black Lion Hospital"
+        },
+        "telecom_tower": {
+          "lat": 9.0,
+          "lon": 38.7,
+          "name": "Addis Ababa Relay Tower"
+        },
+        "transport_hub": {
+          "lat": 8.9,
+          "lon": 38.8,
+          "name": "Bole International Airport"
+        },
+        "fuel_depot": {
+          "lat": 11.6,
+          "lon": 37.4,
+          "name": "Bahir Dar Fuel Depot"
+        },
+        "shelter": {
+          "lat": 13.5,
+          "lon": 39.5,
+          "name": "Mekelle Emergency Centre"
+        },
+        "command_center": {
+          "lat": 9.0,
+          "lon": 38.7,
+          "name": "Addis Ababa NDRMC HQ"
+        }
+      },
+      "population_zones": [
+        {
+          "lat": 9.0,
+          "lon": 38.7,
+          "name": "Addis Ababa",
+          "population": 4800000
+        },
+        {
+          "lat": 11.6,
+          "lon": 37.4,
+          "name": "Bahir Dar",
+          "population": 350000
+        },
+        {
+          "lat": 13.5,
+          "lon": 39.5,
+          "name": "Mekelle",
+          "population": 320000
+        }
+      ]
+    },
+    "South Africa": {
+      "map_center": [
+        -28.5,
+        24.7
+      ],
+      "map_zoom": 5,
+      "assets": {
+        "power_plant": {
+          "lat": -26.1,
+          "lon": 29.0,
+          "name": "Duvha Coal Power Station"
+        },
+        "water_treatment": {
+          "lat": -26.2,
+          "lon": 28.0,
+          "name": "Johannesburg Water"
+        },
+        "hospital": {
+          "lat": -26.2,
+          "lon": 28.0,
+          "name": "Charlotte Maxeke Hospital"
+        },
+        "telecom_tower": {
+          "lat": -33.9,
+          "lon": 18.4,
+          "name": "Cape Town Relay Tower"
+        },
+        "transport_hub": {
+          "lat": -29.9,
+          "lon": 31.1,
+          "name": "Durban Port"
+        },
+        "fuel_depot": {
+          "lat": -29.9,
+          "lon": 31.1,
+          "name": "Durban Oil Terminal"
+        },
+        "shelter": {
+          "lat": -25.8,
+          "lon": 28.3,
+          "name": "Pretoria Emergency Centre"
+        },
+        "command_center": {
+          "lat": -25.8,
+          "lon": 28.3,
+          "name": "Pretoria NDMC HQ"
+        }
+      },
+      "population_zones": [
+        {
+          "lat": -26.2,
+          "lon": 28.0,
+          "name": "Johannesburg",
+          "population": 5600000
+        },
+        {
+          "lat": -33.9,
+          "lon": 18.4,
+          "name": "Cape Town",
+          "population": 4600000
+        },
+        {
+          "lat": -29.9,
+          "lon": 31.1,
+          "name": "Durban",
+          "population": 3700000
+        }
+      ]
+    }
+  }
+}
