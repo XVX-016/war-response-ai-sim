@@ -1,8 +1,8 @@
-@tailwind base;
+﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
 
 :root {
   --bg-base:    #0A0A0A;
@@ -19,8 +19,38 @@
 body {
   background-color: #0A0A0A;
   color: #F5F5F5;
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-weight: 300;
   -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.font-mono,
+[class*="font-mono"],
+code, pre,
+[data-metric],
+[data-value] {
+  font-family: "Space Mono", "IBM Plex Mono", ui-monospace, monospace !important;
+}
+
+.label-caps {
+  font-family: "Space Mono", monospace;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #525252;
+}
+
+.data-value {
+  font-family: "Space Mono", monospace;
+  font-weight: 400;
+  letter-spacing: -0.02em;
 }
 
 ::-webkit-scrollbar { width: 5px; }
@@ -28,3 +58,18 @@ body {
 ::-webkit-scrollbar-thumb { background: #333333; border-radius: 3px; }
 
 ::selection { background: rgba(59,130,246,0.3); color: #F5F5F5; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes heroSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes heroFloat {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-6px) scale(1.01); }
+}

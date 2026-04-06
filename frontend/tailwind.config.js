@@ -24,8 +24,8 @@ module.exports = {
         boros: "#F59E0B",
       },
       fontFamily: {
-        mono: ["JetBrains Mono", "Fira Code", "ui-monospace", "monospace"],
-        sans: ["Inter", "system-ui", "sans-serif"],
+        sans: ['"Space Grotesk"', "system-ui", "sans-serif"],
+        mono: ['"Space Mono"', '"IBM Plex Mono"', "ui-monospace", "monospace"],
       },
       borderRadius: {
         DEFAULT: "4px",

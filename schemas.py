@@ -29,6 +29,9 @@ class Asset(BaseModel):
     reinforced_turns_remaining: int = 0
     hidden_damage: float = 0.0          # revealed only after Inspect action
     last_inspected_turn: Optional[int] = None
+    lat: Optional[float] = None
+    lon: Optional[float] = None
+    geo_name: Optional[str] = None
 
     # Derived helpers — call these instead of reading health directly
     def health_fraction(self) -> float:
@@ -73,6 +76,8 @@ class PopulationZone(BaseModel):
     mortality_risk: float = 0.0     # 0–1 risk score this turn
     service_coverage: float = 1.0   # 0–1 weighted fraction of services available
     # IDs of assets that serve this zone
+    lat: Optional[float] = None
+    lon: Optional[float] = None
     served_by_asset_ids: List[str] = Field(default_factory=list)
 
     def displacement_fraction(self) -> float:
@@ -214,6 +219,7 @@ class ScenarioState(BaseModel):
 
     # Event log (all turns)
     event_log: List[SimEvent] = Field(default_factory=list)
+    diplomatic_state: Optional["DiplomaticState"] = None
 
     # Convenience helpers
     def get_asset(self, asset_id: str) -> Optional[Asset]:
@@ -310,6 +316,38 @@ class AgentObservation(BaseModel):
 # ─────────────────────────────────────────────────────────────────────────────
 # 10. VISION DETECTION (optional adapter)
 # ─────────────────────────────────────────────────────────────────────────────
+
+class BilateralRelation(BaseModel):
+    """Live diplomatic relation between exactly two nations."""
+    nation_a: str
+    nation_b: str
+    trade_volume: float = 0.3
+    tension: float = 0.0
+    sanctions_active: bool = False
+    aid_active: bool = False
+    last_event_turn: int = 0
+    last_event_type: str = ""
+
+
+class DiplomaticState(BaseModel):
+    """Live diplomatic and economic state stored inside ScenarioState."""
+    gdp_index: Dict[str, float] = Field(default_factory=dict)
+    alliance_strength: Dict[str, float] = Field(default_factory=dict)
+    relations: Dict[str, BilateralRelation] = Field(default_factory=dict)
+    trade_received: Dict[str, Dict[str, float]] = Field(default_factory=dict)
+    aid_received: Dict[str, Dict[str, float]] = Field(default_factory=dict)
+    sanctions_penalty: Dict[str, float] = Field(default_factory=dict)
+    events_this_turn: List[str] = Field(default_factory=list)
+
+    def relation_key(self, a: str, b: str) -> str:
+        return "::".join(sorted([a, b]))
+
+    def get_relation(self, a: str, b: str) -> BilateralRelation:
+        key = self.relation_key(a, b)
+        if key not in self.relations:
+            self.relations[key] = BilateralRelation(nation_a=a, nation_b=b)
+        return self.relations[key]
+
 
 class Detection(BaseModel):
     """Single bounding-box detection from YOLOv8."""

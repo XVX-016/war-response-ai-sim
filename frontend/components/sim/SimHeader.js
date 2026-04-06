@@ -1,16 +1,17 @@
 "use client"
 
 export default function SimHeader({ scenarioName, turn, maxTurns, coverage = {} }) {
-  const coverageValues = Object.values(coverage || {})
-  const coverageA = coverageValues[0] ?? 1
-  const coverageB = coverageValues[1] ?? 1
+  const coverageA = coverage?.Auria ?? 1
+  const coverageB = coverage?.Boros ?? 1
+  const bothStable = coverageA > 0.7 && coverageB > 0.7
+  const anyCritical = coverageA < 0.5 || coverageB < 0.5
 
   let dotColour = "#F59E0B"
   let dotLabel = "Active"
-  if (coverageA > 0.7 && coverageB > 0.7) {
+  if (bothStable) {
     dotColour = "#22C55E"
     dotLabel = "Stable"
-  } else if (coverageA < 0.5 || coverageB < 0.5) {
+  } else if (anyCritical) {
     dotColour = "#EF4444"
     dotLabel = "Critical"
   }

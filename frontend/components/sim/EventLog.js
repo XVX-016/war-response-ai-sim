@@ -1,15 +1,22 @@
-"use client"
+﻿"use client"
 
-import { useMemo, useState } from "react"
+import { useState } from "react"
+import { useSimStore } from "@/store/simStore"
 
-const EVENT_TYPE_BG = {
-  action_complete: "#1E3A5F",
-  action_queued: "#1E3A5F",
-  action_rejected: "#3B0000",
-  consequence: "#3B2500",
-  exogenous: "#2D1B69",
-  alliance_resupply: "#14292A",
-  end_condition: "#14291A",
+const FILTERS = ["All", "Critical", "Warnings", "Actions", "Consequences"]
+
+const EVENT_TYPE_COLOURS = {
+  action_complete: { bg: "#1E3A5F", text: "#93C5FD" },
+  action_queued: { bg: "#1E3A5F", text: "#93C5FD" },
+  action_rejected: { bg: "#3B0000", text: "#FCA5A5" },
+  consequence: { bg: "#3B2500", text: "#FCD34D" },
+  exogenous: { bg: "#2D1B69", text: "#C4B5FD" },
+  alliance_resupply: { bg: "#14292A", text: "#6EE7B7" },
+  end_condition: { bg: "#14291A", text: "#86EFAC" },
+  dependency_penalty: { bg: "#2D1A00", text: "#FB923C" },
+  displacement: { bg: "#3B0000", text: "#FCA5A5" },
+  mortality_risk: { bg: "#3B0000", text: "#FCA5A5" },
+  default: { bg: "#1A1A1A", text: "#A3A3A3" },
 }
 
 const SEVERITY_BORDER = {
@@ -18,52 +25,94 @@ const SEVERITY_BORDER = {
   info: "#3B82F6",
 }
 
-function normaliseEvents(events) {
-  return [...(events || [])].sort((a, b) => b.turn - a.turn)
-}
-
-export default function EventLog({ events }) {
+export default function EventLog({ events = [] }) {
   const [filter, setFilter] = useState("All")
+  const lastNarrative = useSimStore((s) => s.lastNarrative)
+  const narrativeHistory = useSimStore((s) => s.narrativeHistory)
+  const lastTurn = useSimStore((s) => s.simState?.turn ?? 0)
 
-  const filtered = useMemo(() => {
-    return normaliseEvents(events).filter((event) => {
+  const filtered = events
+    .slice()
+    .reverse()
+    .filter((event) => {
+      if (filter === "All") return true
       if (filter === "Critical") return event.severity === "critical"
       if (filter === "Warnings") return event.severity === "warning"
-      if (filter === "Actions") return String(event.event_type || "").startsWith("action_")
+      if (filter === "Actions") return event.event_type?.startsWith("action_")
+      if (filter === "Consequences") return event.event_type === "consequence"
       return true
     })
-  }, [events, filter])
-
-  const filters = ["All", "Critical", "Warnings", "Actions"]
 
   return (
-    <div>
-      <div className="flex gap-2 mb-4 flex-wrap">
-        {filters.map((name) => (
+    <div className="flex h-full flex-col">
+      {lastNarrative ? (
+        <div style={{ borderLeft: "3px solid #3B82F6", background: "#0D1B2A", borderRadius: "0 4px 4px 0", padding: "12px 14px", marginBottom: "16px" }}>
+          <div style={{ fontFamily: "monospace", fontSize: "9px", letterSpacing: "0.12em", textTransform: "uppercase", color: "#3B82F6", marginBottom: "6px" }}>
+            AI Summary · Turn {lastTurn}
+          </div>
+          <p style={{ fontSize: "12px", color: "#D4D4D4", lineHeight: "1.6", fontStyle: "italic" }}>{lastNarrative}</p>
+        </div>
+      ) : null}
+
+      {narrativeHistory.length > 1 ? (
+        <details style={{ marginBottom: "12px" }}>
+          <summary style={{ fontSize: "10px", fontFamily: "monospace", color: "#525252", cursor: "pointer", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+            Previous summaries ({narrativeHistory.length - 1})
+          </summary>
+          <div style={{ marginTop: "8px" }}>
+            {[...narrativeHistory].reverse().slice(1).map(({ turn, text }) => (
+              <div key={`${turn}-${text.slice(0, 12)}`} style={{ padding: "8px 0", borderBottom: "1px solid #1F1F1F", fontSize: "11px", color: "#525252", lineHeight: "1.5" }}>
+                <span style={{ fontFamily: "monospace", fontSize: "9px", color: "#333333", marginRight: "8px" }}>T{String(turn).padStart(2, "0")}</span>
+                {text}
+              </div>
+            ))}
+          </div>
+        </details>
+      ) : null}
+
+      <div className="mb-3 flex flex-wrap gap-1">
+        {FILTERS.map((item) => (
           <button
-            key={name}
-            onClick={() => setFilter(name)}
-            className={`px-3 py-1 text-[11px] uppercase font-mono tracking-[0.15em] rounded border transition-colors ${filter === name ? "text-white border-[#3B82F6] bg-[#212020]" : "text-[#525252] border-[#333333] hover:text-[#A3A3A3]"}`}
+            key={item}
+            onClick={() => setFilter(item)}
+            className={`rounded border px-2 py-1 text-[10px] font-mono uppercase tracking-wider transition-colors ${
+              filter === item ? "border-[#3B82F6] bg-[#212020] text-[#F5F5F5]" : "border-[#333333] bg-transparent text-[#525252]"
+            }`}
           >
-            {name}
+            {item}
           </button>
         ))}
+        <span className="ml-auto self-center text-[10px] font-mono text-[#525252]">{filtered.length} events</span>
       </div>
-      <div className="max-h-[560px] overflow-y-auto pr-1">
-        {filtered.length === 0 ? <div className="text-[#525252] font-mono text-sm">No events yet.</div> : null}
+
+      {!lastNarrative && narrativeHistory.length === 0 ? (
+        <p style={{ fontSize: "10px", fontFamily: "monospace", color: "#333333", marginBottom: "12px", letterSpacing: "0.06em" }}>
+          Set ANTHROPIC_API_KEY in .env to enable AI turn summaries
+        </p>
+      ) : null}
+
+      {filtered.length === 0 && (
+        <div className="flex flex-1 items-center justify-center">
+          <p className="text-xs font-mono text-[#525252]">
+            {events.length === 0 ? "No events yet — advance a turn to begin" : "No events match this filter"}
+          </p>
+        </div>
+      )}
+
+      <div className="flex-1 space-y-1 overflow-y-auto">
         {filtered.map((event, index) => {
-          const evtType = event.event_type || "info"
-          const borderColour = SEVERITY_BORDER[event.severity] || "#333333"
-          const tagBg = EVENT_TYPE_BG[evtType] || "#1A1A1A"
+          const typeStyle = EVENT_TYPE_COLOURS[event.event_type] ?? EVENT_TYPE_COLOURS.default
+          const borderCol = SEVERITY_BORDER[event.severity] ?? SEVERITY_BORDER.info
           return (
-            <div key={`${event.turn}-${index}-${evtType}`} className="mb-1 rounded-r-sm bg-[#0A0A0A] px-3 py-2 hover:bg-[#212020]" style={{ borderLeft: `3px solid ${borderColour}` }}>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="font-mono text-[10px] text-[#525252] min-w-[32px]">T{String(event.turn).padStart(2, "0")}</span>
-                <span className="px-1.5 py-[1px] rounded-sm text-[10px] uppercase tracking-[0.05em] text-[#A3A3A3]" style={{ backgroundColor: tagBg }}>
-                  {evtType.replaceAll("_", " ")}
+            <div key={`${event.turn ?? 0}-${index}-${event.event_type ?? "event"}`} className="cursor-default flex flex-col gap-1 bg-[#0A0A0A] px-3 py-2 transition-colors hover:bg-[#212020]" style={{ borderLeft: `3px solid ${borderCol}` }}>
+              <div className="flex items-center gap-2">
+                <span className="min-w-[28px] font-mono text-[10px] text-[#525252]">T{String(event.turn ?? 0).padStart(2, "0")}</span>
+                <span className="rounded-sm px-1.5 py-0.5 text-[10px] font-mono font-medium uppercase tracking-wider" style={{ background: typeStyle.bg, color: typeStyle.text }}>
+                  {(event.event_type ?? "event").replace(/_/g, " ")}
                 </span>
+                {event.nation ? <span className="text-[10px] font-mono text-[#525252]">{event.nation}</span> : null}
               </div>
-              <div className="text-[12px] text-[#D4D4D4] leading-relaxed">{event.description}</div>
+              <p className="pl-[36px] text-[12px] font-light leading-snug text-[#D4D4D4]">{event.description}</p>
             </div>
           )
         })}

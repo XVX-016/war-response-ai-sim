@@ -1,205 +1,148 @@
 "use client"
 
-import { OrbitControls, useTexture } from "@react-three/drei"
-import { Canvas, useFrame } from "@react-three/fiber"
-import { Suspense, useMemo, useRef } from "react"
+import { Canvas, useFrame, useLoader } from "@react-three/fiber"
+import { TextureLoader } from "three"
+import { Suspense, useEffect, useRef, useState } from "react"
 import * as THREE from "three"
 
-function EarthBody() {
-  const earthRef = useRef(null)
+function canCreateRenderer() {
+  if (typeof window === "undefined") return false
+  try {
+    const canvas = document.createElement("canvas")
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: false,
+      alpha: true,
+      powerPreference: "default",
+      failIfMajorPerformanceCaveat: false,
+      stencil: false,
+    })
+    renderer.dispose()
+    return true
+  } catch {
+    return false
+  }
+}
+
+function HeroFallback() {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center overflow-hidden bg-[#0A0A0A]">
+      <div className="relative h-[520px] w-[520px]">
+        <div
+          className="absolute inset-0 overflow-hidden rounded-full border border-[#1D4ED8]/18"
+          style={{
+            backgroundImage: "url(https://unpkg.com/three-globe@2.30.0/example/img/earth-blue-marble.jpg)",
+            backgroundSize: "220% 100%",
+            backgroundRepeat: "repeat-x",
+            backgroundPosition: "50% 50%",
+            filter: "saturate(1.08) contrast(1.1)",
+            boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.02), 0 0 42px rgba(59,130,246,0.08)",
+            animation: "heroFloat 10s ease-in-out infinite",
+          }}
+        />
+        <div
+          className="absolute inset-0 rounded-full"
+          style={{
+            background: "radial-gradient(circle at 30% 24%, rgba(255,255,255,0.46) 0%, rgba(255,255,255,0.18) 10%, rgba(255,255,255,0.06) 18%, transparent 32%)",
+            mixBlendMode: "screen",
+          }}
+        />
+        <div
+          className="absolute inset-0 rounded-full"
+          style={{
+            background: "radial-gradient(ellipse 78% 92% at 68% 52%, rgba(0,0,0,0) 34%, rgba(0,0,0,0.14) 52%, rgba(0,0,0,0.38) 70%, rgba(0,0,0,0.78) 100%)",
+          }}
+        />
+        <div
+          className="absolute inset-[-2.5%] rounded-full opacity-75"
+          style={{
+            background: "radial-gradient(circle at 50% 50%, transparent 64%, rgba(59,130,246,0.10) 78%, rgba(59,130,246,0.22) 88%, transparent 100%)",
+          }}
+        />
+      </div>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.10),transparent_50%)]" />
+      <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#0A0A0A] to-transparent pointer-events-none" />
+    </div>
+  )
+}
+
+function Globe() {
+  const meshRef = useRef(null)
   const atmosphereRef = useRef(null)
-  const texture = useTexture("https://unpkg.com/three-globe@2.30.0/example/img/earth-blue-marble.jpg")
+  const texture = useLoader(TextureLoader, "https://unpkg.com/three-globe@2.30.0/example/img/earth-blue-marble.jpg")
+  const [targetRotation, setTargetRotation] = useState({ x: 0.12, y: 0.15 })
 
   useFrame(() => {
-    if (earthRef.current) earthRef.current.rotation.y += 0.0008
-    if (atmosphereRef.current) atmosphereRef.current.rotation.y += 0.0008
+    if (!meshRef.current || !atmosphereRef.current) return
+    meshRef.current.rotation.y += 0.002
+    meshRef.current.rotation.x += (targetRotation.x - meshRef.current.rotation.x) * 0.08
+    meshRef.current.rotation.y += (targetRotation.y - meshRef.current.rotation.y) * 0.04
+    atmosphereRef.current.rotation.x = meshRef.current.rotation.x
+    atmosphereRef.current.rotation.y = meshRef.current.rotation.y
   })
-
-  return (
-    <group rotation={[0, 0, 0.41]}>
-      <mesh ref={earthRef}>
-        <sphereGeometry args={[2, 64, 64]} />
-        <meshPhongMaterial map={texture} />
-      </mesh>
-      <mesh ref={atmosphereRef}>
-        <sphereGeometry args={[2.05, 64, 64]} />
-        <meshPhongMaterial color="#3B82F6" transparent opacity={0.08} side={THREE.BackSide} />
-      </mesh>
-      <DataArcs />
-      <NodeMarkers />
-    </group>
-  )
-}
-
-function Satellite({ orbitRadius, orbitSpeed, inclination }) {
-  const ref = useRef(null)
-  const angleRef = useRef(Math.random() * Math.PI * 2)
-
-  const trail = useMemo(() => {
-    const positions = []
-    for (let i = 0; i <= 128; i += 1) {
-      const angle = (i / 128) * Math.PI * 2
-      positions.push(
-        Math.cos(angle) * orbitRadius,
-        Math.sin(angle) * inclination * orbitRadius,
-        Math.sin(angle) * orbitRadius * Math.cos(inclination)
-      )
-    }
-    return new Float32Array(positions)
-  }, [inclination, orbitRadius])
-
-  useFrame(() => {
-    angleRef.current += orbitSpeed
-    const angle = angleRef.current
-    const x = Math.cos(angle) * orbitRadius
-    const y = Math.sin(angle) * inclination * orbitRadius
-    const z = Math.sin(angle) * orbitRadius * Math.cos(inclination)
-    if (ref.current) {
-      ref.current.position.set(x, y, z)
-      ref.current.lookAt(0, 0, 0)
-    }
-  })
-
-  return (
-    <>
-      <line>
-        <bufferGeometry>
-          <bufferAttribute attach="attributes-position" array={trail} count={trail.length / 3} itemSize={3} />
-        </bufferGeometry>
-        <lineBasicMaterial color="#1D4ED8" transparent opacity={0.15} />
-      </line>
-      <group ref={ref}>
-        <mesh>
-          <boxGeometry args={[0.04, 0.04, 0.12]} />
-          <meshStandardMaterial color="#A3A3A3" />
-        </mesh>
-        <mesh position={[-0.1, 0, 0]}>
-          <boxGeometry args={[0.12, 0.02, 0.04]} />
-          <meshStandardMaterial color="#1D4ED8" />
-        </mesh>
-        <mesh position={[0.1, 0, 0]}>
-          <boxGeometry args={[0.12, 0.02, 0.04]} />
-          <meshStandardMaterial color="#1D4ED8" />
-        </mesh>
-      </group>
-    </>
-  )
-}
-
-function NodeMarkers() {
-  const group = useRef(null)
-  const nodes = useMemo(
-    () => [
-      { pos: [0.8, 1.8, 0.9], color: "#22C55E", offset: 0 },
-      { pos: [-1.2, 1.6, 1.1], color: "#F59E0B", offset: 1 },
-      { pos: [1.5, 1.2, -0.8], color: "#22C55E", offset: 2 },
-      { pos: [-0.6, -1.7, 1.2], color: "#F59E0B", offset: 3 },
-      { pos: [1.1, -1.5, -0.9], color: "#22C55E", offset: 4 },
-      { pos: [-1.4, 1.0, 1.3], color: "#F59E0B", offset: 5 },
-    ],
-    []
-  )
-
-  useFrame(({ clock }) => {
-    if (!group.current) return
-    group.current.children.forEach((child, idx) => {
-      const scale = 1 + Math.sin(clock.elapsedTime * 2 + nodes[idx].offset) * 0.25
-      child.scale.setScalar(scale)
-    })
-  })
-
-  return (
-    <group ref={group}>
-      {nodes.map((node, idx) => (
-        <mesh key={idx} position={node.pos}>
-          <sphereGeometry args={[0.03, 16, 16]} />
-          <meshStandardMaterial color={node.color} emissive={node.color} emissiveIntensity={0.8} />
-        </mesh>
-      ))}
-    </group>
-  )
-}
-
-function DataArcs() {
-  const arcLines = useMemo(() => {
-    const surface = [
-      new THREE.Vector3(0.8, 1.8, 0.9),
-      new THREE.Vector3(-1.2, 1.6, 1.1),
-      new THREE.Vector3(1.5, 1.2, -0.8),
-      new THREE.Vector3(-0.6, -1.7, 1.2),
-      new THREE.Vector3(1.1, -1.5, -0.9),
-      new THREE.Vector3(-1.4, 1.0, 1.3),
-    ]
-    const pairs = [
-      [surface[0], surface[2]],
-      [surface[1], surface[4]],
-      [surface[3], surface[5]],
-    ]
-    return pairs.map(([a, b]) => {
-      const mid = a.clone().add(b).multiplyScalar(0.5).normalize().multiplyScalar(2.8)
-      const curve = new THREE.CatmullRomCurve3([a, mid, b])
-      const points = curve.getPoints(40)
-      return new Float32Array(points.flatMap((point) => [point.x, point.y, point.z]))
-    })
-  }, [])
 
   return (
     <group>
-      {arcLines.map((positions, idx) => (
-        <line key={idx}>
-          <bufferGeometry>
-            <bufferAttribute attach="attributes-position" array={positions} count={positions.length / 3} itemSize={3} />
-          </bufferGeometry>
-          <lineBasicMaterial color="#3B82F6" transparent opacity={0.2} />
-        </line>
-      ))}
+      <mesh
+        ref={meshRef}
+        onPointerMove={(event) => {
+          const x = -(event.point.y / 2.5)
+          const y = event.point.x / 2.5
+          setTargetRotation({ x, y })
+        }}
+        onPointerOut={() => setTargetRotation({ x: 0.12, y: meshRef.current?.rotation.y ?? 0.15 })}
+      >
+        <sphereGeometry args={[2.15, 128, 128]} />
+        <meshStandardMaterial map={texture} roughness={1} metalness={0} />
+      </mesh>
+
+      <mesh ref={atmosphereRef}>
+        <sphereGeometry args={[2.24, 96, 96]} />
+        <meshBasicMaterial color="#3B82F6" transparent opacity={0.08} side={THREE.BackSide} />
+      </mesh>
     </group>
   )
 }
 
-function ParticleField() {
-  const ref = useRef(null)
-  const particles = useMemo(() => {
-    const positions = new Float32Array(500 * 3)
-    for (let i = 0; i < 500; i += 1) {
-      const radius = 8 + Math.random() * 4
-      const theta = Math.random() * Math.PI * 2
-      const phi = Math.acos(2 * Math.random() - 1)
-      positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta)
-      positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta)
-      positions[i * 3 + 2] = radius * Math.cos(phi)
-    }
-    return positions
-  }, [])
-
-  useFrame(() => {
-    if (ref.current) ref.current.rotation.y += 0.0001
-  })
-
+function SceneCanvas() {
   return (
-    <points ref={ref}>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" array={particles} count={particles.length / 3} itemSize={3} />
-      </bufferGeometry>
-      <pointsMaterial size={0.015} color="#1D4ED8" transparent opacity={0.3} />
-    </points>
+    <div className="absolute inset-0">
+      <Canvas
+        camera={{ position: [0, 0, 6], fov: 45 }}
+        dpr={[1, 1.25]}
+        style={{ background: "transparent" }}
+        gl={{ antialias: true, alpha: true, powerPreference: "default", failIfMajorPerformanceCaveat: false, stencil: false }}
+        onCreated={({ gl }) => {
+          gl.setClearColor(0x000000, 0)
+        }}
+      >
+        <Suspense fallback={null}>
+          <ambientLight intensity={0.7} />
+          <directionalLight position={[5, 3, 5]} intensity={2.2} />
+          <directionalLight position={[-3, -2, -5]} intensity={0.5} />
+          <Globe />
+        </Suspense>
+      </Canvas>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.08),transparent_52%)] pointer-events-none" />
+      <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#0A0A0A] to-transparent pointer-events-none" />
+    </div>
   )
 }
 
 export default function EarthScene() {
-  return (
-    <Canvas camera={{ fov: 45, position: [0, 0, 7] }} style={{ background: "transparent" }} gl={{ antialias: true, alpha: true }}>
-      <Suspense fallback={null}>
-        <EarthBody />
-        <Satellite orbitRadius={3.2} orbitSpeed={0.004} inclination={0.3} />
-        <Satellite orbitRadius={3.8} orbitSpeed={0.003} inclination={0.8} />
-        <Satellite orbitRadius={4.4} orbitSpeed={0.002} inclination={1.2} />
-        <ParticleField />
-        <ambientLight intensity={0.3} />
-        <directionalLight position={[5, 3, 5]} intensity={1.2} />
-        <pointLight position={[-5, -3, -5]} intensity={0.2} color="#1D4ED8" />
-        <OrbitControls enableZoom={false} enablePan={false} autoRotate={false} maxPolarAngle={Math.PI * 0.75} />
-      </Suspense>
-    </Canvas>
-  )
+  const [rendererReady, setRendererReady] = useState(null)
+
+  useEffect(() => {
+    setRendererReady(canCreateRenderer())
+  }, [])
+
+  if (rendererReady === null) {
+    return <div className="absolute inset-0 bg-[#0A0A0A]" />
+  }
+
+  if (!rendererReady) {
+    return <HeroFallback />
+  }
+
+  return <SceneCanvas />
 }
