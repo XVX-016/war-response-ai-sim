@@ -100,6 +100,7 @@ export default function SimulationPage() {
   const [previousState, setPreviousState] = useState(null)
   const [errorMessage, setErrorMessage] = useState("")
   const [isScenarioLoading, setIsScenarioLoading] = useState(false)
+  const [mapMode, setMapMode] = useState("auto")
 
   const scenariosQuery = useQuery({
     queryKey: ["scenarios"],
@@ -329,12 +330,40 @@ export default function SimulationPage() {
                 <LoadingGridSkeleton />
               ) : (
                 <>
-                  {simState?.metadata?.["_has_geo"] ? (
-                    <GeoMap
-                      onAssetClick={(id) => useSimStore.getState().setSelectedAsset(id)}
-                      proposedActions={proposedActions}
-                      nationFilter={nationFilter}
-                    />
+                  {simState?.metadata?.["_has_geo"]?.enabled ? (
+                    <div>
+                      <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
+                        <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#22C55E" }} />
+                        <span style={{ fontFamily: "Space Mono, monospace", fontSize: "9px", letterSpacing: "0.12em", textTransform: "uppercase", color: "#22C55E" }}>
+                          Geo Mode · {geoNations?.[simState.nations?.[0]]} vs {geoNations?.[simState.nations?.[1]]}
+                        </span>
+                        <button
+                          onClick={() => setMapMode((prev) => (prev === "geo" ? "grid" : "geo"))}
+                          style={{
+                            marginLeft: "auto",
+                            fontFamily: "Space Mono, monospace",
+                            fontSize: "9px",
+                            letterSpacing: "0.1em",
+                            textTransform: "uppercase",
+                            color: "#525252",
+                            background: "transparent",
+                            border: "none",
+                            cursor: "pointer",
+                          }}
+                        >
+                          {mapMode === "grid" ? "Switch to Geo →" : "Switch to Grid →"}
+                        </button>
+                      </div>
+                      {mapMode === "grid" ? (
+                        <GridMap simState={simState} nationFilter={nationFilter} onAssetClick={(id) => useSimStore.getState().setSelectedAsset(id)} />
+                      ) : (
+                        <GeoMap
+                          onAssetClick={(id) => useSimStore.getState().setSelectedAsset(id)}
+                          proposedActions={proposedActions}
+                          nationFilter={nationFilter}
+                        />
+                      )}
+                    </div>
                   ) : (
                     <GridMap simState={simState} nationFilter={nationFilter} onAssetClick={(id) => useSimStore.getState().setSelectedAsset(id)} />
                   )}

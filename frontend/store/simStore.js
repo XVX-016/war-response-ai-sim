@@ -19,6 +19,8 @@ export const useSimStore = create((set) => ({
   setScenario: (path, meta) => set({ scenarioPath: path, scenarioMeta: meta }),
   geoNations: {},
   setGeoNations: (geoNations) => set({ geoNations }),
+  countryCache: {},
+  setCountryCache: (cache) => set({ countryCache: cache }),
 
   simState: null,
   coverageMap: {},
@@ -101,5 +103,6 @@ export const useSimStore = create((set) => ({
       turnPhase: "idle",
       proposedActions: [],
       actionReasonings: [],
+      countryCache: {},
     }),
 }))

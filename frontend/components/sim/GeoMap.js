@@ -29,7 +29,7 @@ export default function GeoMap({ onAssetClick, proposedActions, nationFilter }) 
   const leafletRef = useRef(null)
   const markersRef = useRef({})
   const simState = useSimStore((s) => s.simState)
-  const hasGeo = simState?.metadata?.["_has_geo"] === true
+  const hasGeo = simState?.metadata?.["_has_geo"]?.enabled === true
   const nations = simState?.nations ?? []
 
   const getMapConfig = () => {

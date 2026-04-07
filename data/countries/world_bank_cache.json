@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-01-01",
+  "last_updated": "2026-04-07",
   "source": "World Bank Open Data + manual normalisation",
   "indicators": {
     "gdp_index": "NY.GDP.PCAP.CD normalised to global max",
@@ -10,35 +10,305 @@
     "alliance_strength": "NE.TRD.GNFS.ZS + treaty membership index"
   },
   "countries": {
-    "United States": {"gdp_index":0.95,"military_strength":0.85,"population_millions":331,"resource_richness":0.60,"terrain_difficulty":0.30,"alliance_strength":0.95,"region":"North America","flag":"🇺🇸"},
-    "Germany": {"gdp_index":0.88,"military_strength":0.55,"population_millions":83,"resource_richness":0.35,"terrain_difficulty":0.40,"alliance_strength":0.90,"region":"Europe","flag":"🇩🇪"},
-    "France": {"gdp_index":0.85,"military_strength":0.65,"population_millions":67,"resource_richness":0.40,"terrain_difficulty":0.45,"alliance_strength":0.88,"region":"Europe","flag":"🇫🇷"},
-    "United Kingdom": {"gdp_index":0.84,"military_strength":0.70,"population_millions":67,"resource_richness":0.45,"terrain_difficulty":0.25,"alliance_strength":0.92,"region":"Europe","flag":"🇬🇧"},
-    "Japan": {"gdp_index":0.87,"military_strength":0.45,"population_millions":125,"resource_richness":0.20,"terrain_difficulty":0.75,"alliance_strength":0.80,"region":"Asia Pacific","flag":"🇯🇵"},
-    "South Korea": {"gdp_index":0.80,"military_strength":0.65,"population_millions":52,"resource_richness":0.25,"terrain_difficulty":0.70,"alliance_strength":0.75,"region":"Asia Pacific","flag":"🇰🇷"},
-    "Australia": {"gdp_index":0.86,"military_strength":0.55,"population_millions":26,"resource_richness":0.80,"terrain_difficulty":0.20,"alliance_strength":0.85,"region":"Asia Pacific","flag":"🇦🇺"},
-    "Russia": {"gdp_index":0.55,"military_strength":0.90,"population_millions":145,"resource_richness":0.85,"terrain_difficulty":0.60,"alliance_strength":0.20,"region":"Eurasia","flag":"🇷🇺"},
-    "China": {"gdp_index":0.65,"military_strength":0.88,"population_millions":1412,"resource_richness":0.70,"terrain_difficulty":0.65,"alliance_strength":0.35,"region":"Asia","flag":"🇨🇳"},
-    "North Korea": {"gdp_index":0.10,"military_strength":0.80,"population_millions":26,"resource_richness":0.30,"terrain_difficulty":0.80,"alliance_strength":0.05,"region":"Asia","flag":"🇰🇵"},
-    "Saudi Arabia": {"gdp_index":0.72,"military_strength":0.65,"population_millions":35,"resource_richness":0.95,"terrain_difficulty":0.15,"alliance_strength":0.55,"region":"Middle East","flag":"🇸🇦"},
-    "Iran": {"gdp_index":0.40,"military_strength":0.70,"population_millions":85,"resource_richness":0.88,"terrain_difficulty":0.55,"alliance_strength":0.15,"region":"Middle East","flag":"🇮🇷"},
-    "Norway": {"gdp_index":0.92,"military_strength":0.50,"population_millions":5,"resource_richness":0.90,"terrain_difficulty":0.65,"alliance_strength":0.88,"region":"Europe","flag":"🇳🇴"},
-    "UAE": {"gdp_index":0.80,"military_strength":0.60,"population_millions":10,"resource_richness":0.92,"terrain_difficulty":0.10,"alliance_strength":0.65,"region":"Middle East","flag":"🇦🇪"},
-    "India": {"gdp_index":0.45,"military_strength":0.72,"population_millions":1380,"resource_richness":0.55,"terrain_difficulty":0.60,"alliance_strength":0.50,"region":"South Asia","flag":"🇮🇳"},
-    "Brazil": {"gdp_index":0.48,"military_strength":0.55,"population_millions":213,"resource_richness":0.75,"terrain_difficulty":0.40,"alliance_strength":0.55,"region":"South America","flag":"🇧🇷"},
-    "Nigeria": {"gdp_index":0.28,"military_strength":0.45,"population_millions":211,"resource_richness":0.70,"terrain_difficulty":0.35,"alliance_strength":0.40,"region":"Africa","flag":"🇳🇬"},
-    "Indonesia": {"gdp_index":0.42,"military_strength":0.50,"population_millions":274,"resource_richness":0.65,"terrain_difficulty":0.55,"alliance_strength":0.55,"region":"Asia Pacific","flag":"🇮🇩"},
-    "Pakistan": {"gdp_index":0.25,"military_strength":0.65,"population_millions":220,"resource_richness":0.35,"terrain_difficulty":0.70,"alliance_strength":0.35,"region":"South Asia","flag":"🇵🇰"},
-    "Ukraine": {"gdp_index":0.30,"military_strength":0.70,"population_millions":44,"resource_richness":0.55,"terrain_difficulty":0.25,"alliance_strength":0.60,"region":"Europe","flag":"🇺🇦"},
-    "Syria": {"gdp_index":0.08,"military_strength":0.40,"population_millions":21,"resource_richness":0.40,"terrain_difficulty":0.55,"alliance_strength":0.10,"region":"Middle East","flag":"🇸🇾"},
-    "Afghanistan": {"gdp_index":0.05,"military_strength":0.30,"population_millions":40,"resource_richness":0.30,"terrain_difficulty":0.90,"alliance_strength":0.08,"region":"Central Asia","flag":"🇦🇫"},
-    "Yemen": {"gdp_index":0.06,"military_strength":0.25,"population_millions":30,"resource_richness":0.35,"terrain_difficulty":0.65,"alliance_strength":0.10,"region":"Middle East","flag":"🇾🇪"},
-    "Cuba": {"gdp_index":0.22,"military_strength":0.40,"population_millions":11,"resource_richness":0.30,"terrain_difficulty":0.30,"alliance_strength":0.12,"region":"Caribbean","flag":"🇨🇺"},
-    "Venezuela": {"gdp_index":0.15,"military_strength":0.45,"population_millions":28,"resource_richness":0.80,"terrain_difficulty":0.45,"alliance_strength":0.15,"region":"South America","flag":"🇻🇪"},
-    "Israel": {"gdp_index":0.82,"military_strength":0.88,"population_millions":9,"resource_richness":0.20,"terrain_difficulty":0.35,"alliance_strength":0.60,"region":"Middle East","flag":"🇮🇱"},
-    "Singapore": {"gdp_index":0.93,"military_strength":0.60,"population_millions":6,"resource_richness":0.05,"terrain_difficulty":0.05,"alliance_strength":0.90,"region":"Asia Pacific","flag":"🇸🇬"},
-    "Switzerland": {"gdp_index":0.95,"military_strength":0.40,"population_millions":9,"resource_richness":0.20,"terrain_difficulty":0.80,"alliance_strength":0.70,"region":"Europe","flag":"🇨🇭"},
-    "Ethiopia": {"gdp_index":0.18,"military_strength":0.45,"population_millions":115,"resource_richness":0.40,"terrain_difficulty":0.65,"alliance_strength":0.35,"region":"Africa","flag":"🇪🇹"},
-    "South Africa": {"gdp_index":0.38,"military_strength":0.50,"population_millions":60,"resource_richness":0.65,"terrain_difficulty":0.35,"alliance_strength":0.55,"region":"Africa","flag":"🇿🇦"}
+    "United States": {
+      "gdp_index": 0.99,
+      "military_strength": 0.43,
+      "population_millions": 340.11,
+      "resource_richness": 0.03,
+      "terrain_difficulty": 0.38,
+      "alliance_strength": 0.01,
+      "region": "North America",
+      "flag": "🇺🇸"
+    },
+    "Germany": {
+      "gdp_index": 0.66,
+      "military_strength": 0.24,
+      "population_millions": 83.52,
+      "resource_richness": 0.0,
+      "terrain_difficulty": 0.36,
+      "alliance_strength": 0.16,
+      "region": "Europe",
+      "flag": "🇩🇪"
+    },
+    "France": {
+      "gdp_index": 0.54,
+      "military_strength": 0.26,
+      "population_millions": 68.55,
+      "resource_richness": 0.0,
+      "terrain_difficulty": 0.36,
+      "alliance_strength": 0.13,
+      "region": "Europe",
+      "flag": "🇫🇷"
+    },
+    "United Kingdom": {
+      "gdp_index": 0.62,
+      "military_strength": 0.28,
+      "population_millions": 69.23,
+      "resource_richness": 0.01,
+      "terrain_difficulty": 0.15,
+      "alliance_strength": 0.11,
+      "region": "Europe",
+      "flag": "🇬🇧"
+    },
+    "Japan": {
+      "gdp_index": 0.38,
+      "military_strength": 0.17,
+      "population_millions": 123.98,
+      "resource_richness": 0.0,
+      "terrain_difficulty": 0.76,
+      "alliance_strength": 0.07,
+      "region": "Asia Pacific",
+      "flag": "🇯🇵"
+    },
+    "South Korea": {
+      "gdp_index": 0.42,
+      "military_strength": 0.32,
+      "population_millions": 51.75,
+      "resource_richness": 0.0,
+      "terrain_difficulty": 0.71,
+      "alliance_strength": 0.17,
+      "region": "Asia Pacific",
+      "flag": "🇰🇷"
+    },
+    "Australia": {
+      "gdp_index": 0.76,
+      "military_strength": 0.24,
+      "population_millions": 27.2,
+      "resource_richness": 0.27,
+      "terrain_difficulty": 0.19,
+      "alliance_strength": 0.07,
+      "region": "Asia Pacific",
+      "flag": "🇦🇺"
+    },
+    "Russia": {
+      "gdp_index": 0.17,
+      "military_strength": 0.88,
+      "population_millions": 143.53,
+      "resource_richness": 0.37,
+      "terrain_difficulty": 0.55,
+      "alliance_strength": 0.05,
+      "region": "Eurasia",
+      "flag": "🇷🇺"
+    },
+    "China": {
+      "gdp_index": 0.15,
+      "military_strength": 0.21,
+      "population_millions": 1408.97,
+      "resource_richness": 0.03,
+      "terrain_difficulty": 0.27,
+      "alliance_strength": 0.05,
+      "region": "Asia",
+      "flag": "🇨🇳"
+    },
+    "North Korea": {
+      "gdp_index": 0.1,
+      "military_strength": 0.8,
+      "population_millions": 26.5,
+      "resource_richness": 0.3,
+      "terrain_difficulty": 0.55,
+      "alliance_strength": 0.05,
+      "region": "Asia",
+      "flag": "🇰🇵"
+    },
+    "Saudi Arabia": {
+      "gdp_index": 0.41,
+      "military_strength": 0.91,
+      "population_millions": 35.3,
+      "resource_richness": 0.51,
+      "terrain_difficulty": 0.01,
+      "alliance_strength": 0.09,
+      "region": "Middle East",
+      "flag": "🇸🇦"
+    },
+    "Iran": {
+      "gdp_index": 0.06,
+      "military_strength": 0.25,
+      "population_millions": 91.57,
+      "resource_richness": 0.61,
+      "terrain_difficulty": 0.07,
+      "alliance_strength": 0.08,
+      "region": "Middle East",
+      "flag": "🇮🇷"
+    },
+    "Norway": {
+      "gdp_index": 1.0,
+      "military_strength": 0.26,
+      "population_millions": 5.57,
+      "resource_richness": 0.2,
+      "terrain_difficulty": 0.37,
+      "alliance_strength": 0.16,
+      "region": "Europe",
+      "flag": "🇳🇴"
+    },
+    "UAE": {
+      "gdp_index": 0.59,
+      "military_strength": 0.71,
+      "population_millions": 10.99,
+      "resource_richness": 0.35,
+      "terrain_difficulty": 0.05,
+      "alliance_strength": 0.47,
+      "region": "Middle East",
+      "flag": "🇦🇪"
+    },
+    "India": {
+      "gdp_index": 0.03,
+      "military_strength": 0.28,
+      "population_millions": 1450.94,
+      "resource_richness": 0.06,
+      "terrain_difficulty": 0.27,
+      "alliance_strength": 0.06,
+      "region": "South Asia",
+      "flag": "🇮🇳"
+    },
+    "Brazil": {
+      "gdp_index": 0.12,
+      "military_strength": 0.12,
+      "population_millions": 212.0,
+      "resource_richness": 0.16,
+      "terrain_difficulty": 0.66,
+      "alliance_strength": 0.04,
+      "region": "South America",
+      "flag": "🇧🇷"
+    },
+    "Nigeria": {
+      "gdp_index": 0.01,
+      "military_strength": 0.07,
+      "population_millions": 232.68,
+      "resource_richness": 0.17,
+      "terrain_difficulty": 0.26,
+      "alliance_strength": 0.02,
+      "region": "Africa",
+      "flag": "🇳🇬"
+    },
+    "Indonesia": {
+      "gdp_index": 0.05,
+      "military_strength": 0.1,
+      "population_millions": 283.49,
+      "resource_richness": 0.1,
+      "terrain_difficulty": 0.53,
+      "alliance_strength": 0.06,
+      "region": "Asia Pacific",
+      "flag": "🇮🇩"
+    },
+    "Pakistan": {
+      "gdp_index": 0.01,
+      "military_strength": 0.33,
+      "population_millions": 251.27,
+      "resource_richness": 0.03,
+      "terrain_difficulty": 0.05,
+      "alliance_strength": 0.02,
+      "region": "South Asia",
+      "flag": "🇵🇰"
+    },
+    "Ukraine": {
+      "gdp_index": 0.06,
+      "military_strength": 1.0,
+      "population_millions": 37.86,
+      "resource_richness": 0.15,
+      "terrain_difficulty": 0.19,
+      "alliance_strength": 0.15,
+      "region": "Europe",
+      "flag": "🇺🇦"
+    },
+    "Syria": {
+      "gdp_index": 0.01,
+      "military_strength": 0.51,
+      "population_millions": 24.67,
+      "resource_richness": 0.13,
+      "terrain_difficulty": 0.03,
+      "alliance_strength": 0.04,
+      "region": "Middle East",
+      "flag": "🇸🇾"
+    },
+    "Afghanistan": {
+      "gdp_index": 0.05,
+      "military_strength": 0.23,
+      "population_millions": 42.65,
+      "resource_richness": 0.01,
+      "terrain_difficulty": 0.02,
+      "alliance_strength": 0.13,
+      "region": "Central Asia",
+      "flag": "🇦🇫"
+    },
+    "Yemen": {
+      "gdp_index": 0.0,
+      "military_strength": 0.5,
+      "population_millions": 40.58,
+      "resource_richness": 0.1,
+      "terrain_difficulty": 0.01,
+      "alliance_strength": 0.09,
+      "region": "Middle East",
+      "flag": "🇾🇪"
+    },
+    "Cuba": {
+      "gdp_index": 0.11,
+      "military_strength": 0.36,
+      "population_millions": 10.98,
+      "resource_richness": 0.01,
+      "terrain_difficulty": 0.35,
+      "alliance_strength": 0.28,
+      "region": "Caribbean",
+      "flag": "🇨🇺"
+    },
+    "Venezuela": {
+      "gdp_index": 0.04,
+      "military_strength": 0.06,
+      "population_millions": 28.41,
+      "resource_richness": 0.24,
+      "terrain_difficulty": 0.58,
+      "alliance_strength": 0.02,
+      "region": "South America",
+      "flag": "🇻🇪"
+    },
+    "Israel": {
+      "gdp_index": 0.64,
+      "military_strength": 1.0,
+      "population_millions": 9.97,
+      "resource_richness": 0.01,
+      "terrain_difficulty": 0.07,
+      "alliance_strength": 0.09,
+      "region": "Middle East",
+      "flag": "🇮🇱"
+    },
+    "Singapore": {
+      "gdp_index": 1.0,
+      "military_strength": 0.36,
+      "population_millions": 6.04,
+      "resource_richness": 0.0,
+      "terrain_difficulty": 0.23,
+      "alliance_strength": 0.8,
+      "region": "Asia Pacific",
+      "flag": "🇸🇬"
+    },
+    "Switzerland": {
+      "gdp_index": 1.0,
+      "military_strength": 0.4,
+      "population_millions": 9.01,
+      "resource_richness": 0.0,
+      "terrain_difficulty": 0.36,
+      "alliance_strength": 0.3,
+      "region": "Europe",
+      "flag": "🇨🇭"
+    },
+    "Ethiopia": {
+      "gdp_index": 0.01,
+      "military_strength": 0.08,
+      "population_millions": 132.06,
+      "resource_richness": 0.12,
+      "terrain_difficulty": 0.17,
+      "alliance_strength": 0.35,
+      "region": "Africa",
+      "flag": "🇪🇹"
+    },
+    "South Africa": {
+      "gdp_index": 0.07,
+      "military_strength": 0.09,
+      "population_millions": 64.01,
+      "resource_richness": 0.15,
+      "terrain_difficulty": 0.16,
+      "alliance_strength": 0.11,
+      "region": "Africa",
+      "flag": "🇿🇦"
+    }
   }
 }

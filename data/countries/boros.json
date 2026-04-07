@@ -1,12 +1,12 @@
 {
   "nation": "Boros",
-  "display_name": "Federal State of Boros",
-  "flag_emoji": "??",
-  "lore": "A resource-rich federal state with significant natural reserves but fragile civilian infrastructure. Boros maintains a large standing military but operates largely without external alliances.",
-  "gdp_index": 0.48,
-  "military_strength": 0.72,
-  "population_millions": 6.8,
-  "resource_richness": 0.8,
+  "display_name": "United States",
+  "flag_emoji": "\ud83c\uddfa\ud83c\uddf8",
+  "lore": "United States - North America. GDP index: 0.95, Military: 0.85.",
+  "gdp_index": 0.95,
+  "military_strength": 0.85,
+  "population_millions": 331.0,
+  "resource_richness": 0.6,
   "terrain_difficulty": 0.3,
-  "alliance_strength": 0.2
+  "alliance_strength": 0.95
 }

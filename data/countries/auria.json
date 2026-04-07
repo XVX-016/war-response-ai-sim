@@ -1,12 +1,12 @@
 {
   "nation": "Auria",
-  "display_name": "Republic of Auria",
-  "flag_emoji": "??",
-  "lore": "A mid-sized democratic republic with a diversified economy and strong civil institutions. Auria's mountainous northern border limits rapid infrastructure repair but its alliance network provides reliable resupply.",
-  "gdp_index": 0.62,
-  "military_strength": 0.48,
-  "population_millions": 4.2,
+  "display_name": "India",
+  "flag_emoji": "\ud83c\uddee\ud83c\uddf3",
+  "lore": "India - South Asia. GDP index: 0.45, Military: 0.72.",
+  "gdp_index": 0.45,
+  "military_strength": 0.72,
+  "population_millions": 1380.0,
   "resource_richness": 0.55,
   "terrain_difficulty": 0.6,
-  "alliance_strength": 0.65
+  "alliance_strength": 0.5
 }

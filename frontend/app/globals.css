@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
 
 :root {
   --bg-base:    #0A0A0A;
@@ -19,13 +19,15 @@
 body {
   background-color: #0A0A0A;
   color: #F5F5F5;
-  font-family: "Space Grotesk", system-ui, sans-serif;
-  font-weight: 300;
+  font-family: "DM Sans", system-ui, sans-serif;
+  font-weight: 400;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-optical-sizing: auto;
 }
 
 h1, h2, h3 {
-  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-family: "DM Sans", system-ui, sans-serif;
   font-weight: 700;
   letter-spacing: -0.025em;
 }
@@ -35,11 +37,13 @@ h1, h2, h3 {
 code, pre,
 [data-metric],
 [data-value] {
-  font-family: "Space Mono", "IBM Plex Mono", ui-monospace, monospace !important;
+  font-family: "DM Mono", "Fira Code", ui-monospace, monospace !important;
+  font-feature-settings: "liga" 0;
+  text-rendering: optimizeLegibility;
 }
 
 .label-caps {
-  font-family: "Space Mono", monospace;
+  font-family: "DM Mono", monospace;
   font-size: 10px;
   font-weight: 400;
   letter-spacing: 0.12em;
@@ -48,7 +52,7 @@ code, pre,
 }
 
 .data-value {
-  font-family: "Space Mono", monospace;
+  font-family: "DM Mono", monospace;
   font-weight: 400;
   letter-spacing: -0.02em;
 }
