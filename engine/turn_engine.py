@@ -48,7 +48,7 @@ def _validate_action(action: Action, state: ScenarioState) -> Optional[str]:
         if target is None:
             return f"Target asset '{action.target_asset_id}' not found"
         if target.is_destroyed and action.action_type not in ("inspect",):
-            return f"Target asset '{action.target_asset_id}' is destroyed â€” cannot act on it"
+            return f"Target asset '{action.target_asset_id}' is destroyed - cannot act on it"
         if target.asset_type not in act_cfg["valid_targets"]:
             return (
                 f"Action '{action.action_type}' not valid on asset type "
@@ -90,7 +90,7 @@ def _apply_immediate_action(
                 asset_id    = asset.id,
                 description = (
                     f"Repair complete: {asset.name} restored "
-                    f"{asset.health - hp_before:.0f} HP (â†’ {asset.health:.0f})"
+                    f"{asset.health - hp_before:.0f} HP (-> {asset.health:.0f})"
                 ),
                 tags        = ["repair"],
                 severity    = "info",
@@ -125,7 +125,7 @@ def _apply_immediate_action(
                 asset_id    = asset.id,
                 description = (
                     f"Generator deployed: {asset.name} power restored "
-                    f"+{asset.health - hp_before:.0f} HP (â†’ {asset.health:.0f})"
+                    f"+{asset.health - hp_before:.0f} HP (-> {asset.health:.0f})"
                 ),
                 tags        = ["restore_power"],
                 severity    = "info",
@@ -159,7 +159,7 @@ def _apply_immediate_action(
                 event_type  = "action_complete",
                 nation      = nation,
                 asset_id    = asset.id,
-                description = f"Supplies allocated to {asset.name} (+{hp_gain:.0f} HP â†’ {asset.health:.0f})",
+                description = f"Supplies allocated to {asset.name} (+{hp_gain:.0f} HP -> {asset.health:.0f})",
                 tags        = ["allocate_supplies"],
                 severity    = "info",
             ))
@@ -173,7 +173,7 @@ def _apply_immediate_action(
                 event_type  = "action_complete",
                 nation      = nation,
                 asset_id    = asset.id,
-                description = f"Reroute established: {asset.name} partial connectivity restored (+15 HP â†’ {asset.health:.0f})",
+                description = f"Reroute established: {asset.name} partial connectivity restored (+15 HP -> {asset.health:.0f})",
                 tags        = ["reroute"],
                 severity    = "info",
             ))
@@ -190,7 +190,7 @@ def _apply_immediate_action(
                 nation      = nation,
                 asset_id    = asset.id,
                 description = (
-                    f"Inspection complete: {asset.name} â€” health {asset.health:.0f}, "
+                    f"Inspection complete: {asset.name} - health {asset.health:.0f}, "
                     f"hidden damage revealed: {revealed:.0f}"
                 ),
                 tags        = ["inspect"],
@@ -247,7 +247,7 @@ def _apply_exogenous_events(
                         event_type  = "exogenous",
                         nation      = nation,
                         asset_id    = target.id,
-                        description = f"{evt_name.title()}: {target.name} took {damage:.0f} damage (â†’ {target.health:.0f} HP)",
+                        description = f"{evt_name.title()}: {target.name} took {damage:.0f} damage (-> {target.health:.0f} HP)",
                         tags        = [evt_name],
                         severity    = "warning" if target.health > 30 else "critical",
                     ))
@@ -369,7 +369,7 @@ def _apply_resupply(state: ScenarioState, events: List[SimEvent]) -> None:
                 turn        = state.turn,
                 event_type  = "resupply_reduced",
                 nation      = nation,
-                description = f"{nation}: resupply reduced to {factor:.0%} â€” transport hub degraded",
+                description = f"{nation}: resupply reduced to {factor:.0%} - transport hub degraded",
                 tags        = ["supply_lines_disrupted"],
                 severity    = "warning",
             ))
@@ -508,7 +508,7 @@ def step_simulation(
                 description = (
                     f"{action.action_type} queued on "
                     f"{action.target_asset_id or action.target_zone_id} "
-                    f"â€” completes in {turns_needed} turns"
+                    f"- completes in {turns_needed} turns"
                 ),
                 severity    = "info",
             ))
@@ -589,7 +589,7 @@ def step_simulation(
                 turn        = s.turn,
                 event_type  = "consequence",
                 nation      = nation,
-                description = f"{nation}: consequence active â€” {tag.replace('_', ' ')}",
+                description = f"{nation}: consequence active - {tag.replace('_', ' ')}",
                 tags        = [tag],
                 severity    = "warning" if "risk" not in tag else "critical",
             ))
@@ -666,7 +666,7 @@ def step_simulation(
     )
 
     logger.info(
-        f"Turn {s.turn} complete â€” "
+        f"Turn {s.turn} complete - "
         f"coverage: { {n: f'{v:.0%}' for n,v in service_coverage.items()} } | "
         f"displaced: {total_displaced} | "
         f"end: {end_condition_this_turn or 'none'}"

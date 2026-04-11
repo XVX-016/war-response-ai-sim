@@ -1,12 +1,12 @@
 {
   "nation": "Boros",
-  "display_name": "United States",
-  "flag_emoji": "\ud83c\uddfa\ud83c\uddf8",
-  "lore": "United States - North America. GDP index: 0.95, Military: 0.85.",
-  "gdp_index": 0.95,
-  "military_strength": 0.85,
-  "population_millions": 331.0,
-  "resource_richness": 0.6,
-  "terrain_difficulty": 0.3,
-  "alliance_strength": 0.95
+  "display_name": "China",
+  "flag_emoji": "\ud83c\udde8\ud83c\uddf3",
+  "lore": "China - Asia. GDP index: 0.15, Military: 0.21.",
+  "gdp_index": 0.15,
+  "military_strength": 0.21,
+  "population_millions": 1408.97,
+  "resource_richness": 0.03,
+  "terrain_difficulty": 0.27,
+  "alliance_strength": 0.05
 }

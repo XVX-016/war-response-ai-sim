@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { api } from "@/lib/api"
 import { useSimStore } from "@/store/simStore"
 
@@ -24,11 +24,64 @@ function deriveLabel(profile, key) {
   return ""
 }
 
+function sliderStyle(value, min, max, accentColour) {
+  const pct = ((value - min) / (max - min)) * 100
+  return {
+    background: `linear-gradient(to right, ${accentColour} 0%, ${accentColour} ${pct}%, #333333 ${pct}%, #333333 100%)`,
+    height: "3px",
+    borderRadius: "2px",
+  }
+}
+
 export default function CountrySliders({ nation, accentColour, onError }) {
   const profiles = useSimStore((s) => s.profiles)
   const setProfiles = useSimStore((s) => s.setProfiles)
   const [toast, setToast] = useState("")
   const profile = profiles?.[nation]
+
+  useEffect(() => {
+    const style = document.createElement("style")
+    style.textContent = `
+      input[type="range"] {
+        -webkit-appearance: none;
+        appearance: none;
+        height: 3px;
+        border-radius: 2px;
+        outline: none;
+        cursor: pointer;
+      }
+      input[type="range"]::-webkit-slider-track {
+        background: #333333;
+        height: 3px;
+        border-radius: 2px;
+      }
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #F5F5F5;
+        border: 2px solid #333333;
+        cursor: pointer;
+        margin-top: -5px;
+      }
+      input[type="range"]::-moz-range-track {
+        background: #333333;
+        height: 3px;
+        border-radius: 2px;
+      }
+      input[type="range"]::-moz-range-thumb {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #F5F5F5;
+        border: 2px solid #333333;
+        cursor: pointer;
+      }
+    `
+    document.head.appendChild(style)
+    return () => document.head.removeChild(style)
+  }, [])
 
   if (!profile) {
     return <div className="border border-[#333333] rounded p-6 text-[#525252]">Loading {nation}...</div>
@@ -95,12 +148,27 @@ export default function CountrySliders({ nation, accentColour, onError }) {
                   const updatedProfile = { ...profile, [factor.key]: Number(e.target.value) }
                   useSimStore.getState().updateProfile(nation, updatedProfile)
                 }}
-                className="w-full accent-current"
-                style={{ accentColor: accentColour }}
+                className="w-full"
+                style={sliderStyle(value, factor.min, factor.max, accentColour)}
               />
-              <div className="mt-2 inline-block text-[10px] font-mono uppercase tracking-[0.15em] px-2 py-1 rounded border border-[#333333] text-[#A3A3A3]">
+              <span
+                style={{
+                  display: "inline-block",
+                  fontFamily: "DM Sans, sans-serif",
+                  fontSize: "10px",
+                  fontWeight: 500,
+                  letterSpacing: "0.04em",
+                  textTransform: "uppercase",
+                  color: "#A3A3A3",
+                  background: "#1A1A1A",
+                  border: "1px solid #2D2C2C",
+                  borderRadius: "3px",
+                  padding: "2px 8px",
+                  marginTop: "4px",
+                }}
+              >
                 {deriveLabel(profile, factor.key)}
-              </div>
+              </span>
             </div>
           )
         })}

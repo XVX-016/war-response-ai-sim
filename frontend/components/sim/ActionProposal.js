@@ -22,7 +22,7 @@ export default function ActionProposal({ onExecute, onCancel }) {
   if (proposedActions.length === 0) {
     return (
       <div style={{ border: "1px solid #333333", borderRadius: "4px", padding: "16px", background: "#212020", textAlign: "center" }}>
-        <p style={{ fontFamily: "Space Mono, monospace", fontSize: "11px", color: "#525252", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+        <p style={{ fontFamily: "DM Sans, sans-serif", fontSize: "11px", color: "#525252", letterSpacing: "0.08em", textTransform: "uppercase" }}>
           No actions proposed - agents are passing this turn
         </p>
         <button onClick={() => onExecute([])} style={primaryBtn}>
@@ -51,17 +51,17 @@ export default function ActionProposal({ onExecute, onCancel }) {
   const acceptedCount = proposedActions.filter((_, index) => getStatus(index) === "accept").length
 
   return (
-    <div style={{ border: "1px solid #3B82F6", borderRadius: "4px", background: "#0D1B2A", overflow: "hidden" }}>
-      <div style={{ background: "#1D3A5F", padding: "10px 14px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+    <div style={{ border: "1px solid #1D3251", borderRadius: "4px", background: "#131B26", overflow: "hidden" }}>
+      <div style={{ background: "#1D3251", padding: "10px 14px", display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid #263F6B" }}>
         <div>
-          <span style={{ fontFamily: "Space Mono, monospace", fontSize: "9px", letterSpacing: "0.15em", textTransform: "uppercase", color: "#3B82F6" }}>
+          <span style={{ fontFamily: "DM Mono, monospace", fontSize: "9px", letterSpacing: "0.15em", textTransform: "uppercase", color: "#3B82F6" }}>
             Agent Proposal
           </span>
-          <span style={{ fontFamily: "Space Mono, monospace", fontSize: "11px", color: "#F5F5F5", marginLeft: "12px" }}>
-            {proposedActions.length} action{proposedActions.length !== 1 ? "s" : ""} · {acceptedCount} accepted
+          <span style={{ fontFamily: "DM Sans, sans-serif", fontSize: "12px", color: "#F5F5F5", marginLeft: "12px" }}>
+            {proposedActions.length} actions · {acceptedCount} accepted
           </span>
         </div>
-        <span style={{ fontFamily: "Space Mono, monospace", fontSize: "10px", color: "#525252" }}>
+        <span style={{ fontFamily: "DM Sans, sans-serif", fontSize: "10px", color: "#525252", letterSpacing: "0.04em" }}>
           Click any action to skip it
         </span>
       </div>
@@ -72,7 +72,7 @@ export default function ActionProposal({ onExecute, onCancel }) {
           const accepted = getStatus(index) === "accept"
           const asset = action.target_asset_id ? simState?.assets?.find((item) => item.id === action.target_asset_id) : null
           const zone = action.target_zone_id ? simState?.zones?.find((item) => item.id === action.target_zone_id) : null
-          const targetName = asset?.name || zone?.name || action.target_asset_id || action.target_zone_id || "—"
+          const targetName = asset?.name || zone?.name || action.target_asset_id || action.target_zone_id || "-"
           const nationColour = action.actor_nation === simState?.nations?.[0] ? "#3B82F6" : "#F59E0B"
 
           return (
@@ -85,9 +85,9 @@ export default function ActionProposal({ onExecute, onCancel }) {
                 gap: "10px",
                 padding: "10px",
                 marginBottom: "4px",
-                background: accepted ? "#1A2A1A" : "#1A1A1A",
+                background: accepted ? "#131F14" : "#1A1A1A",
                 borderRadius: "3px",
-                border: `1px solid ${accepted ? "#22C55E33" : "#33333333"}`,
+                border: accepted ? "1px solid #1A3320" : "1px solid #2D2C2C",
                 cursor: "pointer",
                 opacity: accepted ? 1 : 0.45,
                 transition: "all 150ms ease",
@@ -99,19 +99,19 @@ export default function ActionProposal({ onExecute, onCancel }) {
 
               <div style={{ flex: 1 }}>
                 <div style={{ display: "flex", gap: "8px", marginBottom: "4px", alignItems: "center", flexWrap: "wrap" }}>
-                  <span style={{ fontFamily: "Space Mono, monospace", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: nationColour }}>
+                  <span style={{ fontFamily: "DM Mono, monospace", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: nationColour }}>
                     {action.actor_nation}
                   </span>
-                  <span style={{ fontFamily: "Space Mono, monospace", fontSize: "10px", color: "#F5F5F5", fontWeight: 700 }}>
+                  <span style={{ fontFamily: "DM Sans, sans-serif", fontSize: "13px", color: "#F5F5F5", fontWeight: 600 }}>
                     {ACTION_LABELS[action.action_type] || action.action_type}
                   </span>
-                  <span style={{ fontFamily: "Space Mono, monospace", fontSize: "10px", color: "#A3A3A3" }}>
-                    → {targetName}
+                  <span style={{ fontFamily: "DM Sans, sans-serif", fontSize: "12px", color: "#A3A3A3" }}>
+                    -> {targetName}
                   </span>
                 </div>
 
                 {reasoning?.reason ? (
-                  <div style={{ fontFamily: "Space Grotesk, sans-serif", fontSize: "11px", color: "#525252", lineHeight: "1.4" }}>
+                  <div style={{ fontFamily: "DM Sans, sans-serif", fontSize: "12px", fontWeight: 300, color: "#6B7280", lineHeight: "1.4" }}>
                     {reasoning.reason}
                   </div>
                 ) : null}
@@ -122,10 +122,10 @@ export default function ActionProposal({ onExecute, onCancel }) {
       </div>
 
       <div style={{ padding: "10px 14px", borderTop: "1px solid #1F1F1F", display: "flex", gap: "8px", justifyContent: "flex-end" }}>
-        <button onClick={onCancel} style={{ padding: "8px 16px", background: "#212020", border: "1px solid #333333", borderRadius: "4px", color: "#A3A3A3", fontFamily: "Space Mono, monospace", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer" }}>
+        <button onClick={onCancel} style={{ padding: "8px 16px", background: "#212020", border: "1px solid #333333", borderRadius: "4px", color: "#A3A3A3", fontFamily: "DM Sans, sans-serif", fontSize: "12px", letterSpacing: "0.04em", cursor: "pointer" }}>
           Cancel
         </button>
-        <button onClick={handleExecute} style={{ padding: "8px 20px", background: "#22C55E", border: "1px solid #22C55E", borderRadius: "4px", color: "#000000", fontFamily: "Space Mono, monospace", fontSize: "10px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer" }}>
+        <button onClick={handleExecute} style={{ padding: "8px 20px", background: "#22C55E", border: "1px solid #22C55E", borderRadius: "4px", color: "#000000", fontFamily: "DM Sans, sans-serif", fontSize: "12px", fontWeight: 600, letterSpacing: "0.04em", cursor: "pointer" }}>
           Execute {acceptedCount} Action{acceptedCount !== 1 ? "s" : ""}
         </button>
       </div>
@@ -140,10 +140,10 @@ const primaryBtn = {
   border: "none",
   borderRadius: "4px",
   color: "#ffffff",
-  fontFamily: "Space Mono, monospace",
-  fontSize: "10px",
-  letterSpacing: "0.1em",
-  textTransform: "uppercase",
+  fontFamily: "DM Sans, sans-serif",
+  fontSize: "12px",
+  fontWeight: 600,
+  letterSpacing: "0.04em",
   cursor: "pointer",
   display: "block",
   marginInline: "auto",

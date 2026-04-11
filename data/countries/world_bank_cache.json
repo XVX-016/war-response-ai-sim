@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-04-07",
+  "last_updated": "2026-04-10",
   "source": "World Bank Open Data + manual normalisation",
   "indicators": {
     "gdp_index": "NY.GDP.PCAP.CD normalised to global max",
@@ -282,7 +282,7 @@
     },
     "Switzerland": {
       "gdp_index": 1.0,
-      "military_strength": 0.4,
+      "military_strength": 0.09,
       "population_millions": 9.01,
       "resource_richness": 0.0,
       "terrain_difficulty": 0.36,

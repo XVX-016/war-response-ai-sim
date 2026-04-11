@@ -16,13 +16,13 @@ export default function ComparisonTable() {
   const auria = profiles?.Auria
   const boros = profiles?.Boros
 
-  if (!auria || !boros) return <div className="border border-[#333333] rounded p-6 text-[#525252]">Loading comparison…</div>
+  if (!auria || !boros) return <div className="border border-[#333333] rounded p-6 text-[#525252]">Loading comparison...</div>
 
   return (
     <div className="border border-[#333333] rounded p-6 bg-[#0A0A0A] overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="text-left border-b border-[#1F1F1F] text-[#525252] uppercase font-mono text-xs tracking-[0.15em]">
+          <tr className="text-left border-b border-[#1F1F1F] text-[#525252] uppercase font-mono text-xs tracking-[0.08em]" style={{ fontWeight: 500 }}>
             <th className="pb-3">Factor</th>
             <th className="pb-3">Auria value</th>
             <th className="pb-3">Boros value</th>
@@ -38,10 +38,10 @@ export default function ComparisonTable() {
             const winnerClass = equal ? "text-[#525252]" : winner === "Auria" ? "text-[#3B82F6]" : "text-[#F59E0B]"
             return (
               <tr key={label} className="border-b border-[#1F1F1F] text-[#A3A3A3]">
-                <td className="py-3">{label}</td>
-                <td className="py-3 font-mono">{Number(av).toFixed(2)}</td>
-                <td className="py-3 font-mono">{Number(bv).toFixed(2)}</td>
-                <td className={`py-3 font-mono ${winnerClass}`}>{winner}</td>
+                <td className="py-3" style={{ maxWidth: "120px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: "DM Sans, sans-serif", fontWeight: 400, fontSize: "13px" }}>{label}</td>
+                <td className="py-3" style={{ maxWidth: "120px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: "DM Sans, sans-serif", fontWeight: 400, fontSize: "13px" }}>{Number(av).toFixed(2)}</td>
+                <td className="py-3" style={{ maxWidth: "120px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: "DM Sans, sans-serif", fontWeight: 400, fontSize: "13px" }}>{Number(bv).toFixed(2)}</td>
+                <td className={`py-3 ${winnerClass}`} style={{ maxWidth: "120px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: "DM Sans, sans-serif", fontWeight: 400, fontSize: "13px" }}>{winner}</td>
               </tr>
             )
           })}

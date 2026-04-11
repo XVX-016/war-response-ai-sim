@@ -19,11 +19,13 @@ function StartSimulationButton() {
   const setSimState = useSimStore((s) => s.setSimState)
   const hasProfiles = Object.keys(profiles || {}).length > 0
   const [isSaving, setIsSaving] = useState(false)
+  const [error, setError] = useState("")
 
   const handleStart = async () => {
     if (!hasProfiles || isSaving) return
     setIsSaving(true)
     try {
+      setError("")
       await Promise.all(
         Object.entries(profiles).map(([nation, profile]) => api.saveProfile(nation, profile))
       )
@@ -36,19 +38,26 @@ function StartSimulationButton() {
         setSimState(dipResult.state, null)
       }
       router.push("/sim")
+    } catch (err) {
+      console.error("Start simulation failed:", err)
+      setError(err.message || "Failed to start simulation")
     } finally {
       setIsSaving(false)
     }
   }
 
   return (
-    <button
-      disabled={!hasProfiles || isSaving}
-      onClick={handleStart}
-      className="px-8 py-3 bg-[#3B82F6] text-white text-sm font-mono tracking-widest uppercase border border-[#3B82F6] rounded hover:bg-[#1D4ED8] transition-colors disabled:opacity-40"
-    >
-      {isSaving ? "Saving..." : "Start Simulation"}
-    </button>
+    <>
+      <button
+        disabled={isSaving}
+        onClick={handleStart}
+        className="px-8 py-3 bg-[#3B82F6] text-white text-sm font-mono tracking-widest uppercase border border-[#3B82F6] rounded hover:bg-[#1D4ED8] transition-colors"
+        style={{ opacity: isSaving ? 0.5 : 1, cursor: isSaving ? "not-allowed" : "pointer" }}
+      >
+        {isSaving ? "Loading..." : "Start Simulation"}
+      </button>
+      {error ? <p className="text-sm text-[#EF4444] mt-3">{error}</p> : null}
+    </>
   )
 }
 

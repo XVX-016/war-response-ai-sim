@@ -16,7 +16,7 @@ export default function Navbar() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0A0A0A]/80 backdrop-blur-sm border-b border-[#1F1F1F]">
       <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
         <Link href="/">
-          <span className="font-mono text-xs tracking-[0.2em] uppercase text-[#F5F5F5] font-semibold">ResilienceSim</span>
+          <span className="font-mono text-xs tracking-[0.2em] uppercase text-[#F5F5F5] font-semibold">Resilience-Sim</span>
         </Link>
         <div className="flex items-center gap-8">
           {LINKS.map(({ href, label }) => (
