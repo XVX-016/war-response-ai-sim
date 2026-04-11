@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import Link from "next/link"
 import { motion } from "framer-motion"
@@ -10,15 +10,7 @@ export default function HeroText() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="mb-4 text-xs font-mono uppercase tracking-[0.2em] text-[#3B82F6]"
-        style={{
-          background: "rgba(10,10,10,0.65)",
-          backdropFilter: "blur(6px)",
-          border: "1px solid rgba(59,130,246,0.25)",
-          borderRadius: "3px",
-          padding: "4px 12px",
-          display: "inline-block",
-        }}
+        className="mb-4 text-xs font-mono uppercase tracking-[0.2em] text-[#D1D5DB]"
       >
         Civil Protection · Infrastructure Resilience · AI Simulation
       </motion.p>
@@ -39,15 +31,8 @@ export default function HeroText() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.7 }}
-        className="mb-12 text-center text-sm font-mono uppercase tracking-widest text-[#6B7280] md:text-base"
-        style={{
-          background: "rgba(10,10,10,0.65)",
-          backdropFilter: "blur(6px)",
-          border: "1px solid rgba(59,130,246,0.25)",
-          borderRadius: "3px",
-          padding: "4px 12px",
-          display: "inline-block",
-        }}
+        className="mb-12 text-center text-sm font-mono uppercase tracking-widest md:text-base"
+        style={{ color: "#60A5FA" }}
       >
         Multi-Agent Crisis Simulation · Cascade Failure Modelling · AI Recovery
       </motion.p>

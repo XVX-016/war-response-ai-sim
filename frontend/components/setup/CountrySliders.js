@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { api } from "@/lib/api"
 import { useSimStore } from "@/store/simStore"
 
 const FACTORS = [
@@ -35,7 +34,8 @@ function sliderStyle(value, min, max, accentColour) {
 
 export default function CountrySliders({ nation, accentColour, onError }) {
   const profiles = useSimStore((s) => s.profiles)
-  const setProfiles = useSimStore((s) => s.setProfiles)
+  const geoNations = useSimStore((s) => s.geoNations)
+  const setGeoNations = useSimStore((s) => s.setGeoNations)
   const [toast, setToast] = useState("")
   const profile = profiles?.[nation]
 
@@ -49,9 +49,10 @@ export default function CountrySliders({ nation, accentColour, onError }) {
         border-radius: 2px;
         outline: none;
         cursor: pointer;
+        background: transparent;
       }
       input[type="range"]::-webkit-slider-track {
-        background: #333333;
+        background: transparent;
         height: 3px;
         border-radius: 2px;
       }
@@ -66,7 +67,7 @@ export default function CountrySliders({ nation, accentColour, onError }) {
         margin-top: -5px;
       }
       input[type="range"]::-moz-range-track {
-        background: #333333;
+        background: transparent;
         height: 3px;
         border-radius: 2px;
       }
@@ -87,6 +88,24 @@ export default function CountrySliders({ nation, accentColour, onError }) {
     return <div className="border border-[#333333] rounded p-6 text-[#525252]">Loading {nation}...</div>
   }
 
+  if (profile.pending_selection) {
+    return (
+      <div className="border border-[#333333] rounded p-6 bg-[#0A0A0A]">
+        <div className="flex items-center gap-3 mb-3">
+          <span className="inline-flex items-center justify-center rounded w-7 h-7 font-mono text-xs font-semibold text-white" style={{ backgroundColor: accentColour }}>
+            {nation === "Auria" ? "A" : "B"}
+          </span>
+          <div>
+            <h3 className="text-xl font-semibold text-[#F5F5F5]">Select a country</h3>
+          </div>
+        </div>
+        <p className="text-sm text-[#525252]">
+          Choose a country from the dropdown above to load its real-world factors and enable the geographic map.
+        </p>
+      </div>
+    )
+  }
+
   const showToast = (message, tone = "success") => {
     setToast(`${tone}:${message}`)
     window.setTimeout(() => setToast(""), 1800)
@@ -94,9 +113,23 @@ export default function CountrySliders({ nation, accentColour, onError }) {
 
   const onReset = async () => {
     try {
-      const data = await api.getProfiles()
-      setProfiles(data)
-      showToast("Reset to defaults")
+      useSimStore.getState().updateProfile(nation, {
+        nation,
+        display_name: "Select a country",
+        flag_emoji: nation === "Auria" ? "A" : "B",
+        lore: "Choose a country from the dropdown to load its real-world profile.",
+        gdp_index: 0.5,
+        military_strength: 0.5,
+        population_millions: 5,
+        resource_richness: 0.5,
+        terrain_difficulty: 0.5,
+        alliance_strength: 0.5,
+        pending_selection: true,
+      })
+      const nextGeoNations = { ...geoNations }
+      delete nextGeoNations[nation]
+      setGeoNations(nextGeoNations)
+      showToast("Selection cleared")
       onError?.("")
     } catch (error) {
       onError?.(error.message || "Failed to reset profiles")

@@ -24,24 +24,6 @@ export default function CapabilityCards() {
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {CAPS.map((cap) => (
         <div key={cap.title} className="border border-[#333333] rounded p-8 hover:border-[rgba(59,130,246,0.4)] transition-colors bg-transparent">
-          <div
-            style={{
-              fontFamily: "DM Sans, system-ui, sans-serif",
-              fontWeight: 500,
-              fontSize: "11px",
-              letterSpacing: "0.05em",
-              textTransform: "uppercase",
-              borderLeft: "3px solid #3B82F6",
-              background: "rgba(59,130,246,0.08)",
-              padding: "2px 8px 2px 10px",
-              borderRadius: "0 3px 3px 0",
-              display: "inline-block",
-              marginBottom: "14px",
-              color: "#F5F5F5",
-            }}
-          >
-            {cap.code}
-          </div>
           <p
             style={{
               fontFamily: "DM Sans, system-ui, sans-serif",

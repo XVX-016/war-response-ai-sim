@@ -11,6 +11,27 @@ import ComparisonTable from "@/components/setup/ComparisonTable"
 import { api } from "@/lib/api"
 import { useSimStore } from "@/store/simStore"
 
+function createEmptyProfile(nation) {
+  return {
+    nation,
+    display_name: "Select a country",
+    flag_emoji: nation === "Auria" ? "A" : "B",
+    lore: "Choose a country from the dropdown to load its real-world profile.",
+    gdp_index: 0.5,
+    military_strength: 0.5,
+    population_millions: 5,
+    resource_richness: 0.5,
+    terrain_difficulty: 0.5,
+    alliance_strength: 0.5,
+    pending_selection: true,
+  }
+}
+
+const EMPTY_SETUP_PROFILES = {
+  Auria: createEmptyProfile("Auria"),
+  Boros: createEmptyProfile("Boros"),
+}
+
 function StartSimulationButton() {
   const router = useRouter()
   const profiles = useSimStore((s) => s.profiles)
@@ -18,11 +39,16 @@ function StartSimulationButton() {
   const setScenario = useSimStore((s) => s.setScenario)
   const setSimState = useSimStore((s) => s.setSimState)
   const hasProfiles = Object.keys(profiles || {}).length > 0
+  const hasSelections = Boolean(geoNations?.Auria && geoNations?.Boros)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState("")
 
   const handleStart = async () => {
     if (!hasProfiles || isSaving) return
+    if (!hasSelections) {
+      setError("Choose both countries from the dropdowns before starting the simulation.")
+      return
+    }
     setIsSaving(true)
     try {
       setError("")
@@ -49,13 +75,14 @@ function StartSimulationButton() {
   return (
     <>
       <button
-        disabled={isSaving}
+        disabled={isSaving || !hasSelections}
         onClick={handleStart}
         className="px-8 py-3 bg-[#3B82F6] text-white text-sm font-mono tracking-widest uppercase border border-[#3B82F6] rounded hover:bg-[#1D4ED8] transition-colors"
-        style={{ opacity: isSaving ? 0.5 : 1, cursor: isSaving ? "not-allowed" : "pointer" }}
+        style={{ opacity: isSaving || !hasSelections ? 0.5 : 1, cursor: isSaving || !hasSelections ? "not-allowed" : "pointer" }}
       >
         {isSaving ? "Loading..." : "Start Simulation"}
       </button>
+      {!hasSelections && !error ? <p className="text-sm text-[#525252] mt-3">Select both countries to enable geographic simulation.</p> : null}
       {error ? <p className="text-sm text-[#EF4444] mt-3">{error}</p> : null}
     </>
   )
@@ -83,7 +110,7 @@ export default function SetupPage() {
   const profiles = useSimStore((s) => s.profiles)
   const [errorMessage, setErrorMessage] = useState("")
 
-  const { data, isLoading, isError, error } = useQuery({
+  const { isLoading, isError, error } = useQuery({
     queryKey: ["profiles"],
     queryFn: api.getProfiles,
     retry: 2,
@@ -91,10 +118,9 @@ export default function SetupPage() {
   })
 
   useEffect(() => {
-    if (data) {
-      setProfiles(data)
-    }
-  }, [data, setProfiles])
+    setProfiles(EMPTY_SETUP_PROFILES)
+    setGeoNations({})
+  }, [setGeoNations, setProfiles])
 
   const ready = Object.keys(profiles || {}).length > 0
 
@@ -129,7 +155,7 @@ export default function SetupPage() {
                 <CountrySearch
                   accentColour="#3B82F6"
                   onSelect={(profile, selectedCountryName) => {
-                    updateProfile("Auria", { ...profiles.Auria, ...profile, nation: "Auria" })
+                    updateProfile("Auria", { ...profiles.Auria, ...profile, nation: "Auria", pending_selection: false })
                     setGeoNations({ ...geoNations, Auria: selectedCountryName })
                   }}
                 />
@@ -139,7 +165,7 @@ export default function SetupPage() {
                 <CountrySearch
                   accentColour="#F59E0B"
                   onSelect={(profile, selectedCountryName) => {
-                    updateProfile("Boros", { ...profiles.Boros, ...profile, nation: "Boros" })
+                    updateProfile("Boros", { ...profiles.Boros, ...profile, nation: "Boros", pending_selection: false })
                     setGeoNations({ ...geoNations, Boros: selectedCountryName })
                   }}
                 />
@@ -147,14 +173,16 @@ export default function SetupPage() {
               </div>
             </div>
 
-            <div className="border-t border-[#1F1F1F] pt-16">
-              <p className="text-xs font-mono tracking-[0.2em] uppercase text-[#525252] mb-2">Analysis</p>
-              <h2 className="text-2xl font-bold text-[#F5F5F5] mb-10 tracking-tight">Country Comparison</h2>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-                <RadarChart />
-                <ComparisonTable />
+            {(!profiles?.Auria?.pending_selection || !profiles?.Boros?.pending_selection) && (
+              <div className="border-t border-[#1F1F1F] pt-16">
+                <p className="text-xs font-mono tracking-[0.2em] uppercase text-[#525252] mb-2">Analysis</p>
+                <h2 className="text-2xl font-bold text-[#F5F5F5] mb-10 tracking-tight">Country Comparison</h2>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+                  <RadarChart />
+                  <ComparisonTable />
+                </div>
               </div>
-            </div>
+            )}
 
             <div className="mt-16 flex flex-col items-center gap-4">
               {errorMessage ? <p className="text-sm text-[#EF4444] font-mono">{errorMessage}</p> : null}

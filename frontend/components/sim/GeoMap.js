@@ -29,9 +29,12 @@ export default function GeoMap({ onAssetClick, proposedActions, nationFilter }) 
   const leafletRef = useRef(null)
   const markersRef = useRef({})
   const simState = useSimStore((s) => s.simState)
+  const geoNations = useSimStore((s) => s.geoNations)
   const [leafletFailed, setLeafletFailed] = useState(false)
   const hasGeo = simState?.metadata?.["_has_geo"] === true || simState?.metadata?.["_has_geo"]?.enabled === true
   const nations = simState?.nations ?? []
+
+  const displayNationName = (nation) => geoNations?.[nation] || nation
 
   const getMapConfig = () => {
     if (!hasGeo || !simState?.metadata) return { center: [20, 0], zoom: 2 }
@@ -159,15 +162,14 @@ export default function GeoMap({ onAssetClick, proposedActions, nationFilter }) 
           font-family: 'DM Sans', sans-serif; font-size: 11px;
           color: #F5F5F5; min-width: 160px;
         ">
-          <div style="font-weight:700; margin-bottom:4px;">${asset.name || asset.id}</div>
+          <div style="font-weight:700; margin-bottom:4px;">${asset.geo_name || asset.name || asset.id}</div>
           <div style="color:#A3A3A3; font-size:10px; margin-bottom:2px;">
             ${asset.asset_type.replace(/_/g, " ").toUpperCase()}
           </div>
           <div style="color:${colour}; font-size:10px; font-family:'DM Mono', monospace;">
             ${Math.round(asset.health)}/${asset.max_health} HP - ${status.toUpperCase()}
           </div>
-          <div style="color:#525252; font-size:9px; margin-top:4px;">${asset.nation}</div>
-          ${asset.geo_name ? `<div style="color:#333333; font-size:9px;">${asset.geo_name}</div>` : ""}
+          <div style="color:#525252; font-size:9px; margin-top:4px;">${displayNationName(asset.nation)}</div>
         </div>
       `
 
@@ -215,6 +217,7 @@ export default function GeoMap({ onAssetClick, proposedActions, nationFilter }) 
                       font-family:'DM Sans',sans-serif; font-size:10px; color:#F5F5F5;">
             <div>${zone.name || zone.id}</div>
             <div style="color:#A3A3A3;">Pop: ${(zone.population / 1000).toFixed(0)}k</div>
+            <div style="color:#525252;">${displayNationName(zone.nation)}</div>
             ${zone.displaced > 0 ? `<div style="color:#EF4444;">Displaced: ${zone.displaced.toLocaleString()}</div>` : ""}
           </div>
         `,

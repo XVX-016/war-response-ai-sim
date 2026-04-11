@@ -1,4 +1,5 @@
 import { create } from "zustand"
+import { persist } from "zustand/middleware"
 
 function normaliseProfiles(input) {
   if (!input) return {}
@@ -8,7 +9,9 @@ function normaliseProfiles(input) {
   return input
 }
 
-export const useSimStore = create((set) => ({
+export const useSimStore = create(persist((set) => ({
+  hasHydrated: false,
+  setHasHydrated: (hasHydrated) => set({ hasHydrated }),
   profiles: {},
   setProfiles: (input) => set({ profiles: normaliseProfiles(input) }),
   updateProfile: (nation, profile) =>
@@ -105,4 +108,16 @@ export const useSimStore = create((set) => ({
       actionReasonings: [],
       countryCache: {},
     }),
+}), {
+  name: "resilience-sim-store",
+  onRehydrateStorage: () => (state) => {
+    state?.setHasHydrated?.(true)
+  },
+  partialize: (state) => ({
+    profiles: state.profiles,
+    scenarioPath: state.scenarioPath,
+    scenarioMeta: state.scenarioMeta,
+    geoNations: state.geoNations,
+    countryCache: state.countryCache,
+  }),
 }))

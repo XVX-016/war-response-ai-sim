@@ -23,10 +23,10 @@ function FactorBar({ label, value, colour }) {
 
 function Badge({ label, type }) {
   const config = {
-    trade: { background: "#1A2E1A", color: "#22C55E", border: "1px solid #1F3D1F" },
-    tension: { background: "#2E1A1A", color: "#F59E0B", border: "1px solid #3D2A1A" },
-    sanctions: { background: "#2E0000", color: "#EF4444", border: "1px solid #4D0000" },
-    aid: { background: "#1A2E1A", color: "#22C55E", border: "1px solid #1F3D1F" },
+    trade: { background: "#1C1C1C", color: "#E5E5E5", border: "1px solid #333333" },
+    tension: { background: "#1C1C1C", color: "#E5E5E5", border: "1px solid #333333" },
+    sanctions: { background: "#1C1C1C", color: "#E5E5E5", border: "1px solid #333333" },
+    aid: { background: "#1C1C1C", color: "#E5E5E5", border: "1px solid #333333" },
   }[type]
 
   return (

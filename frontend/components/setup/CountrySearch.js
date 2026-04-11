@@ -90,7 +90,7 @@ export default function CountrySearch({ onSelect }) {
           letterSpacing: "0.05em",
         }}
       >
-        {Object.keys(cache).length} countries loaded · World Bank data
+        {Object.keys(cache).length} countries loaded - World Bank data
       </div>
     </div>
   )

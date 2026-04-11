@@ -88,6 +88,7 @@ export default function SimulationPage() {
   const router = useRouter()
   const queryClient = useQueryClient()
   const hasAutoLoaded = useRef(false)
+  const hasHydrated = useSimStore((s) => s.hasHydrated)
   const profiles = useSimStore((s) => s.profiles)
   const geoNations = useSimStore((s) => s.geoNations)
   const scenarioPath = useSimStore((s) => s.scenarioPath)
@@ -146,7 +147,7 @@ export default function SimulationPage() {
   const scenarios = scenariosQuery.data?.scenarios || []
 
   useEffect(() => {
-    if (scenariosQuery.isSuccess && scenarios.length > 0 && profilesReady && !simState && !isRunning && !hasAutoLoaded.current) {
+    if (hasHydrated && scenariosQuery.isSuccess && scenarios.length > 0 && profilesReady && !simState && !isRunning && !hasAutoLoaded.current) {
       hasAutoLoaded.current = true
       const firstScenario = scenarios[0]
       ;(async () => {
@@ -167,7 +168,7 @@ export default function SimulationPage() {
         }
       })()
     }
-  }, [isRunning, profilesReady, scenarios, scenariosQuery.isSuccess, setIsRunning, setScenario, setSimState, simState])
+  }, [hasHydrated, isRunning, profilesReady, scenarios, scenariosQuery.isSuccess, setIsRunning, setScenario, setSimState, simState])
 
   useEffect(() => {
     if (profilesQuery.isSuccess && Object.keys(profilesQuery.data?.profiles || {}).length === 0) {
@@ -294,11 +295,13 @@ export default function SimulationPage() {
     return coverage
   }, [coverage, history])
 
-  if (profilesQuery.isLoading || scenariosQuery.isLoading) {
+  if (!hasHydrated || profilesQuery.isLoading || scenariosQuery.isLoading) {
     return (
       <main className="min-h-screen bg-[#0A0A0A] pt-20 px-6">
         <Navbar />
-        <div className="max-w-4xl mx-auto rounded border border-[#333333] p-8 font-mono text-sm text-[#A3A3A3]">Loading country profiles from backend...</div>
+        <div className="max-w-4xl mx-auto rounded border border-[#333333] p-8 font-mono text-sm text-[#A3A3A3]">
+          {!hasHydrated ? "Restoring saved setup..." : "Loading country profiles from backend..."}
+        </div>
       </main>
     )
   }
@@ -355,7 +358,7 @@ export default function SimulationPage() {
                       <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
                         <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#22C55E" }} />
                         <span style={{ fontFamily: "DM Mono, monospace", fontSize: "9px", letterSpacing: "0.12em", textTransform: "uppercase", color: "#22C55E" }}>
-                          Geo Mode · {geoNations?.[simState.nations?.[0]]} vs {geoNations?.[simState.nations?.[1]]}
+                          Geo Mode - {geoNations?.[simState.nations?.[0]]} vs {geoNations?.[simState.nations?.[1]]}
                         </span>
                         <button
                           onClick={() => setMapMode((prev) => (prev === "geo" ? "grid" : "geo"))}
