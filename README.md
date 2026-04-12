@@ -1,4 +1,4 @@
-# ResilienceSim
+# Resilience-Sim
 
 ResilienceSim is a Python-based civil protection infrastructure simulator for two fictional countries under cascading crises. It models disruption, recovery, resource allocation, consequence propagation, optional humanitarian narration, and an optional vision adapter for scenario annotation.
 
