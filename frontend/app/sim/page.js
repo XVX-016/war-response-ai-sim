@@ -2,12 +2,12 @@
 
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
+import dynamic from "next/dynamic"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import Navbar from "@/components/layout/Navbar"
 import ActionProposal from "@/components/sim/ActionProposal"
 import DiplomacyPanel from "@/components/sim/DiplomacyPanel"
 import EndScreen from "@/components/sim/EndScreen"
-import GeoMap from "@/components/sim/GeoMap"
 import GridMap from "@/components/sim/GridMap"
 import InsightsPanel from "@/components/sim/InsightsPanel"
 import KpiPanel from "@/components/sim/KpiPanel"
@@ -16,6 +16,26 @@ import SimHeader from "@/components/sim/SimHeader"
 import Timeline from "@/components/sim/Timeline"
 import { api } from "@/lib/api"
 import { useSimStore } from "@/store/simStore"
+
+const GeoMap = dynamic(() => import("@/components/sim/GeoMap"), {
+  ssr: false,
+  loading: () => (
+    <div
+      style={{
+        height: "500px",
+        background: "#1A1A1A",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: "#525252",
+        fontFamily: "DM Mono, monospace",
+        fontSize: "11px",
+      }}
+    >
+      Loading map...
+    </div>
+  ),
+})
 
 const WEIGHTS = {
   power_plant: 0.25,
@@ -68,6 +88,7 @@ export default function SimulationPage() {
   const router = useRouter()
   const queryClient = useQueryClient()
   const hasAutoLoaded = useRef(false)
+  const hasHydrated = useSimStore((s) => s.hasHydrated)
   const profiles = useSimStore((s) => s.profiles)
   const geoNations = useSimStore((s) => s.geoNations)
   const scenarioPath = useSimStore((s) => s.scenarioPath)
@@ -100,6 +121,7 @@ export default function SimulationPage() {
   const [previousState, setPreviousState] = useState(null)
   const [errorMessage, setErrorMessage] = useState("")
   const [isScenarioLoading, setIsScenarioLoading] = useState(false)
+  const [mapMode, setMapMode] = useState("auto")
 
   const scenariosQuery = useQuery({
     queryKey: ["scenarios"],
@@ -125,7 +147,7 @@ export default function SimulationPage() {
   const scenarios = scenariosQuery.data?.scenarios || []
 
   useEffect(() => {
-    if (scenariosQuery.isSuccess && scenarios.length > 0 && profilesReady && !simState && !isRunning && !hasAutoLoaded.current) {
+    if (hasHydrated && scenariosQuery.isSuccess && scenarios.length > 0 && profilesReady && !simState && !isRunning && !hasAutoLoaded.current) {
       hasAutoLoaded.current = true
       const firstScenario = scenarios[0]
       ;(async () => {
@@ -146,7 +168,7 @@ export default function SimulationPage() {
         }
       })()
     }
-  }, [isRunning, profilesReady, scenarios, scenariosQuery.isSuccess, setIsRunning, setScenario, setSimState, simState])
+  }, [hasHydrated, isRunning, profilesReady, scenarios, scenariosQuery.isSuccess, setIsRunning, setScenario, setSimState, simState])
 
   useEffect(() => {
     if (profilesQuery.isSuccess && Object.keys(profilesQuery.data?.profiles || {}).length === 0) {
@@ -273,11 +295,13 @@ export default function SimulationPage() {
     return coverage
   }, [coverage, history])
 
-  if (profilesQuery.isLoading || scenariosQuery.isLoading) {
+  if (!hasHydrated || profilesQuery.isLoading || scenariosQuery.isLoading) {
     return (
       <main className="min-h-screen bg-[#0A0A0A] pt-20 px-6">
         <Navbar />
-        <div className="max-w-4xl mx-auto rounded border border-[#333333] p-8 font-mono text-sm text-[#A3A3A3]">Loading country profiles from backend...</div>
+        <div className="max-w-4xl mx-auto rounded border border-[#333333] p-8 font-mono text-sm text-[#A3A3A3]">
+          {!hasHydrated ? "Restoring saved setup..." : "Loading country profiles from backend..."}
+        </div>
       </main>
     )
   }
@@ -302,7 +326,7 @@ export default function SimulationPage() {
     <main className="min-h-screen bg-[#0A0A0A]">
       <Navbar />
       <div className="pt-14">
-        <SimHeader scenarioName={simState?.scenario_name || "Simulation"} turn={simState?.turn || 0} maxTurns={simState?.max_turns || 60} coverage={coverage} />
+        <SimHeader scenarioName={simState?.scenario_name || "Simulation"} turn={simState?.turn || 0} maxTurns={simState?.max_turns || 60} />
         <div className="max-w-[1680px] mx-auto px-6 py-6">
           {errorMessage ? <div className="mb-4 rounded border border-[#EF4444] p-3 text-sm font-mono text-[#EF4444]">{errorMessage}</div> : null}
           <div className="grid grid-cols-[280px_minmax(0,1fr)_380px] items-start gap-6">
@@ -329,12 +353,40 @@ export default function SimulationPage() {
                 <LoadingGridSkeleton />
               ) : (
                 <>
-                  {simState?.metadata?.["_has_geo"] ? (
-                    <GeoMap
-                      onAssetClick={(id) => useSimStore.getState().setSelectedAsset(id)}
-                      proposedActions={proposedActions}
-                      nationFilter={nationFilter}
-                    />
+                  {(simState?.metadata?.["_has_geo"] === true || simState?.metadata?.["_has_geo"]?.enabled) ? (
+                    <div>
+                      <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
+                        <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#22C55E" }} />
+                        <span style={{ fontFamily: "DM Mono, monospace", fontSize: "9px", letterSpacing: "0.12em", textTransform: "uppercase", color: "#22C55E" }}>
+                          Geo Mode - {geoNations?.[simState.nations?.[0]]} vs {geoNations?.[simState.nations?.[1]]}
+                        </span>
+                        <button
+                          onClick={() => setMapMode((prev) => (prev === "geo" ? "grid" : "geo"))}
+                          style={{
+                            marginLeft: "auto",
+                            fontFamily: "DM Mono, monospace",
+                            fontSize: "9px",
+                            letterSpacing: "0.1em",
+                            textTransform: "uppercase",
+                            color: "#525252",
+                            background: "transparent",
+                            border: "none",
+                            cursor: "pointer",
+                          }}
+                        >
+                          {mapMode === "grid" ? "Switch to Geo ->" : "Switch to Grid ->"}
+                        </button>
+                      </div>
+                      {mapMode === "grid" ? (
+                        <GridMap simState={simState} nationFilter={nationFilter} onAssetClick={(id) => useSimStore.getState().setSelectedAsset(id)} />
+                      ) : (
+                        <GeoMap
+                          onAssetClick={(id) => useSimStore.getState().setSelectedAsset(id)}
+                          proposedActions={proposedActions}
+                          nationFilter={nationFilter}
+                        />
+                      )}
+                    </div>
                   ) : (
                     <GridMap simState={simState} nationFilter={nationFilter} onAssetClick={(id) => useSimStore.getState().setSelectedAsset(id)} />
                   )}

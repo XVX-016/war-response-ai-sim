@@ -1,12 +1,12 @@
 {
   "nation": "Boros",
-  "display_name": "Federal State of Boros",
-  "flag_emoji": "??",
-  "lore": "A resource-rich federal state with significant natural reserves but fragile civilian infrastructure. Boros maintains a large standing military but operates largely without external alliances.",
-  "gdp_index": 0.48,
-  "military_strength": 0.72,
-  "population_millions": 6.8,
-  "resource_richness": 0.8,
-  "terrain_difficulty": 0.3,
-  "alliance_strength": 0.2
+  "display_name": "South Africa",
+  "flag_emoji": "\ud83c\uddff\ud83c\udde6",
+  "lore": "South Africa - Africa. GDP index: 0.07, Military: 0.09.",
+  "gdp_index": 0.07,
+  "military_strength": 0.09,
+  "population_millions": 64.01,
+  "resource_richness": 0.15,
+  "terrain_difficulty": 0.16,
+  "alliance_strength": 0.11
 }

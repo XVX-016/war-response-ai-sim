@@ -204,7 +204,7 @@ def _apply_geo_coordinates(state: ScenarioState, geo_nations: Optional[Dict[str,
         state.metadata[nation]["map_zoom"] = geo_data.get("map_zoom")
 
     if has_geo:
-        state.metadata["_has_geo"] = True
+        state.metadata["_has_geo"] = {"enabled": True}
 
 
 def load_scenario(
@@ -284,3 +284,4 @@ def load_scenario(
 def reset_scenario(state: ScenarioState, path: str | Path) -> tuple[ScenarioState, WorldGrid]:
     logger.info(f"Resetting scenario from {path}")
     return load_scenario(path)
+

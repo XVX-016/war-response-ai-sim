@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { useState } from "react"
 import { useSimStore } from "@/store/simStore"
@@ -25,6 +25,15 @@ const SEVERITY_BORDER = {
   info: "#3B82F6",
 }
 
+function fixEncoding(str) {
+  if (!str) return ""
+  try {
+    return decodeURIComponent(escape(str))
+  } catch {
+    return str.replace(/â€¦/g, "...").replace(/Â·/g, "·").replace(/â†’/g, "->")
+  }
+}
+
 export default function EventLog({ events = [] }) {
   const [filter, setFilter] = useState("All")
   const lastNarrative = useSimStore((s) => s.lastNarrative)
@@ -46,24 +55,28 @@ export default function EventLog({ events = [] }) {
   return (
     <div className="flex h-full flex-col">
       {lastNarrative ? (
-        <div style={{ borderLeft: "3px solid #3B82F6", background: "#0D1B2A", borderRadius: "0 4px 4px 0", padding: "12px 14px", marginBottom: "16px" }}>
-          <div style={{ fontFamily: "monospace", fontSize: "9px", letterSpacing: "0.12em", textTransform: "uppercase", color: "#3B82F6", marginBottom: "6px" }}>
+        <div style={{ borderLeft: "3px solid #3B82F6", background: "#1A2233", borderRadius: "0 4px 4px 0", padding: "12px 14px", marginBottom: "16px" }}>
+          <div style={{ fontFamily: "DM Mono, monospace", fontSize: "9px", letterSpacing: "0.12em", textTransform: "uppercase", color: "#3B82F6", marginBottom: "6px" }}>
             AI Summary · Turn {lastTurn}
           </div>
-          <p style={{ fontSize: "12px", color: "#D4D4D4", lineHeight: "1.6", fontStyle: "italic" }}>{lastNarrative}</p>
+          <p style={{ fontFamily: "DM Sans, sans-serif", fontSize: "12px", fontWeight: 300, color: "#D4D4D4", lineHeight: "1.6", fontStyle: "italic" }}>
+            {fixEncoding(lastNarrative)}
+          </p>
         </div>
       ) : null}
 
       {narrativeHistory.length > 1 ? (
         <details style={{ marginBottom: "12px" }}>
-          <summary style={{ fontSize: "10px", fontFamily: "monospace", color: "#525252", cursor: "pointer", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+          <summary style={{ fontSize: "10px", fontFamily: "DM Mono, monospace", color: "#525252", cursor: "pointer", letterSpacing: "0.08em", textTransform: "uppercase" }}>
             Previous summaries ({narrativeHistory.length - 1})
           </summary>
           <div style={{ marginTop: "8px" }}>
             {[...narrativeHistory].reverse().slice(1).map(({ turn, text }) => (
-              <div key={`${turn}-${text.slice(0, 12)}`} style={{ padding: "8px 0", borderBottom: "1px solid #1F1F1F", fontSize: "11px", color: "#525252", lineHeight: "1.5" }}>
-                <span style={{ fontFamily: "monospace", fontSize: "9px", color: "#333333", marginRight: "8px" }}>T{String(turn).padStart(2, "0")}</span>
-                {text}
+              <div key={`${turn}-${text.slice(0, 12)}`} style={{ padding: "8px 0", borderBottom: "1px solid #1F1F1F", fontSize: "11px", color: "#525252", lineHeight: "1.5", fontFamily: "DM Sans, sans-serif", fontWeight: 300 }}>
+                <span style={{ fontFamily: "DM Mono, monospace", fontSize: "9px", color: "#333333", marginRight: "8px" }}>
+                  T{String(turn).padStart(2, "0")}
+                </span>
+                {fixEncoding(text)}
               </div>
             ))}
           </div>
@@ -75,44 +88,51 @@ export default function EventLog({ events = [] }) {
           <button
             key={item}
             onClick={() => setFilter(item)}
-            className={`rounded border px-2 py-1 text-[10px] font-mono uppercase tracking-wider transition-colors ${
+            className={`rounded border px-2 py-1 text-[10px] uppercase transition-colors ${
               filter === item ? "border-[#3B82F6] bg-[#212020] text-[#F5F5F5]" : "border-[#333333] bg-transparent text-[#525252]"
             }`}
+            style={{ fontFamily: "DM Mono, monospace", letterSpacing: "0.08em" }}
           >
             {item}
           </button>
         ))}
-        <span className="ml-auto self-center text-[10px] font-mono text-[#525252]">{filtered.length} events</span>
+        <span className="ml-auto self-center text-[10px] text-[#525252]" style={{ fontFamily: "DM Mono, monospace" }}>
+          {filtered.length} events
+        </span>
       </div>
 
       {!lastNarrative && narrativeHistory.length === 0 ? (
-        <p style={{ fontSize: "10px", fontFamily: "monospace", color: "#333333", marginBottom: "12px", letterSpacing: "0.06em" }}>
+        <p style={{ fontSize: "10px", fontFamily: "DM Mono, monospace", color: "#333333", marginBottom: "12px", letterSpacing: "0.06em" }}>
           Set ANTHROPIC_API_KEY in .env to enable AI turn summaries
         </p>
       ) : null}
 
-      {filtered.length === 0 && (
+      {filtered.length === 0 ? (
         <div className="flex flex-1 items-center justify-center">
-          <p className="text-xs font-mono text-[#525252]">
-            {events.length === 0 ? "No events yet — advance a turn to begin" : "No events match this filter"}
+          <p className="text-xs text-[#525252]" style={{ fontFamily: "DM Sans, sans-serif", fontWeight: 300 }}>
+            {events.length === 0 ? "No events yet - advance a turn to begin" : "No events match this filter"}
           </p>
         </div>
-      )}
+      ) : null}
 
       <div className="flex-1 space-y-1 overflow-y-auto">
         {filtered.map((event, index) => {
           const typeStyle = EVENT_TYPE_COLOURS[event.event_type] ?? EVENT_TYPE_COLOURS.default
           const borderCol = SEVERITY_BORDER[event.severity] ?? SEVERITY_BORDER.info
           return (
-            <div key={`${event.turn ?? 0}-${index}-${event.event_type ?? "event"}`} className="cursor-default flex flex-col gap-1 bg-[#0A0A0A] px-3 py-2 transition-colors hover:bg-[#212020]" style={{ borderLeft: `3px solid ${borderCol}` }}>
+            <div key={`${event.turn ?? 0}-${index}-${event.event_type ?? "event"}`} className="cursor-default flex flex-col gap-1 bg-[#0A0A0A] px-3 py-2 transition-colors hover:bg-[#151515]" style={{ borderLeft: `3px solid ${borderCol}` }}>
               <div className="flex items-center gap-2">
-                <span className="min-w-[28px] font-mono text-[10px] text-[#525252]">T{String(event.turn ?? 0).padStart(2, "0")}</span>
-                <span className="rounded-sm px-1.5 py-0.5 text-[10px] font-mono font-medium uppercase tracking-wider" style={{ background: typeStyle.bg, color: typeStyle.text }}>
+                <span style={{ minWidth: "28px", fontFamily: "DM Mono, monospace", fontSize: "10px", color: "#525252", background: "#1A1A1A", border: "1px solid #2D2C2C", borderRadius: "3px", padding: "1px 4px" }}>
+                  T{String(event.turn ?? 0).padStart(2, "0")}
+                </span>
+                <span style={{ borderRadius: "3px", padding: "2px 6px", fontSize: "10px", fontFamily: "DM Sans, sans-serif", fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase", background: typeStyle.bg, color: typeStyle.text }}>
                   {(event.event_type ?? "event").replace(/_/g, " ")}
                 </span>
-                {event.nation ? <span className="text-[10px] font-mono text-[#525252]">{event.nation}</span> : null}
+                {event.nation ? <span style={{ fontFamily: "DM Sans, sans-serif", fontSize: "10px", fontWeight: 300, color: "#525252" }}>{event.nation}</span> : null}
               </div>
-              <p className="pl-[36px] text-[12px] font-light leading-snug text-[#D4D4D4]">{event.description}</p>
+              <p style={{ paddingLeft: "36px", fontFamily: "DM Sans, sans-serif", fontWeight: 300, fontSize: "12px", color: "#D4D4D4", lineHeight: 1.5 }}>
+                {fixEncoding(event.description)}
+              </p>
             </div>
           )
         })}

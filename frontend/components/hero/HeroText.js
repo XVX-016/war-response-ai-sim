@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import Link from "next/link"
 import { motion } from "framer-motion"
@@ -10,7 +10,7 @@ export default function HeroText() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="mb-4 text-xs font-mono uppercase tracking-[0.2em] text-[#3B82F6]"
+        className="mb-4 text-xs font-mono uppercase tracking-[0.2em] text-[#D1D5DB]"
       >
         Civil Protection · Infrastructure Resilience · AI Simulation
       </motion.p>
@@ -20,6 +20,7 @@ export default function HeroText() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
         className="mb-4 text-center text-6xl font-bold leading-tight tracking-tight text-[#F5F5F5] md:text-8xl"
+        style={{ textShadow: "0 2px 20px rgba(0,0,0,0.8), 0 0 40px rgba(0,0,0,0.6)" }}
       >
         Infrastructure
         <br />
@@ -30,7 +31,8 @@ export default function HeroText() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.7 }}
-        className="mb-12 text-center text-sm font-mono uppercase tracking-widest text-[#525252] md:text-base"
+        className="mb-12 text-center text-sm font-mono uppercase tracking-widest md:text-base"
+        style={{ color: "#60A5FA" }}
       >
         Multi-Agent Crisis Simulation · Cascade Failure Modelling · AI Recovery
       </motion.p>
@@ -50,7 +52,7 @@ export default function HeroText() {
           href="https://github.com/YOUR_USERNAME/war-response-ai-sim"
           target="_blank"
           rel="noreferrer"
-          className="pointer-events-auto rounded border border-[#333333] bg-transparent px-8 py-3 text-sm font-mono uppercase tracking-widest text-[#A3A3A3] transition-colors hover:border-[#A3A3A3] hover:text-[#F5F5F5]"
+          className="pointer-events-auto rounded border border-[#333333] bg-[rgba(10,10,10,0.7)] px-8 py-3 text-sm font-mono uppercase tracking-widest text-[#A3A3A3] transition-colors hover:border-[#A3A3A3] hover:text-[#F5F5F5]"
         >
           GitHub
         </a>

@@ -36,11 +36,35 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
+## Startup Commands (FastAPI + Next.js)
+
+Backend:
+```bash
+python -m uvicorn backend.main:app --reload --port 8000
+```
+
+Frontend:
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open:
+```text
+http://localhost:3000
+http://localhost:8000/api/health
+```
+
 ## Test Suite
 
 ```bash
 python -m pytest -q tests/test_phase1.py tests/test_phase2.py tests/test_phase3.py tests/test_phase4.py tests/test_phase5.py tests/test_phase6.py
 ```
+
+## Security
+
+Dependencies include advisories in Next.js internals that require a major version upgrade to resolve. Not exploitable in this deployment context.
 
 ## Safety Framing
 

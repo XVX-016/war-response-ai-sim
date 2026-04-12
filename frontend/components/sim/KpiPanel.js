@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import EventLog from "@/components/sim/EventLog"
+import { useNationDisplayNames } from "@/lib/nations"
 
 function colourForCoverage(value) {
   if (value > 0.7) return "#22C55E"
@@ -231,10 +232,11 @@ function NationPanel({ nation, simState, previousState, profile, selectedAssetId
 
 export default function KpiPanel({ simState, previousState, profiles, selectedAssetId, coverageMap, previousCoverageMap, eventLog, endConditions, lastNarrative }) {
   const [tab, setTab] = useState("Auria")
+  const nations = useNationDisplayNames()
 
   const tabs = [
-    { id: "Auria", label: "Auria", accent: "#3B82F6" },
-    { id: "Boros", label: "Boros", accent: "#F59E0B" },
+    { id: "Auria", label: nations.find((item) => item.internal === "Auria")?.display ?? "Auria", accent: "#3B82F6" },
+    { id: "Boros", label: nations.find((item) => item.internal === "Boros")?.display ?? "Boros", accent: "#F59E0B" },
     { id: "Events", label: "Events", accent: "#525252" },
   ]
 

@@ -23,20 +23,39 @@ export default function CapabilityCards() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {CAPS.map((cap) => (
-        <div key={cap.title} className="border border-[#333333] rounded p-8 hover:border-[#525252] transition-colors bg-transparent group">
-          <div className="font-mono text-[10px] tracking-[0.15em] text-[#3B82F6] border border-[#333333] rounded px-2 py-1 inline-block mb-6 w-fit group-hover:border-[#3B82F6] transition-colors">
-            {cap.code}
-          </div>
-          <p className="text-xs font-mono tracking-[0.15em] uppercase text-[#525252] mb-2 group-hover:text-[#3B82F6] transition-colors">{cap.title}</p>
-          <p className="text-sm text-[#A3A3A3] mb-6 leading-relaxed">{cap.desc}</p>
-          <ul className="space-y-1">
+        <div key={cap.title} className="border border-[#333333] rounded p-8 hover:border-[rgba(59,130,246,0.4)] transition-colors bg-transparent">
+          <p
+            style={{
+              fontFamily: "DM Sans, system-ui, sans-serif",
+              fontSize: "11px",
+              fontWeight: 600,
+              letterSpacing: "0.06em",
+              textTransform: "uppercase",
+              color: "#A3A3A3",
+              marginBottom: "10px",
+            }}
+          >
+            {cap.title}
+          </p>
+          <p className="text-sm text-[#A3A3A3] mb-6" style={{ fontWeight: 300, lineHeight: 1.65 }}>{cap.desc}</p>
+          <div className="space-y-1">
             {cap.tags.map((tag) => (
-              <li key={tag} className="text-xs font-mono text-[#525252] flex items-center gap-2">
-                <span className="w-1 h-1 rounded-full bg-[#333333]" />
+              <div
+                key={tag}
+                style={{
+                  paddingLeft: "8px",
+                  borderLeft: "1px solid #333333",
+                  marginBottom: "4px",
+                  fontFamily: "DM Sans, sans-serif",
+                  fontSize: "12px",
+                  fontWeight: 300,
+                  color: "#525252",
+                }}
+              >
                 {tag}
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       ))}
     </div>

@@ -1,7 +1,8 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useSimStore } from "@/store/simStore"
+import GridMap from "@/components/sim/GridMap"
 
 const ABBREV = {
   power_plant: "P",
@@ -21,22 +22,23 @@ const STATUS_COLOUR = {
   destroyed: "#525252",
 }
 
-const NATION_COLOUR = (nations, nation) =>
-  nation === nations[0] ? "#3B82F6" : "#F59E0B"
+const NATION_COLOUR = (nations, nation) => (nation === nations[0] ? "#3B82F6" : "#F59E0B")
 
 export default function GeoMap({ onAssetClick, proposedActions, nationFilter }) {
   const mapRef = useRef(null)
   const leafletRef = useRef(null)
   const markersRef = useRef({})
   const simState = useSimStore((s) => s.simState)
-  const hasGeo = simState?.metadata?.["_has_geo"] === true
+  const geoNations = useSimStore((s) => s.geoNations)
+  const [leafletFailed, setLeafletFailed] = useState(false)
+  const hasGeo = simState?.metadata?.["_has_geo"] === true || simState?.metadata?.["_has_geo"]?.enabled === true
   const nations = simState?.nations ?? []
+
+  const displayNationName = (nation) => geoNations?.[nation] || nation
 
   const getMapConfig = () => {
     if (!hasGeo || !simState?.metadata) return { center: [20, 0], zoom: 2 }
-    const centers = nations
-      .map((nation) => simState.metadata[nation]?.map_center)
-      .filter(Boolean)
+    const centers = nations.map((nation) => simState.metadata[nation]?.map_center).filter(Boolean)
     if (centers.length === 0) return { center: [20, 0], zoom: 2 }
     const lat = centers.reduce((sum, c) => sum + c[0], 0) / centers.length
     const lon = centers.reduce((sum, c) => sum + c[1], 0) / centers.length
@@ -45,47 +47,68 @@ export default function GeoMap({ onAssetClick, proposedActions, nationFilter }) 
   }
 
   useEffect(() => {
-    if (typeof window === "undefined" || !mapRef.current) return
-    if (leafletRef.current) return
+    if (!hasGeo) return undefined
+    const timeout = window.setTimeout(() => {
+      if (!leafletRef.current) setLeafletFailed(true)
+    }, 3000)
+    return () => window.clearTimeout(timeout)
+  }, [hasGeo])
 
-    import("leaflet").then((L) => {
-      delete L.Icon.Default.prototype._getIconUrl
-      L.Icon.Default.mergeOptions({
-        iconRetinaUrl: "/leaflet/marker-icon-2x.png",
-        iconUrl: "/leaflet/marker-icon.png",
-        shadowUrl: "/leaflet/marker-shadow.png",
+  useEffect(() => {
+    if (typeof window === "undefined" || !mapRef.current || leafletFailed || !hasGeo) return undefined
+    if (leafletRef.current) return undefined
+
+    let cancelled = false
+
+    import("leaflet")
+      .then((L) => {
+        if (cancelled || !mapRef.current) return
+
+        if (mapRef.current._leaflet_id) {
+          mapRef.current._leaflet_id = undefined
+        }
+
+        delete L.Icon.Default.prototype._getIconUrl
+        L.Icon.Default.mergeOptions({
+          iconRetinaUrl: "/leaflet/marker-icon-2x.png",
+          iconUrl: "/leaflet/marker-icon.png",
+          shadowUrl: "/leaflet/marker-shadow.png",
+        })
+
+        const { center, zoom } = getMapConfig()
+        const map = L.map(mapRef.current, {
+          center,
+          zoom,
+          zoomControl: true,
+          attributionControl: false,
+        })
+
+        L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+          maxZoom: 19,
+          subdomains: "abcd",
+        }).addTo(map)
+
+        leafletRef.current = { map, L }
+        renderMarkers(map, L)
       })
-
-      const { center, zoom } = getMapConfig()
-      const map = L.map(mapRef.current, {
-        center,
-        zoom,
-        zoomControl: true,
-        attributionControl: false,
+      .catch(() => {
+        setLeafletFailed(true)
       })
-
-      L.tileLayer(
-        "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
-        { maxZoom: 19 }
-      ).addTo(map)
-
-      leafletRef.current = { map, L }
-      renderMarkers(map, L)
-    })
 
     return () => {
+      cancelled = true
       if (leafletRef.current?.map) {
         leafletRef.current.map.remove()
         leafletRef.current = null
       }
     }
-  }, [])
+  }, [hasGeo, leafletFailed])
 
   useEffect(() => {
-    if (!leafletRef.current) return
+    if (!leafletRef.current || leafletFailed) return
     const { map, L } = leafletRef.current
     renderMarkers(map, L)
-  }, [simState, proposedActions, nationFilter])
+  }, [simState, proposedActions, nationFilter, leafletFailed])
 
   function renderMarkers(map, L) {
     if (!simState?.assets) return
@@ -103,13 +126,7 @@ export default function GeoMap({ onAssetClick, proposedActions, nationFilter }) 
 
     assets.forEach((asset) => {
       const health = asset.max_health > 0 ? asset.health / asset.max_health : 0
-      const status = asset.is_destroyed
-        ? "destroyed"
-        : health < 0.25
-          ? "critical"
-          : health < 0.5
-            ? "degraded"
-            : "healthy"
+      const status = asset.is_destroyed ? "destroyed" : health < 0.25 ? "critical" : health < 0.5 ? "degraded" : "healthy"
       const colour = STATUS_COLOUR[status]
       const letter = ABBREV[asset.asset_type] || "?"
       const isProp = proposedActions?.some((action) => action.target_asset_id === asset.id)
@@ -123,7 +140,7 @@ export default function GeoMap({ onAssetClick, proposedActions, nationFilter }) 
             border: 2px solid ${NATION_COLOUR(nations, asset.nation)};
             border-radius: 4px;
             display: flex; align-items: center; justify-content: center;
-            font-family: 'Space Mono', monospace;
+            font-family: 'DM Mono', monospace;
             font-size: 13px; font-weight: 700;
             color: white;
             cursor: pointer;
@@ -142,18 +159,17 @@ export default function GeoMap({ onAssetClick, proposedActions, nationFilter }) 
         <div style="
           background: #212020; border: 1px solid #333333;
           border-radius: 4px; padding: 8px 10px;
-          font-family: 'Space Mono', monospace; font-size: 11px;
+          font-family: 'DM Sans', sans-serif; font-size: 11px;
           color: #F5F5F5; min-width: 160px;
         ">
-          <div style="font-weight:700; margin-bottom:4px;">${asset.name || asset.id}</div>
+          <div style="font-weight:700; margin-bottom:4px;">${asset.geo_name || asset.name || asset.id}</div>
           <div style="color:#A3A3A3; font-size:10px; margin-bottom:2px;">
             ${asset.asset_type.replace(/_/g, " ").toUpperCase()}
           </div>
-          <div style="color:${colour}; font-size:10px;">
-            ${Math.round(asset.health)}/${asset.max_health} HP · ${status.toUpperCase()}
+          <div style="color:${colour}; font-size:10px; font-family:'DM Mono', monospace;">
+            ${Math.round(asset.health)}/${asset.max_health} HP - ${status.toUpperCase()}
           </div>
-          <div style="color:#525252; font-size:9px; margin-top:4px;">${asset.nation}</div>
-          ${asset.geo_name ? `<div style="color:#333333; font-size:9px;">${asset.geo_name}</div>` : ""}
+          <div style="color:#525252; font-size:9px; margin-top:4px;">${displayNationName(asset.nation)}</div>
         </div>
       `
 
@@ -198,9 +214,10 @@ export default function GeoMap({ onAssetClick, proposedActions, nationFilter }) 
           `
           <div style="background:#212020; border:1px solid #333333;
                       border-radius:4px; padding:6px 8px;
-                      font-family:'Space Mono',monospace; font-size:10px; color:#F5F5F5;">
+                      font-family:'DM Sans',sans-serif; font-size:10px; color:#F5F5F5;">
             <div>${zone.name || zone.id}</div>
             <div style="color:#A3A3A3;">Pop: ${(zone.population / 1000).toFixed(0)}k</div>
+            <div style="color:#525252;">${displayNationName(zone.nation)}</div>
             ${zone.displaced > 0 ? `<div style="color:#EF4444;">Displaced: ${zone.displaced.toLocaleString()}</div>` : ""}
           </div>
         `,
@@ -223,7 +240,7 @@ export default function GeoMap({ onAssetClick, proposedActions, nationFilter }) 
       .leaflet-custom-tooltip::before { display: none !important; }
       .leaflet-container {
         background: #0A0A0A;
-        font-family: "Space Grotesk", system-ui, sans-serif;
+        font-family: "DM Sans", system-ui, sans-serif;
       }
     `
     document.head.appendChild(style)
@@ -231,6 +248,9 @@ export default function GeoMap({ onAssetClick, proposedActions, nationFilter }) 
   }, [])
 
   if (!hasGeo) return null
+  if (leafletFailed) {
+    return <GridMap simState={simState} nationFilter={nationFilter} onAssetClick={onAssetClick} />
+  }
 
   return (
     <div style={{ position: "relative" }}>
@@ -238,7 +258,7 @@ export default function GeoMap({ onAssetClick, proposedActions, nationFilter }) 
         ref={mapRef}
         style={{
           width: "100%",
-          height: "500px",
+          height: "480px",
           borderRadius: "4px",
           border: "1px solid #333333",
           background: "#0A0A0A",
@@ -253,12 +273,12 @@ export default function GeoMap({ onAssetClick, proposedActions, nationFilter }) 
         ].map(({ colour, label }) => (
           <div key={label} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
             <div style={{ width: "8px", height: "8px", borderRadius: "2px", background: colour }} />
-            <span style={{ fontFamily: "Space Mono, monospace", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "#525252" }}>
+            <span style={{ fontFamily: "DM Mono, monospace", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "#525252" }}>
               {label}
             </span>
           </div>
         ))}
-        <span style={{ fontFamily: "Space Mono, monospace", fontSize: "9px", color: "#333333", marginLeft: "auto" }}>
+        <span style={{ fontFamily: "DM Mono, monospace", fontSize: "9px", color: "#333333", marginLeft: "auto" }}>
           P=Power W=Water H=Hospital T=Telecom X=Transport F=Fuel S=Shelter C=Command
         </span>
       </div>

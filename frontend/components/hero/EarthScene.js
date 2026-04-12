@@ -27,7 +27,7 @@ function canCreateRenderer() {
 function HeroFallback() {
   return (
     <div className="absolute inset-0 flex items-center justify-center overflow-hidden bg-[#0A0A0A]">
-      <div className="relative h-[520px] w-[520px]">
+      <div className="relative h-[325px] w-[325px]">
         <div
           className="absolute inset-0 overflow-hidden rounded-full border border-[#1D4ED8]/18"
           style={{
@@ -92,12 +92,12 @@ function Globe() {
         }}
         onPointerOut={() => setTargetRotation({ x: 0.12, y: meshRef.current?.rotation.y ?? 0.15 })}
       >
-        <sphereGeometry args={[2.15, 128, 128]} />
+        <sphereGeometry args={[1.34375, 128, 128]} />
         <meshStandardMaterial map={texture} roughness={1} metalness={0} />
       </mesh>
 
       <mesh ref={atmosphereRef}>
-        <sphereGeometry args={[2.24, 96, 96]} />
+        <sphereGeometry args={[1.4, 96, 96]} />
         <meshBasicMaterial color="#3B82F6" transparent opacity={0.08} side={THREE.BackSide} />
       </mesh>
     </group>

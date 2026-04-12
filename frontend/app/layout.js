@@ -3,7 +3,7 @@ import "./globals.css"
 import Providers from "@/components/Providers"
 
 export const metadata = {
-  title: "ResilienceSim — Civil Infrastructure Resilience Simulator",
+  title: "ResilienceSim - Civil Infrastructure Resilience Simulator",
   description:
     "Multi-agent AI simulation of civilian infrastructure resilience. " +
     "Two nations manage cascading failures across power, water, hospitals, " +

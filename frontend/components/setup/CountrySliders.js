@@ -1,7 +1,6 @@
 "use client"
 
-import { useState } from "react"
-import { api } from "@/lib/api"
+import { useEffect, useState } from "react"
 import { useSimStore } from "@/store/simStore"
 
 const FACTORS = [
@@ -24,14 +23,87 @@ function deriveLabel(profile, key) {
   return ""
 }
 
+function sliderStyle(value, min, max, accentColour) {
+  const pct = ((value - min) / (max - min)) * 100
+  return {
+    background: `linear-gradient(to right, ${accentColour} 0%, ${accentColour} ${pct}%, #333333 ${pct}%, #333333 100%)`,
+    height: "3px",
+    borderRadius: "2px",
+  }
+}
+
 export default function CountrySliders({ nation, accentColour, onError }) {
   const profiles = useSimStore((s) => s.profiles)
-  const setProfiles = useSimStore((s) => s.setProfiles)
+  const geoNations = useSimStore((s) => s.geoNations)
+  const setGeoNations = useSimStore((s) => s.setGeoNations)
   const [toast, setToast] = useState("")
   const profile = profiles?.[nation]
 
+  useEffect(() => {
+    const style = document.createElement("style")
+    style.textContent = `
+      input[type="range"] {
+        -webkit-appearance: none;
+        appearance: none;
+        height: 3px;
+        border-radius: 2px;
+        outline: none;
+        cursor: pointer;
+        background: transparent;
+      }
+      input[type="range"]::-webkit-slider-track {
+        background: transparent;
+        height: 3px;
+        border-radius: 2px;
+      }
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #F5F5F5;
+        border: 2px solid #333333;
+        cursor: pointer;
+        margin-top: -5px;
+      }
+      input[type="range"]::-moz-range-track {
+        background: transparent;
+        height: 3px;
+        border-radius: 2px;
+      }
+      input[type="range"]::-moz-range-thumb {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #F5F5F5;
+        border: 2px solid #333333;
+        cursor: pointer;
+      }
+    `
+    document.head.appendChild(style)
+    return () => document.head.removeChild(style)
+  }, [])
+
   if (!profile) {
     return <div className="border border-[#333333] rounded p-6 text-[#525252]">Loading {nation}...</div>
+  }
+
+  if (profile.pending_selection) {
+    return (
+      <div className="border border-[#333333] rounded p-6 bg-[#0A0A0A]">
+        <div className="flex items-center gap-3 mb-3">
+          <span className="inline-flex items-center justify-center rounded w-7 h-7 font-mono text-xs font-semibold text-white" style={{ backgroundColor: accentColour }}>
+            {nation === "Auria" ? "A" : "B"}
+          </span>
+          <div>
+            <h3 className="text-xl font-semibold text-[#F5F5F5]">Select a country</h3>
+          </div>
+        </div>
+        <p className="text-sm text-[#525252]">
+          Choose a country from the dropdown above to load its real-world factors and enable the geographic map.
+        </p>
+      </div>
+    )
   }
 
   const showToast = (message, tone = "success") => {
@@ -41,9 +113,23 @@ export default function CountrySliders({ nation, accentColour, onError }) {
 
   const onReset = async () => {
     try {
-      const data = await api.getProfiles()
-      setProfiles(data)
-      showToast("Reset to defaults")
+      useSimStore.getState().updateProfile(nation, {
+        nation,
+        display_name: "Select a country",
+        flag_emoji: nation === "Auria" ? "A" : "B",
+        lore: "Choose a country from the dropdown to load its real-world profile.",
+        gdp_index: 0.5,
+        military_strength: 0.5,
+        population_millions: 5,
+        resource_richness: 0.5,
+        terrain_difficulty: 0.5,
+        alliance_strength: 0.5,
+        pending_selection: true,
+      })
+      const nextGeoNations = { ...geoNations }
+      delete nextGeoNations[nation]
+      setGeoNations(nextGeoNations)
+      showToast("Selection cleared")
       onError?.("")
     } catch (error) {
       onError?.(error.message || "Failed to reset profiles")
@@ -95,12 +181,27 @@ export default function CountrySliders({ nation, accentColour, onError }) {
                   const updatedProfile = { ...profile, [factor.key]: Number(e.target.value) }
                   useSimStore.getState().updateProfile(nation, updatedProfile)
                 }}
-                className="w-full accent-current"
-                style={{ accentColor: accentColour }}
+                className="w-full"
+                style={sliderStyle(value, factor.min, factor.max, accentColour)}
               />
-              <div className="mt-2 inline-block text-[10px] font-mono uppercase tracking-[0.15em] px-2 py-1 rounded border border-[#333333] text-[#A3A3A3]">
+              <span
+                style={{
+                  display: "inline-block",
+                  fontFamily: "DM Sans, sans-serif",
+                  fontSize: "10px",
+                  fontWeight: 500,
+                  letterSpacing: "0.04em",
+                  textTransform: "uppercase",
+                  color: "#A3A3A3",
+                  background: "#1A1A1A",
+                  border: "1px solid #2D2C2C",
+                  borderRadius: "3px",
+                  padding: "2px 8px",
+                  marginTop: "4px",
+                }}
+              >
                 {deriveLabel(profile, factor.key)}
-              </div>
+              </span>
             </div>
           )
         })}

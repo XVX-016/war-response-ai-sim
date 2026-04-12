@@ -66,7 +66,7 @@ def apply_dependency_penalties(state: ScenarioState) -> Tuple[Dict[str, float], 
                     nation      = asset.nation,
                     asset_id    = asset.id,
                     description = (
-                        f"{asset.name} loses {penalty:.0f} HP — "
+                        f"{asset.name} loses {penalty:.0f} HP - "
                         f"dependency '{dep_type}' is entirely destroyed"
                     ),
                     tags        = [f"missing_dep:{dep_type}"],
@@ -90,7 +90,7 @@ def apply_dependency_penalties(state: ScenarioState) -> Tuple[Dict[str, float], 
                     nation      = asset.nation,
                     asset_id    = asset.id,
                     description = (
-                        f"{asset.name} loses {penalty:.0f} HP — "
+                        f"{asset.name} loses {penalty:.0f} HP - "
                         f"dependency '{dep_type}' ({best_dep.name}) is degraded "
                         f"(health {best_dep.health:.0f})"
                     ),
@@ -283,7 +283,7 @@ def update_population_zones(
                 zone_id     = zone.id,
                 description = (
                     f"{zone.name}: mortality risk elevated at {mortality_risk:.0%} "
-                    f"— service coverage critically low ({coverage:.0%})"
+                        f"- service coverage critically low ({coverage:.0%})"
                 ),
                 tags        = ["mortality_risk"],
                 severity    = "critical",
@@ -329,7 +329,7 @@ def check_end_conditions(state: ScenarioState) -> Dict[str, str]:
         collapse_threshold = cfg_end["collapsed"]["service_coverage_threshold"]
         if coverage < collapse_threshold:
             newly_terminal[nation] = "collapsed"
-            logger.warning(f"{nation} has COLLAPSED — service coverage {coverage:.1%}")
+            logger.warning(f"{nation} has COLLAPSED - service coverage {coverage:.1%}")
             continue
 
         # ── Stabilised ────────────────────────────────────────────────────────
