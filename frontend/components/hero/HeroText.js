@@ -10,7 +10,7 @@ export default function HeroText() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="mb-4 text-xs font-mono uppercase tracking-[0.2em] text-[#D1D5DB]"
+        className="mb-4 text-[10px] sm:text-xs font-mono uppercase tracking-[0.15em] sm:tracking-[0.2em] text-[#D1D5DB] text-center px-4"
       >
         Civil Protection · Infrastructure Resilience · AI Simulation
       </motion.p>
@@ -31,7 +31,7 @@ export default function HeroText() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.7 }}
-        className="mb-12 text-center text-sm font-mono uppercase tracking-widest md:text-base"
+        className="mb-8 sm:mb-12 text-center text-[10px] sm:text-sm font-mono uppercase tracking-widest md:text-base px-4"
         style={{ color: "#60A5FA" }}
       >
         Multi-Agent Crisis Simulation · Cascade Failure Modelling · AI Recovery
@@ -41,18 +41,18 @@ export default function HeroText() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.9 }}
-        className="pointer-events-auto flex gap-4"
+        className="pointer-events-auto flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto px-6 sm:px-0"
       >
         <Link href="/setup">
-          <button className="rounded border border-[#3B82F6] bg-[#3B82F6] px-8 py-3 text-sm font-mono uppercase tracking-widest text-white transition-colors hover:bg-[#1D4ED8]">
+          <button className="w-full sm:w-auto rounded border border-[#3B82F6] bg-[#3B82F6] px-6 sm:px-8 py-3 text-xs sm:text-sm font-mono uppercase tracking-widest text-white transition-colors hover:bg-[#1D4ED8]">
             Enter Simulator
           </button>
         </Link>
         <a
-          href="https://github.com/YOUR_USERNAME/war-response-ai-sim"
+          href="https://github.com/XVX-016/war-response-ai-sim"
           target="_blank"
           rel="noreferrer"
-          className="pointer-events-auto rounded border border-[#333333] bg-[rgba(10,10,10,0.7)] px-8 py-3 text-sm font-mono uppercase tracking-widest text-[#A3A3A3] transition-colors hover:border-[#A3A3A3] hover:text-[#F5F5F5]"
+          className="pointer-events-auto text-center rounded border border-[#333333] bg-[rgba(10,10,10,0.7)] px-6 sm:px-8 py-3 text-xs sm:text-sm font-mono uppercase tracking-widest text-[#A3A3A3] transition-colors hover:border-[#A3A3A3] hover:text-[#F5F5F5]"
         >
           GitHub
         </a>

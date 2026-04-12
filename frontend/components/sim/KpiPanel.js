@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { useState } from "react"
 import EventLog from "@/components/sim/EventLog"
@@ -27,12 +27,65 @@ function resourceColour(fraction) {
   return "#EF4444"
 }
 
-function consequenceTone(tag) {
-  const lower = String(tag || "").toLowerCase()
-  if (lower.includes("risk") || lower.includes("mortality") || lower.includes("collapse")) return { bg: "#3B0000", fg: "#FCA5A5" }
-  if (lower.includes("degraded") || lower.includes("impaired") || lower.includes("reduced")) return { bg: "#3B2500", fg: "#FCD34D" }
-  if (lower.includes("disrupted") || lower.includes("blocked") || lower.includes("shortage")) return { bg: "#1C1A3B", fg: "#C4B5FD" }
-  return { bg: "#1A1A1A", fg: "#A3A3A3" }
+// Severity classification — determines visual weight
+function getConsequenceTier(tag) {
+  const t = tag.toLowerCase()
+  if (t.includes("mortality") || t.includes("disease_risk") || t.includes("collapse"))
+    return "critical"
+  if (t.includes("blackout") || t.includes("water_shortage") ||
+      t.includes("hospital") || t.includes("medical_capacity"))
+    return "high"
+  if (t.includes("disrupted") || t.includes("blocked") ||
+      t.includes("coordination") || t.includes("misallocation"))
+    return "medium"
+  return "low"
+}
+
+const TIER_STYLES = {
+  critical: {
+    background: "#3B0000",
+    color:      "#FCA5A5",
+    fontWeight: 600,
+  },
+  high: {
+    background: "#2D1A00",
+    color:      "#FCD34D",
+    fontWeight: 500,
+  },
+  medium: {
+    background: "#1A1A3B",
+    color:      "#A5B4FC",
+    fontWeight: 500,
+  },
+  low: {
+    background: "#1A1A1A",
+    color:      "#6B7280",
+    fontWeight: 400,
+  },
+}
+
+function ConsequenceBadge({ tag }) {
+  const tier   = getConsequenceTier(tag)
+  const styles = TIER_STYLES[tier]
+  const label  = tag.replace(/_/g, " ")
+
+  return (
+    <span style={{
+      display:       "inline-block",
+      background:    styles.background,
+      color:         styles.color,
+      fontFamily:    "DM Sans, sans-serif",
+      fontSize:      "10px",
+      fontWeight:    styles.fontWeight,
+      letterSpacing: "0.04em",
+      textTransform: "uppercase",
+      borderRadius:  "3px",
+      padding:       "3px 7px",
+      margin:        "2px 3px 2px 0",
+    }}>
+      {label}
+    </span>
+  )
 }
 
 function EndConditionBanner({ condition }) {
@@ -157,9 +210,9 @@ function NationPanel({ nation, simState, previousState, profile, selectedAssetId
     <div className="space-y-5">
       <EndConditionBanner condition={endCondition} />
 
-      <div className="rounded border border-[#333333] bg-[#212020] p-4">
+      <div className="rounded border border-[#333333] bg-[#212020] p-3 md:p-4">
         <p className="mb-2 text-[11px] font-mono uppercase tracking-[0.14em] text-[#525252]">Service Coverage</p>
-        <div className="text-5xl font-mono" style={{ color: colourForCoverage(currentCoverage) }}>{Math.round(currentCoverage * 100)}%</div>
+        <div className="text-4xl md:text-5xl font-mono" style={{ color: colourForCoverage(currentCoverage) }}>{Math.round(currentCoverage * 100)}%</div>
         <div className="mt-1 text-xs font-mono" style={{ color: currentCoverage - prevCoverage >= 0 ? "#22C55E" : "#EF4444" }}>
           {currentCoverage - prevCoverage >= 0 ? "+" : ""}{Math.round((currentCoverage - prevCoverage) * 100)} pts
         </div>
@@ -168,7 +221,7 @@ function NationPanel({ nation, simState, previousState, profile, selectedAssetId
       <div className="grid grid-cols-2 gap-4">
         <div className="rounded border border-[#333333] bg-[#212020] p-4">
           <p className="mb-2 text-[11px] font-mono uppercase tracking-[0.14em] text-[#525252]">Displaced Persons</p>
-          <div className="text-3xl font-mono" style={{ color: displacedColour(displacement) }}>{displacement.toLocaleString()}</div>
+          <div className="text-3xl font-mono" style={{ color: displacedColour(displacement) }}>{displacement.toLocaleString("en-US")}</div>
         </div>
         <div className="rounded border border-[#333333] bg-[#212020] p-4">
           <p className="mb-2 text-[11px] font-mono uppercase tracking-[0.14em] text-[#525252]">Stable Turns</p>
@@ -203,24 +256,42 @@ function NationPanel({ nation, simState, previousState, profile, selectedAssetId
 
       <div className="rounded border border-[#333333] bg-[#212020] p-4">
         <p className="mb-3 text-[11px] font-mono uppercase tracking-[0.14em] text-[#525252]">Active Consequences</p>
-        <div className="flex flex-wrap gap-2">
-          {consequences.length === 0 ? (
-            <div style={{ display: "flex", alignItems: "center", gap: "6px", padding: "6px 0" }}>
-              <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#22C55E" }} />
-              <span style={{ fontFamily: "monospace", fontSize: "10px", letterSpacing: "0.08em", textTransform: "uppercase", color: "#22C55E" }}>
-                All systems nominal
-              </span>
-            </div>
-          ) : null}
-          {consequences.map((tag) => {
-            const tone = consequenceTone(tag)
-            return (
-              <span key={tag} className="rounded px-2 py-1 text-[10px] font-medium uppercase tracking-[0.04em]" style={{ backgroundColor: tone.bg, color: tone.fg }}>
-                {tag.replaceAll("_", " ")}
-              </span>
-            )
-          })}
-        </div>
+        {consequences.length === 0 ? (
+          <div style={{
+            display:    "flex",
+            alignItems: "center",
+            gap:        "6px",
+            padding:    "4px 0",
+          }}>
+            <div style={{
+              width:        "5px",
+              height:       "5px",
+              borderRadius: "50%",
+              background:   "#22C55E",
+              flexShrink:   0,
+            }} />
+            <span style={{
+              fontFamily:    "DM Sans, sans-serif",
+              fontSize:      "11px",
+              fontWeight:    400,
+              letterSpacing: "0.04em",
+              color:         "#22C55E",
+            }}>
+              All systems nominal
+            </span>
+          </div>
+        ) : (
+          <div style={{
+            display:   "flex",
+            flexWrap:  "wrap",
+            gap:       "0",
+            marginTop: "8px",
+          }}>
+            {consequences.map((tag) => (
+              <ConsequenceBadge key={tag} tag={tag} />
+            ))}
+          </div>
+        )}
       </div>
 
       <AssetDetail asset={selectedAsset} />
@@ -241,7 +312,7 @@ export default function KpiPanel({ simState, previousState, profiles, selectedAs
   ]
 
   return (
-    <div className="h-full rounded border border-[#333333] bg-[#0A0A0A] p-4">
+    <div className="h-full rounded border border-[#333333] bg-[#0A0A0A] p-3 md:p-4">
       <div className="mb-4 flex gap-4 border-b border-[#1F1F1F]">
         {tabs.map((item) => (
           <button key={item.id} onClick={() => setTab(item.id)} className="pb-3 text-xs font-mono uppercase tracking-[0.14em] transition-colors" style={{ color: tab === item.id ? "#F5F5F5" : "#525252", borderBottom: tab === item.id ? `2px solid ${item.accent}` : "2px solid transparent" }}>

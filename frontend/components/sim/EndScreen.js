@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 import { motion, AnimatePresence } from "framer-motion"
 import { useSimStore } from "@/store/simStore"
 import { useRouter } from "next/navigation"
@@ -40,7 +40,7 @@ export default function EndScreen({ onRestart }) {
             {outcome.sub}
           </motion.p>
 
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9 }} style={{ display: "flex", gap: "48px", marginBottom: "48px" }}>
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9 }} style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "24px", marginBottom: "48px" }}>
             {[
               { label: "Turns elapsed", value: finalTurn },
               { label: "Total displaced", value: finalDisplaced.toLocaleString() },
@@ -53,7 +53,7 @@ export default function EndScreen({ onRestart }) {
             ))}
           </motion.div>
 
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }} style={{ display: "flex", gap: "16px", marginBottom: "48px" }}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }} style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "16px", marginBottom: "48px" }}>
             {nations.map((nation) => {
               const cond = endConditions[nation] ?? "unknown"
               const colour = cond === "stabilised" ? "#22C55E" : cond === "collapsed" ? "#EF4444" : "#A3A3A3"
@@ -66,7 +66,7 @@ export default function EndScreen({ onRestart }) {
             })}
           </motion.div>
 
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.3 }} style={{ display: "flex", gap: "12px" }}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.3 }} style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "12px" }}>
             <button onClick={onRestart} style={{ padding: "10px 28px", background: "#212020", border: "1px solid #333333", borderRadius: "4px", color: "#F5F5F5", fontFamily: "monospace", fontSize: "11px", letterSpacing: "0.12em", textTransform: "uppercase", cursor: "pointer" }}>
               Restart
             </button>

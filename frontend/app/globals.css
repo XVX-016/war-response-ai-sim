@@ -1,4 +1,4 @@
-﻿@tailwind base;
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -26,7 +26,21 @@ body {
   font-optical-sizing: auto;
 }
 
-h1, h2, h3 {
+h1 {
+  font-family: "DM Sans", system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+}
+
+h2 {
+  font-family: "DM Sans", system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  font-size: clamp(1.25rem, 3vw, 1.875rem);
+}
+
+h3 {
   font-family: "DM Sans", system-ui, sans-serif;
   font-weight: 700;
   letter-spacing: -0.025em;
@@ -62,6 +76,10 @@ code, pre,
 ::-webkit-scrollbar-thumb { background: #333333; border-radius: 3px; }
 
 ::selection { background: rgba(59,130,246,0.3); color: #F5F5F5; }
+
+/* Hide scrollbar utility for mobile horizontal scrolls */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 @keyframes pulse {
   0%, 100% { opacity: 1; }

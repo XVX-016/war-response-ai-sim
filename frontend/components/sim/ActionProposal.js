@@ -54,7 +54,7 @@ export default function ActionProposal({ onExecute, onCancel }) {
 
   return (
     <div style={{ border: "1px solid #2D2C2C", borderRadius: "4px", background: "#131313", overflow: "hidden" }}>
-      <div style={{ background: "#1A1A1A", padding: "10px 14px", display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid #2D2C2C" }}>
+      <div style={{ background: "#1A1A1A", padding: "10px 14px", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "6px", borderBottom: "1px solid #2D2C2C" }}>
         <div>
           <span style={{ fontFamily: "DM Mono, monospace", fontSize: "9px", letterSpacing: "0.15em", textTransform: "uppercase", color: "#A3A3A3" }}>
             Agent Proposal
@@ -123,7 +123,7 @@ export default function ActionProposal({ onExecute, onCancel }) {
         })}
       </div>
 
-      <div style={{ padding: "10px 14px", borderTop: "1px solid #1F1F1F", display: "flex", gap: "8px", justifyContent: "flex-end" }}>
+      <div style={{ padding: "10px 14px", borderTop: "1px solid #1F1F1F", display: "flex", flexWrap: "wrap", gap: "8px", justifyContent: "flex-end" }}>
         <button onClick={onCancel} style={{ padding: "8px 16px", background: "#212020", border: "1px solid #333333", borderRadius: "4px", color: "#A3A3A3", fontFamily: "DM Sans, sans-serif", fontSize: "12px", letterSpacing: "0.04em", cursor: "pointer" }}>
           Cancel
         </button>

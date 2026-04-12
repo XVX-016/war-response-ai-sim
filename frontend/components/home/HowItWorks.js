@@ -7,10 +7,9 @@ const STEPS = [
 
 export default function HowItWorks() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-0">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-0">
       {STEPS.map((s, i) => (
         <div key={s.n} className="relative flex flex-col">
-          {i < STEPS.length - 1 && <div className="hidden md:block absolute top-4 left-1/2 w-full h-px bg-[#1F1F1F]" />}
           <div className="relative z-10 pr-8">
             <span className="font-mono text-xs text-[#3B82F6] tracking-widest mb-3 block">{s.n}</span>
             <h3 className="text-sm font-semibold text-[#F5F5F5] mb-2 tracking-tight">{s.title}</h3>

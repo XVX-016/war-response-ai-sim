@@ -5,18 +5,27 @@ import { useSimStore } from "@/store/simStore"
 
 const FILTERS = ["All", "Critical", "Warnings", "Actions", "Consequences"]
 
-const EVENT_TYPE_COLOURS = {
-  action_complete: { bg: "#1E3A5F", text: "#93C5FD" },
-  action_queued: { bg: "#1E3A5F", text: "#93C5FD" },
-  action_rejected: { bg: "#3B0000", text: "#FCA5A5" },
-  consequence: { bg: "#3B2500", text: "#FCD34D" },
-  exogenous: { bg: "#2D1B69", text: "#C4B5FD" },
-  alliance_resupply: { bg: "#14292A", text: "#6EE7B7" },
-  end_condition: { bg: "#14291A", text: "#86EFAC" },
-  dependency_penalty: { bg: "#2D1A00", text: "#FB923C" },
-  displacement: { bg: "#3B0000", text: "#FCA5A5" },
-  mortality_risk: { bg: "#3B0000", text: "#FCA5A5" },
-  default: { bg: "#1A1A1A", text: "#A3A3A3" },
+function getEventTagStyle(eventType) {
+  const t = (eventType || "").toLowerCase()
+  if (t === "displacement" || t === "mortality_risk")
+    return { background: "#3B0000", color: "#FCA5A5" }
+  if (t === "consequence")
+    return { background: "#2D1A00", color: "#FCD34D" }
+  if (t === "action_complete" || t === "alliance_resupply")
+    return { background: "#14291A", color: "#86EFAC" }
+  if (t === "diplomatic_event" || t === "trade")
+    return { background: "#1A1A3B", color: "#A5B4FC" }
+  if (t === "exogenous")
+    return { background: "#2D1A2D", color: "#D8B4FE" }
+  if (t === "action_rejected")
+    return { background: "#2D1A00", color: "#FCA5A5" }
+  if (t === "end_condition")
+    return { background: "#14291A", color: "#86EFAC" }
+  if (t === "dependency_penalty")
+    return { background: "#2D1A00", color: "#FB923C" }
+  if (t === "action_queued")
+    return { background: "#1A1A3B", color: "#A5B4FC" }
+  return { background: "#1A1A1A", color: "#6B7280" }
 }
 
 const SEVERITY_BORDER = {
@@ -30,7 +39,7 @@ function fixEncoding(str) {
   try {
     return decodeURIComponent(escape(str))
   } catch {
-    return str.replace(/â€¦/g, "...").replace(/Â·/g, "·").replace(/â†’/g, "->")
+    return str.replace(/â€¦/g, "...").replace(/Â·/g, "·").replace(/â†'/g, "->")
   }
 }
 
@@ -39,6 +48,10 @@ export default function EventLog({ events = [] }) {
   const lastNarrative = useSimStore((s) => s.lastNarrative)
   const narrativeHistory = useSimStore((s) => s.narrativeHistory)
   const lastTurn = useSimStore((s) => s.simState?.turn ?? 0)
+  const geoNations = useSimStore((s) => s.geoNations)
+  const nations = useSimStore((s) => s.simState?.nations ?? [])
+
+  const displayName = (internal) => geoNations?.[internal] || internal
 
   const filtered = events
     .slice()
@@ -117,18 +130,39 @@ export default function EventLog({ events = [] }) {
 
       <div className="flex-1 space-y-1 overflow-y-auto">
         {filtered.map((event, index) => {
-          const typeStyle = EVENT_TYPE_COLOURS[event.event_type] ?? EVENT_TYPE_COLOURS.default
+          const tagStyle = getEventTagStyle(event.event_type)
           const borderCol = SEVERITY_BORDER[event.severity] ?? SEVERITY_BORDER.info
+          const nationColour = event.nation === nations[0] ? "#60A5FA" : "#FBBF24"
           return (
             <div key={`${event.turn ?? 0}-${index}-${event.event_type ?? "event"}`} className="cursor-default flex flex-col gap-1 bg-[#0A0A0A] px-3 py-2 transition-colors hover:bg-[#151515]" style={{ borderLeft: `3px solid ${borderCol}` }}>
               <div className="flex items-center gap-2">
                 <span style={{ minWidth: "28px", fontFamily: "DM Mono, monospace", fontSize: "10px", color: "#525252", background: "#1A1A1A", border: "1px solid #2D2C2C", borderRadius: "3px", padding: "1px 4px" }}>
                   T{String(event.turn ?? 0).padStart(2, "0")}
                 </span>
-                <span style={{ borderRadius: "3px", padding: "2px 6px", fontSize: "10px", fontFamily: "DM Sans, sans-serif", fontWeight: 600, letterSpacing: "0.04em", textTransform: "uppercase", background: typeStyle.bg, color: typeStyle.text }}>
+                <span style={{
+                  fontFamily:    "DM Sans, sans-serif",
+                  fontSize:      "10px",
+                  fontWeight:    600,
+                  letterSpacing: "0.04em",
+                  textTransform: "uppercase",
+                  borderRadius:  "3px",
+                  padding:       "2px 6px",
+                  background:    tagStyle.background,
+                  color:         tagStyle.color,
+                }}>
                   {(event.event_type ?? "event").replace(/_/g, " ")}
                 </span>
-                {event.nation ? <span style={{ fontFamily: "DM Sans, sans-serif", fontSize: "10px", fontWeight: 300, color: "#525252" }}>{event.nation}</span> : null}
+                {event.nation ? (
+                  <span style={{
+                    fontFamily: "DM Sans, sans-serif",
+                    fontSize:   "11px",
+                    fontWeight: 400,
+                    color:      nationColour,
+                    marginLeft: "6px",
+                  }}>
+                    {displayName(event.nation)}
+                  </span>
+                ) : null}
               </div>
               <p style={{ paddingLeft: "36px", fontFamily: "DM Sans, sans-serif", fontWeight: 300, fontSize: "12px", color: "#D4D4D4", lineHeight: 1.5 }}>
                 {fixEncoding(event.description)}
