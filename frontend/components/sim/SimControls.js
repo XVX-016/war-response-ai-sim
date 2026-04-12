@@ -12,6 +12,7 @@ export default function SimControls({
   stepDelay,
   nationFilter,
   turnPhase,
+  geoNations,
   onScenarioChange,
   onProposeTurn,
   onReset,
@@ -23,7 +24,7 @@ export default function SimControls({
   const maxTurns = simState?.max_turns ?? 60
 
   return (
-    <div className="sticky top-16 space-y-5 rounded border border-[#333333] bg-[#0A0A0A] p-4">
+    <div className="lg:sticky lg:top-16 space-y-4 md:space-y-5 rounded border border-[#333333] bg-[#0A0A0A] p-3 md:p-4">
       <div>
         <p className="mb-2 text-[11px] font-mono uppercase tracking-[0.14em] text-[#525252]">Scenario</p>
         <select value={scenarioPath || ""} onChange={(e) => onScenarioChange(e.target.value)} className="w-full rounded border border-[#333333] bg-[#1A1A1A] px-3 py-2 text-sm text-[#F5F5F5] outline-none">
@@ -72,11 +73,17 @@ export default function SimControls({
       <div>
         <p className="mb-2 text-[11px] font-mono uppercase tracking-[0.14em] text-[#525252]">Nation Filter</p>
         <div className="flex flex-wrap gap-2">
-          {["All", "Auria", "Boros"].map((nation) => (
-            <button key={nation} onClick={() => onNationFilterChange(nation)} className={`rounded border px-3 py-1 text-xs font-mono uppercase tracking-[0.12em] ${nationFilter === nation ? "border-[#3B82F6] text-white" : "border-[#333333] text-[#525252]"}`}>
-              {nation}
-            </button>
-          ))}
+          {["All", "Auria", "Boros"].map((nation) => {
+            let label = nation
+            if (nation !== "All") {
+              label = geoNations?.[nation] || (nation === "Auria" ? "Country A" : "Country B")
+            }
+            return (
+              <button key={nation} onClick={() => onNationFilterChange(nation)} className={`rounded border px-3 py-1 text-xs font-mono uppercase tracking-[0.12em] ${nationFilter === nation ? "border-[#3B82F6] text-white" : "border-[#333333] text-[#525252]"}`}>
+                {label}
+              </button>
+            )
+          })}
         </div>
       </div>
     </div>

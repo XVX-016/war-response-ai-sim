@@ -297,7 +297,7 @@ export default function SimulationPage() {
 
   if (!hasHydrated || profilesQuery.isLoading || scenariosQuery.isLoading) {
     return (
-      <main className="min-h-screen bg-[#0A0A0A] pt-20 px-6">
+      <main className="min-h-screen bg-[#0A0A0A] pt-20 px-3 md:px-6">
         <Navbar />
         <div className="max-w-4xl mx-auto rounded border border-[#333333] p-8 font-mono text-sm text-[#A3A3A3]">
           {!hasHydrated ? "Restoring saved setup..." : "Loading country profiles from backend..."}
@@ -327,9 +327,9 @@ export default function SimulationPage() {
       <Navbar />
       <div className="pt-14">
         <SimHeader scenarioName={simState?.scenario_name || "Simulation"} turn={simState?.turn || 0} maxTurns={simState?.max_turns || 60} />
-        <div className="max-w-[1680px] mx-auto px-6 py-6">
+        <div className="max-w-[1680px] mx-auto px-0 md:px-6 py-4 md:py-6">
           {errorMessage ? <div className="mb-4 rounded border border-[#EF4444] p-3 text-sm font-mono text-[#EF4444]">{errorMessage}</div> : null}
-          <div className="grid grid-cols-[280px_minmax(0,1fr)_380px] items-start gap-6">
+          <div className="grid grid-cols-1 xl:grid-cols-[280px_minmax(0,1fr)_380px] lg:grid-cols-[260px_minmax(0,1fr)] items-start gap-4 md:gap-6">
             <SimControls
               scenarios={scenarios}
               scenarioPath={scenarioPath}
@@ -340,6 +340,7 @@ export default function SimulationPage() {
               stepDelay={stepDelay}
               nationFilter={nationFilter}
               turnPhase={turnPhase}
+              geoNations={geoNations}
               onScenarioChange={loadScenario}
               onProposeTurn={proposeTurn}
               onReset={resetScenario}

@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useSimStore } from "@/store/simStore"
@@ -239,7 +239,7 @@ export default function GridMap({ simState, nationFilter = "All", onAssetClick }
   }
 
   return (
-    <div className="relative mx-auto w-fit rounded border border-[#333333] bg-[#212020] p-4">
+    <div className="relative mx-auto w-fit rounded border border-[#333333] bg-[#212020] p-2 md:p-4">
       <canvas
         ref={canvasRef}
         width={CANVAS_SIZE}
@@ -255,7 +255,7 @@ export default function GridMap({ simState, nationFilter = "All", onAssetClick }
           onAssetClick?.(nextId)
         }}
       />
-      <div style={{ display: "flex", gap: "16px", padding: "10px 0", alignItems: "center" }}>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "12px", padding: "10px 0", alignItems: "center" }}>
         {[
           { colour: "#22C55E", label: "Healthy" },
           { colour: "#F59E0B", label: "Degraded" },

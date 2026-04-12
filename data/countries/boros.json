@@ -1,12 +1,12 @@
 {
   "nation": "Boros",
-  "display_name": "South Africa",
-  "flag_emoji": "\ud83c\uddff\ud83c\udde6",
-  "lore": "South Africa - Africa. GDP index: 0.07, Military: 0.09.",
-  "gdp_index": 0.07,
-  "military_strength": 0.09,
-  "population_millions": 64.01,
-  "resource_richness": 0.15,
-  "terrain_difficulty": 0.16,
-  "alliance_strength": 0.11
+  "display_name": "Nigeria",
+  "flag_emoji": "\ud83c\uddf3\ud83c\uddec",
+  "lore": "Nigeria - Africa. GDP index: 0.01, Military: 0.07.",
+  "gdp_index": 0.01,
+  "military_strength": 0.07,
+  "population_millions": 232.68,
+  "resource_richness": 0.17,
+  "terrain_difficulty": 0.26,
+  "alliance_strength": 0.02
 }

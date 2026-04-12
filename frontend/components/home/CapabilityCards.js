@@ -23,7 +23,7 @@ export default function CapabilityCards() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {CAPS.map((cap) => (
-        <div key={cap.title} className="border border-[#333333] rounded p-8 hover:border-[rgba(59,130,246,0.4)] transition-colors bg-transparent">
+        <div key={cap.title} className="border border-[#333333] rounded p-5 md:p-8 hover:border-[rgba(59,130,246,0.4)] transition-colors bg-transparent">
           <p
             style={{
               fontFamily: "DM Sans, system-ui, sans-serif",

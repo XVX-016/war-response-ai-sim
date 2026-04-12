@@ -57,12 +57,12 @@ export default function DiplomacyPanel() {
   const relation = Object.values(dip.relations ?? {})[0]
 
   return (
-    <div style={{ border: "1px solid #2D2C2C", borderRadius: "4px", padding: "16px", marginTop: "12px", background: "#151515" }}>
+    <div style={{ border: "1px solid #2D2C2C", borderRadius: "4px", padding: "clamp(10px, 2vw, 16px)", marginTop: "12px", background: "#151515" }}>
       <div style={{ fontFamily: "DM Mono, monospace", fontSize: "9px", letterSpacing: "0.15em", textTransform: "uppercase", color: "#525252", marginBottom: "12px" }}>
         Diplomatic State
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "16px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "12px", marginBottom: "16px" }}>
         {nations.map((nation, index) => {
           const gdp = dip.gdp_index?.[nation] ?? 0.5
           const alliance = dip.alliance_strength?.[nation] ?? 0.5

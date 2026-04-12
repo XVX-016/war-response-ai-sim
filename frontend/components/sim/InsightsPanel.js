@@ -51,14 +51,17 @@ function computeCriticalPath(simState, nation) {
 export default function InsightsPanel() {
   const simState = useSimStore((s) => s.simState)
   const history = useSimStore((s) => s.history)
+  const geoNations = useSimStore((s) => s.geoNations)
   const displayNames = useNationDisplayNames()
+
+  const displayName = (internal) => geoNations?.[internal] || internal
 
   if (!simState || simState.turn === 0) return null
 
   const nations = simState.nations || []
 
   return (
-    <div style={{ border: "1px solid #2D2C2C", borderRadius: "4px", background: "#151515", padding: "16px", marginBottom: "12px" }}>
+    <div style={{ border: "1px solid #2D2C2C", borderRadius: "4px", background: "#151515", padding: "clamp(10px, 2vw, 16px)", marginBottom: "12px" }}>
       <div style={{ fontFamily: "DM Mono, monospace", fontSize: "9px", letterSpacing: "0.15em", textTransform: "uppercase", color: "#525252", marginBottom: "12px" }}>
         Situation Analysis
       </div>
@@ -74,17 +77,31 @@ export default function InsightsPanel() {
           const nationCol = index === 0 ? "#3B82F6" : "#F59E0B"
           const prevCoverage = history.length >= 2 ? history[history.length - 2]?.service_coverage?.[nation] ?? coverage : coverage
           const trend = coverage - prevCoverage
-          const display = displayNames.find((item) => item.internal === nation)?.display ?? nation
 
           return (
             <div key={nation}>
-              <div style={{ fontFamily: "DM Mono, monospace", fontSize: "10px", letterSpacing: "0.1em", textTransform: "uppercase", color: nationCol, marginBottom: "10px" }}>
-                {display}
+              {/* Column header — strong colour as left accent only */}
+              <div style={{
+                borderLeft:   `3px solid ${nationCol}`,
+                paddingLeft:  "8px",
+                marginBottom: "12px",
+              }}>
+                <span style={{
+                  fontFamily:    "DM Sans, sans-serif",
+                  fontSize:      "10px",
+                  fontWeight:    600,
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                  color:         index === 0 ? "#60A5FA" : "#FBBF24",
+                }}>
+                  {displayName(nation)}
+                </span>
               </div>
 
-              <div style={{ fontFamily: "DM Mono, monospace", fontSize: "24px", fontWeight: 400, color: coverage > 0.7 ? "#22C55E" : coverage > 0.4 ? "#F59E0B" : "#EF4444", letterSpacing: "-0.02em", marginBottom: "2px" }}>
+              {/* Coverage % headline */}
+              <div style={{ fontFamily: "DM Mono, monospace", fontSize: "clamp(22px, 4vw, 28px)", fontWeight: 400, color: coverage > 0.7 ? "#22C55E" : coverage > 0.4 ? "#F59E0B" : "#EF4444", letterSpacing: "-0.02em", marginBottom: "2px" }}>
                 {(coverage * 100).toFixed(1)}%
-                <span style={{ fontSize: "11px", fontWeight: 400, color: trend >= 0 ? "#22C55E" : "#EF4444", marginLeft: "8px" }}>
+                <span style={{ fontSize: "11px", fontWeight: 400, color: trend >= 0 ? "#22C55E" : "#EF4444", marginLeft: "6px", verticalAlign: "middle" }}>
                   {trend >= 0 ? "▲" : "▼"} {Math.abs(trend * 100).toFixed(1)}%
                 </span>
               </div>
@@ -92,13 +109,14 @@ export default function InsightsPanel() {
                 Service coverage
               </div>
 
+              {/* Displacement card */}
               {totalDisp > 0 ? (
-                <div style={{ background: "#1E1010", border: "1px solid #2D1515", borderRadius: "3px", padding: "8px 10px", marginBottom: "10px" }}>
-                  <div style={{ fontFamily: "DM Mono, monospace", fontSize: "13px", color: "#EF4444", letterSpacing: "-0.01em" }}>
-                    {totalDisp.toLocaleString()} displaced
+                <div style={{ background: "#220D0D", border: "1px solid #3B1515", borderRadius: "3px", padding: "8px 10px", marginBottom: "10px" }}>
+                  <div style={{ fontFamily: "DM Mono, monospace", fontSize: "20px", fontWeight: 500, color: "#FCA5A5", letterSpacing: "-0.01em" }}>
+                    {totalDisp.toLocaleString("en-US")} displaced
                   </div>
                   {anchor ? (
-                    <div style={{ fontFamily: "DM Sans, sans-serif", fontSize: "11px", fontWeight: 300, color: "#A3A3A3", marginTop: "2px" }}>
+                    <div style={{ fontFamily: "DM Sans, sans-serif", fontSize: "12px", fontWeight: 300, color: "#A3A3A3", marginTop: "2px" }}>
                       Equivalent to the population of {anchor}
                     </div>
                   ) : null}
@@ -108,18 +126,19 @@ export default function InsightsPanel() {
                 </div>
               ) : null}
 
+              {/* Recommended action card */}
               {critPath ? (
                 <div style={{ background: "#101825", border: "1px solid #152035", borderRadius: "3px", padding: "8px 10px" }}>
-                  <div style={{ fontFamily: "DM Mono, monospace", fontSize: "9px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#3B82F6", marginBottom: "4px" }}>
+                  <div style={{ fontFamily: "DM Sans, sans-serif", fontSize: "9px", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "#60A5FA", marginBottom: "4px" }}>
                     Recommended action
                   </div>
-                  <div style={{ fontFamily: "DM Sans, sans-serif", fontSize: "12px", fontWeight: 300, color: "#F5F5F5", marginBottom: "2px" }}>
+                  <div style={{ fontFamily: "DM Sans, sans-serif", fontSize: "14px", fontWeight: 600, color: "#F5F5F5", marginBottom: "2px" }}>
                     Repair {critPath.asset.name}
                   </div>
-                  <div style={{ fontFamily: "DM Mono, monospace", fontSize: "10px", color: "#3B82F6" }}>
+                  <div style={{ fontFamily: "DM Mono, monospace", fontSize: "12px", color: "#93C5FD" }}>
                     +{(critPath.coverageGain * 100).toFixed(1)}% coverage gain
                   </div>
-                  <div style={{ fontFamily: "DM Sans, sans-serif", fontSize: "11px", fontWeight: 300, color: "#525252", marginTop: "2px" }}>
+                  <div style={{ fontFamily: "DM Mono, monospace", fontSize: "11px", color: "#525252", marginTop: "2px" }}>
                     Current: {critPath.asset.health.toFixed(0)}/{critPath.asset.max_health} HP
                   </div>
                 </div>

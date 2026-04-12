@@ -125,12 +125,12 @@ export default function SetupPage() {
   const ready = Object.keys(profiles || {}).length > 0
 
   return (
-    <main className="min-h-screen bg-[#0A0A0A] pt-20 pb-16 px-6">
+    <main className="min-h-screen bg-[#0A0A0A] pt-20 pb-16 px-4 md:px-6">
       <Navbar />
       <div className="max-w-7xl mx-auto">
         <div className="mb-12">
           <p className="text-xs font-mono tracking-[0.2em] uppercase text-[#525252] mb-2">Configuration</p>
-          <h1 className="text-4xl font-bold text-[#F5F5F5] tracking-tight">Country Setup</h1>
+          <h1 className="text-2xl md:text-4xl font-bold text-[#F5F5F5] tracking-tight">Country Setup</h1>
           <p className="text-sm text-[#525252] mt-2">
             Configure each nation before starting the simulation. Parameters scale starting resources, agent capability,
             and simulation dynamics.
@@ -150,7 +150,7 @@ export default function SetupPage() {
 
         {ready ? (
           <>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 mb-8 md:mb-16">
               <div>
                 <CountrySearch
                   accentColour="#3B82F6"
@@ -174,10 +174,10 @@ export default function SetupPage() {
             </div>
 
             {(!profiles?.Auria?.pending_selection || !profiles?.Boros?.pending_selection) && (
-              <div className="border-t border-[#1F1F1F] pt-16">
+              <div className="border-t border-[#1F1F1F] pt-8 md:pt-16">
                 <p className="text-xs font-mono tracking-[0.2em] uppercase text-[#525252] mb-2">Analysis</p>
-                <h2 className="text-2xl font-bold text-[#F5F5F5] mb-10 tracking-tight">Country Comparison</h2>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+                <h2 className="text-xl md:text-2xl font-bold text-[#F5F5F5] mb-6 md:mb-10 tracking-tight">Country Comparison</h2>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 items-stretch">
                   <RadarChart />
                   <ComparisonTable />
                 </div>
